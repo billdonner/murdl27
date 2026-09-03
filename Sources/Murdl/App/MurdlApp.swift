@@ -2,7 +2,10 @@ import SwiftUI
 
 @main
 struct MurdlApp: App {
+    static let keyboardWindowID = "keyboard"
+
     @StateObject private var game = MurdlGame()
+    @State private var keyCapture = KeyCapture()
 
     /// Game commands stay off while the Help sheet is up so its keys cannot reach the board behind it.
     private var gameLocked: Bool {
@@ -12,7 +15,8 @@ struct MurdlApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(game: game)
-                .frame(minWidth: 1160, minHeight: 760)
+                .frame(minWidth: 1160, minHeight: 640)
+                .onAppear { keyCapture.attach(to: game) }
         }
         .defaultSize(width: 1380, height: 820)
         .windowResizability(.contentMinSize)
@@ -39,13 +43,11 @@ struct MurdlApp: App {
                 Button("Submit Guess") {
                     game.submitGuess()
                 }
-                .keyboardShortcut(.return, modifiers: [])
                 .disabled(gameLocked)
 
                 Button("Delete Letter") {
                     game.deleteLetter()
                 }
-                .keyboardShortcut(.delete, modifiers: [])
                 .disabled(gameLocked || game.currentGuess.isEmpty)
 
                 Divider()
@@ -74,6 +76,10 @@ struct MurdlApp: App {
                 .keyboardShortcut("f", modifiers: [.command, .shift])
             }
 
+            CommandGroup(after: .windowArrangement) {
+                ShowKeyboardCommand()
+            }
+
             CommandGroup(replacing: .help) {
                 Button("MURDL Help") {
                     game.showHelp()
@@ -81,5 +87,27 @@ struct MurdlApp: App {
                 .keyboardShortcut("/", modifiers: [.command])
             }
         }
+
+        Window("Keyboard", id: Self.keyboardWindowID) {
+            KeyboardView(game: game)
+        }
+        .windowResizability(.contentSize)
+        .windowLevel(.floating)
+        .windowStyle(.hiddenTitleBar)
+        .windowBackgroundDragBehavior(.enabled)
+        .defaultPosition(.bottomTrailing)
+        .defaultLaunchBehavior(.presented)
+        .restorationBehavior(.disabled)
+    }
+}
+
+private struct ShowKeyboardCommand: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Button("Show Keyboard") {
+            openWindow(id: MurdlApp.keyboardWindowID)
+        }
+        .keyboardShortcut("k", modifiers: [.command])
     }
 }

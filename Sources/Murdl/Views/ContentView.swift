@@ -2,10 +2,11 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var game: MurdlGame
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(spacing: 10) {
-            HeaderView(game: game)
+            HeaderView(game: game, showKeyboard: { openWindow(id: MurdlApp.keyboardWindowID) })
 
             if game.isHelperMode {
                 HelperBarView(game: game)
@@ -16,9 +17,6 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             StatusStripView(game: game)
-
-            KeyboardView(game: game)
-                .frame(maxWidth: 790)
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 12)
@@ -47,6 +45,7 @@ struct ContentView: View {
 // Keyboard shortcuts are declared once, in the app's menus. The buttons below mirror them.
 private struct HeaderView: View {
     @ObservedObject var game: MurdlGame
+    let showKeyboard: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -93,6 +92,12 @@ private struct HeaderView: View {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
                     game.toggleHelperMode()
                 }
+            }
+
+            HeaderButton(systemImage: "keyboard",
+                         label: "Show keyboard",
+                         help: "Show the floating letter keyboard (Command-K)") {
+                showKeyboard()
             }
 
             HeaderButton(systemImage: "textformat",
@@ -185,14 +190,7 @@ private struct HelperBarView: View {
 
             Spacer(minLength: 10)
 
-            HStack(spacing: 5) {
-                ForEach(game.boards) { board in
-                    HelperBoardChip(
-                        board: board,
-                        isTarget: game.helperFocusBoardID == board.id
-                    )
-                }
-            }
+            HelperChipGrid(game: game)
 
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
@@ -229,9 +227,42 @@ private struct HelperBarView: View {
     }
 }
 
+private struct HelperChipGrid: View {
+    @ObservedObject var game: MurdlGame
+    private static let chipsPerRow = 8
+
+    var body: some View {
+        let rows = stride(from: 0, to: game.boards.count, by: Self.chipsPerRow).map { start in
+            Array(game.boards[start..<min(start + Self.chipsPerRow, game.boards.count)])
+        }
+        HStack(spacing: 10) {
+            if game.boardCount > Self.chipsPerRow {
+                Text("\(game.solvedCount)/\(game.boardCount)")
+                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .help("Boards solved")
+            }
+            VStack(spacing: 4) {
+                ForEach(rows.indices, id: \.self) { rowIndex in
+                    HStack(spacing: 4) {
+                        ForEach(rows[rowIndex]) { board in
+                            HelperBoardChip(
+                                board: board,
+                                isTarget: game.helperFocusBoardID == board.id,
+                                size: game.boardCount > Self.chipsPerRow ? 20 : 26
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 private struct HelperBoardChip: View {
     let board: MurdlBoard
     let isTarget: Bool
+    var size: CGFloat = 26
 
     private var accent: Color {
         MurdlPalette.boardAccent(board.id)
@@ -244,19 +275,19 @@ private struct HelperBoardChip: View {
 
             if board.isSolved {
                 Image(systemName: "checkmark")
-                    .font(.system(size: 13, weight: .heavy))
+                    .font(.system(size: size * 0.5, weight: .heavy))
                     .foregroundStyle(.white)
             } else if board.isLost {
                 Image(systemName: "xmark")
-                    .font(.system(size: 12, weight: .heavy))
+                    .font(.system(size: size * 0.46, weight: .heavy))
                     .foregroundStyle(.white)
             } else {
                 Text("\(board.id + 1)")
-                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                    .font(.system(size: size * 0.5, weight: .heavy, design: .monospaced))
                     .foregroundStyle(isTarget ? .white : accent)
             }
         }
-        .frame(width: 26, height: 26)
+        .frame(width: size, height: size)
         .overlay {
             RoundedRectangle(cornerRadius: 6)
                 .stroke(accent.opacity(isTarget ? 1 : 0.42), lineWidth: isTarget ? 2 : 1)
@@ -291,22 +322,49 @@ private struct BoardGridView: View {
 
     private static let maxColumns = 8
     private static let minTile: CGFloat = 18
-    private static let maxTile: CGFloat = 56
     private static let boardSpacing: CGFloat = 6
     private static let boardPadding: CGFloat = 7
     private static let tileSpacing: CGFloat = 3
     private static let headerAndPadding: CGFloat = 50
+    /// How much of the next row of boards stays visible when the grid has to scroll.
+    private static let peek: CGFloat = 72
+
+    /// Small games get bigger tiles so two boards do not float in an empty window.
+    private static func maxTile(forBoards count: Int) -> CGFloat {
+        switch count {
+        case ...2: return 76
+        case ...4: return 64
+        default: return 56
+        }
+    }
+
+    private static func boardWidth(tile: CGFloat) -> CGFloat {
+        tile * CGFloat(MurdlGame.wordLength) + tileSpacing * CGFloat(MurdlGame.wordLength - 1) + boardPadding * 2
+    }
+
+    /// Columns are whatever fits at the minimum tile size, capped at eight. On a narrow
+    /// window (or an iPad) this wraps eight boards into two rows of four.
+    private static func columns(forBoards count: Int, width: CGFloat) -> Int {
+        let minBoardWidth = boardWidth(tile: minTile)
+        let fit = Int((width + boardSpacing) / (minBoardWidth + boardSpacing))
+        return max(1, min(count, maxColumns, fit))
+    }
 
     var body: some View {
         GeometryReader { proxy in
-            let columns = min(game.boardCount, Self.maxColumns)
+            let columns = Self.columns(forBoards: game.boardCount, width: proxy.size.width)
             let boardRows = Int((Double(game.boardCount) / Double(columns)).rounded(.up))
             let boardWidthLimit = (proxy.size.width - (Self.boardSpacing * CGFloat(columns - 1))) / CGFloat(columns)
             let tileFromWidth = (boardWidthLimit - (Self.boardPadding * 2) - (Self.tileSpacing * CGFloat(MurdlGame.wordLength - 1))) / CGFloat(MurdlGame.wordLength)
             let boardHeightLimit = (proxy.size.height - (Self.boardSpacing * CGFloat(boardRows - 1))) / CGFloat(boardRows)
             let tileFromHeight = (boardHeightLimit - Self.headerAndPadding - (Self.tileSpacing * CGFloat(game.maxGuesses - 1))) / CGFloat(game.maxGuesses)
-            let tileSize = floor(max(Self.minTile, min(Self.maxTile, tileFromWidth, tileFromHeight)))
-            let needsScroll = tileFromHeight < Self.minTile
+            let tileSize = floor(max(Self.minTile, min(Self.maxTile(forBoards: game.boardCount), tileFromWidth, tileFromHeight)))
+            let needsScroll = tileFromHeight < Self.minTile && boardRows > 1
+            // When scrolling, shrink the tiles just enough that the next row peeks above the fold.
+            let peekTile = needsScroll
+                ? floor(max(Self.minTile, (proxy.size.height - Self.peek - Self.boardSpacing - Self.headerAndPadding - Self.tileSpacing * CGFloat(game.maxGuesses - 1)) / CGFloat(game.maxGuesses)))
+                : tileSize
+            let finalTile = min(tileSize, peekTile)
             let chunks = stride(from: 0, to: game.boards.count, by: columns).map { start in
                 Array(game.boards[start..<min(start + columns, game.boards.count)])
             }
@@ -322,7 +380,7 @@ private struct BoardGridView: View {
                                     status: game.status(for: board),
                                     isFinished: board.isFinished,
                                     isHelperTarget: game.helperFocusBoardID == board.id,
-                                    tileSize: tileSize
+                                    tileSize: finalTile
                                 )
                             }
                         }
@@ -347,19 +405,21 @@ private struct GameBoardView: View {
     private var boardWidth: CGFloat {
         tileSize * CGFloat(MurdlGame.wordLength) + 3 * CGFloat(MurdlGame.wordLength - 1)
     }
+    private var isCompact: Bool { tileSize < 26 }
+    private var headerFont: CGFloat { isCompact ? 10 : 13 }
 
     var body: some View {
-        VStack(spacing: 6) {
-            HStack(spacing: 6) {
-                Text("#\(boardID + 1)")
-                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
+        VStack(spacing: isCompact ? 4 : 6) {
+            HStack(spacing: 4) {
+                Text(isCompact ? "\(boardID + 1)" : "#\(boardID + 1)")
+                    .font(.system(size: headerFont, weight: .heavy, design: .monospaced))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 3)
+                    .padding(.horizontal, isCompact ? 5 : 7)
+                    .padding(.vertical, isCompact ? 2 : 3)
                     .background(accent, in: Capsule())
                 Spacer(minLength: 2)
-                Text(status)
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                Text(isCompact ? compactStatus : status)
+                    .font(.system(size: headerFont - 1, weight: .bold, design: .monospaced))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                     .foregroundStyle(isFinished ? accent : .secondary)
@@ -394,6 +454,17 @@ private struct GameBoardView: View {
         .shadow(color: isHelperTarget ? accent.opacity(0.38) : .clear, radius: 10, y: 3)
         .scaleEffect(isHelperTarget ? 1.012 : 1)
         .help("Board \(boardID + 1): \(status)")
+    }
+
+    /// "Ready 3/21" becomes "3/21"; "Won 2/21" becomes "Won 2"; "Lost WORD" stays.
+    private var compactStatus: String {
+        if status.hasPrefix("Ready ") {
+            return String(status.dropFirst(6))
+        }
+        if status.hasPrefix("Won "), let slash = status.firstIndex(of: "/") {
+            return String(status[..<slash])
+        }
+        return status
     }
 }
 
@@ -456,101 +527,6 @@ private struct StatusStripView: View {
             .background(MurdlPalette.status, in: RoundedRectangle(cornerRadius: 8))
             .accessibilityLabel("Game status")
             .help("Current game status")
-    }
-}
-
-private struct KeyboardView: View {
-    @ObservedObject var game: MurdlGame
-    private static let rows = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"]
-
-    var body: some View {
-        GeometryReader { proxy in
-            let gap: CGFloat = 5
-            let unit = max(31, min(45, (proxy.size.width - (gap * 9)) / 10))
-            let font = MurdlTypography.keyboardLetterFont(game.keyboardFontStyle)
-
-            VStack(spacing: 6) {
-                HStack(spacing: gap) {
-                    letterButtons(Self.rows[0], unit: unit, font: font)
-                }
-                HStack(spacing: gap) {
-                    letterButtons(Self.rows[1], unit: unit, font: font)
-                }
-                HStack(spacing: gap) {
-                    KeyboardCommandButton(title: "ENTER", systemImage: "return", width: unit * 1.45) {
-                        game.submitGuess()
-                    }
-
-                    letterButtons(Self.rows[2], unit: unit, font: font)
-
-                    KeyboardCommandButton(title: "DELETE", systemImage: "delete.left", width: unit * 1.45) {
-                        game.deleteLetter()
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        }
-        .frame(height: 136)
-        .disabled(game.isOver || game.isShowingHelp)
-        .opacity(game.isOver ? 0.55 : 1)
-        .help("Click keys or type on the keyboard")
-    }
-
-    private func letterButtons(_ letters: String, unit: CGFloat, font: Font) -> some View {
-        ForEach(Array(letters).map(String.init), id: \.self) { letter in
-            KeyboardLetterButton(
-                letter: letter,
-                mark: game.keyMarks[letter] ?? .empty,
-                font: font,
-                fontTitle: game.keyboardFontStyle.title,
-                width: unit
-            ) {
-                game.enter(letter)
-            }
-        }
-    }
-}
-
-private struct KeyboardLetterButton: View {
-    let letter: String
-    let mark: TileMark
-    let font: Font
-    let fontTitle: String
-    let width: CGFloat
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(letter)
-                .font(font)
-                .frame(width: width, height: 38)
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(MurdlPalette.keyText(for: mark))
-        .background(MurdlPalette.keyFill(for: mark), in: RoundedRectangle(cornerRadius: 6))
-        .keyboardShortcut(KeyEquivalent(Character(letter.lowercased())), modifiers: [])
-        .accessibilityLabel("Letter \(letter)")
-        .help("Type \(letter). Keyboard font: \(fontTitle)")
-    }
-}
-
-private struct KeyboardCommandButton: View {
-    let title: String
-    let systemImage: String
-    let width: CGFloat
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 16, weight: .heavy))
-                .frame(width: width, height: 38)
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(MurdlPalette.keyText(for: .empty))
-        .background(MurdlPalette.commandKey, in: RoundedRectangle(cornerRadius: 6))
-        .accessibilityLabel(title)
-        .help(title)
     }
 }
 
@@ -686,92 +662,4 @@ private struct ColorStrip: View {
         }
         .accessibilityHidden(true)
     }
-}
-
-private enum MurdlTypography {
-    static func keyboardLetterFont(_ style: KeyboardFontStyle) -> Font {
-        switch style {
-        case .system:
-            return .system(size: 18, weight: .heavy, design: .default)
-        case .rounded:
-            return .system(size: 18, weight: .heavy, design: .rounded)
-        case .monospaced:
-            return .system(size: 18, weight: .heavy, design: .monospaced)
-        case .serif:
-            return .system(size: 18, weight: .heavy, design: .serif)
-        }
-    }
-}
-
-private enum MurdlPalette {
-    static let background = Color("GameBackGroundColor")
-    static let panel = background.opacity(0.78)
-    static let divider = Color.secondary.opacity(0.22)
-    static let brand = Color("AccentColor")
-    static let letter = Color("LetterForeGround")
-    static let status = Color("BonusRowBackGround")
-    static let correct = Color("MatchExactApple")
-    static let present = Color("MatchWrongPosApple")
-    static let absent = Color("NoMatchApple")
-    static let commandKey = Color("KeyCapBackGround")
-    static let keyForeground = Color("KeyCapForeGround")
-    static let titleGradient = LinearGradient(
-        colors: [boardAccent(0), boardAccent(1), boardAccent(2)],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-
-    static func boardAccent(_ index: Int) -> Color {
-        boardAccents[index % boardAccents.count]
-    }
-
-    static func idleTile(_ boardID: Int) -> Color {
-        boardAccent(boardID).opacity(0.24)
-    }
-
-    static func editingTile(_ boardID: Int) -> Color {
-        boardAccent(boardID).opacity(0.44)
-    }
-
-    /// Keys use the same three result colors as the tiles.
-    static func keyFill(for mark: TileMark) -> Color {
-        switch mark {
-        case .empty, .editing:
-            return commandKey
-        case .absent:
-            return absent
-        case .present:
-            return present
-        case .correct:
-            return correct
-        }
-    }
-
-    static func keyText(for mark: TileMark) -> Color {
-        switch mark {
-        case .empty, .editing:
-            return keyForeground
-        default:
-            return Color.white
-        }
-    }
-
-    private static let boardAccents: [Color] = [
-        Color(red: 0.10, green: 0.70, blue: 0.32),
-        Color(red: 0.95, green: 0.55, blue: 0.08),
-        Color(red: 0.10, green: 0.49, blue: 0.92),
-        Color(red: 0.86, green: 0.22, blue: 0.32),
-        Color(red: 0.56, green: 0.36, blue: 0.90),
-        Color(red: 0.00, green: 0.63, blue: 0.67),
-        Color(red: 0.83, green: 0.67, blue: 0.12),
-        Color(red: 0.88, green: 0.32, blue: 0.62),
-        Color(red: 0.36, green: 0.55, blue: 0.20),
-        Color(red: 0.80, green: 0.36, blue: 0.10),
-        Color(red: 0.24, green: 0.32, blue: 0.78),
-        Color(red: 0.62, green: 0.14, blue: 0.20),
-        Color(red: 0.40, green: 0.20, blue: 0.62),
-        Color(red: 0.10, green: 0.45, blue: 0.48),
-        Color(red: 0.60, green: 0.48, blue: 0.08),
-        Color(red: 0.62, green: 0.22, blue: 0.44)
-    ]
 }

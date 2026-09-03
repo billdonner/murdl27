@@ -5,7 +5,7 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Source archive: `/Users/billdonner/old-swift/MURDL`
 - App id: `com.billdonner.murdl`
 - Target: native macOS 26.0 or later
-- Mode: 8 boards, 5 letters, 13 guesses
+- Modes: 2, 4, 8, or 16 boards, 5 letters, guesses = boards + 5 (8 boards is the classic 13-guess game)
 - Dictionaries: copied from `old-swift/MURDL/Documents/wtf/Dictionaries`
 - Visual assets: copied from `old-swift/MURDL/Documents/wtf/wtf/Assets.xcassets`
 - Help: bundled as `Sources/Murdl/Resources/Help.md`

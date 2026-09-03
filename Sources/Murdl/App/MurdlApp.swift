@@ -23,6 +23,16 @@ struct MurdlApp: App {
                 }
                 .keyboardShortcut("n", modifiers: [.command])
                 .disabled(game.isShowingHelp)
+
+                Picker("Boards", selection: Binding(
+                    get: { game.boardCount },
+                    set: { game.setBoardCount($0) }
+                )) {
+                    ForEach(MurdlGame.boardCountOptions, id: \.self) { count in
+                        Text("\(count) Boards, \(count + MurdlGame.extraGuesses) Guesses").tag(count)
+                    }
+                }
+                .disabled(game.isShowingHelp)
             }
 
             CommandMenu("Game") {

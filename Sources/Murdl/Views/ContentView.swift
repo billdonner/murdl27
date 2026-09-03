@@ -56,7 +56,7 @@ private struct HeaderView: View {
                 Text("MURDL")
                     .font(.system(size: 34, weight: .black, design: .rounded))
                     .foregroundStyle(MurdlPalette.titleGradient)
-                Text("8 boards  \(MurdlGame.maxGuesses) guesses")
+                Text("\(game.boardCount) boards  \(game.maxGuesses) guesses")
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(.secondary)
             }
@@ -64,7 +64,7 @@ private struct HeaderView: View {
             Spacer(minLength: 8)
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text("\(game.solvedCount)/\(MurdlGame.boardCount)")
+                Text("\(game.solvedCount)/\(game.boardCount)")
                     .font(.system(size: 24, weight: .heavy, design: .rounded).monospacedDigit())
                     .foregroundStyle(MurdlPalette.letter)
                 Text(game.scoreText.isEmpty ? "\(game.guessesRemaining) left" : game.scoreText)
@@ -72,6 +72,20 @@ private struct HeaderView: View {
                     .foregroundStyle(.secondary)
             }
             .help("Solved boards and remaining guesses")
+
+            Picker("Boards", selection: Binding(
+                get: { game.boardCount },
+                set: { game.setBoardCount($0) }
+            )) {
+                ForEach(MurdlGame.boardCountOptions, id: \.self) { count in
+                    Text("\(count)").tag(count)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .frame(width: 168)
+            .accessibilityLabel("Number of boards")
+            .help("Number of boards. Changing it starts a new game.")
 
             HeaderButton(systemImage: "sparkles",
                          label: game.isHelperMode ? "Turn off helper mode" : "Turn on helper mode",
@@ -275,30 +289,48 @@ private struct HelperBoardChip: View {
 private struct BoardGridView: View {
     @ObservedObject var game: MurdlGame
 
+    private static let maxColumns = 8
+    private static let minTile: CGFloat = 18
+    private static let maxTile: CGFloat = 56
+    private static let boardSpacing: CGFloat = 6
+    private static let boardPadding: CGFloat = 7
+    private static let tileSpacing: CGFloat = 3
+    private static let headerAndPadding: CGFloat = 50
+
     var body: some View {
         GeometryReader { proxy in
-            let boardSpacing: CGFloat = 6
-            let boardPadding: CGFloat = 7
-            let tileSpacing: CGFloat = 3
-            let headerAndPadding: CGFloat = 50
-            let boardWidthLimit = (proxy.size.width - (boardSpacing * CGFloat(MurdlGame.boardCount - 1))) / CGFloat(MurdlGame.boardCount)
-            let tileFromWidth = (boardWidthLimit - (boardPadding * 2) - (tileSpacing * CGFloat(MurdlGame.wordLength - 1))) / CGFloat(MurdlGame.wordLength)
-            let tileFromHeight = (proxy.size.height - headerAndPadding - (tileSpacing * CGFloat(MurdlGame.maxGuesses - 1))) / CGFloat(MurdlGame.maxGuesses)
-            let tileSize = floor(max(20, min(40, tileFromWidth, tileFromHeight)))
-
-            HStack(alignment: .top, spacing: boardSpacing) {
-                ForEach(game.boards) { board in
-                    GameBoardView(
-                        boardID: board.id,
-                        rows: game.visibleRows(for: board),
-                        status: game.status(for: board),
-                        isFinished: board.isFinished,
-                        isHelperTarget: game.helperFocusBoardID == board.id,
-                        tileSize: tileSize
-                    )
-                }
+            let columns = min(game.boardCount, Self.maxColumns)
+            let boardRows = Int((Double(game.boardCount) / Double(columns)).rounded(.up))
+            let boardWidthLimit = (proxy.size.width - (Self.boardSpacing * CGFloat(columns - 1))) / CGFloat(columns)
+            let tileFromWidth = (boardWidthLimit - (Self.boardPadding * 2) - (Self.tileSpacing * CGFloat(MurdlGame.wordLength - 1))) / CGFloat(MurdlGame.wordLength)
+            let boardHeightLimit = (proxy.size.height - (Self.boardSpacing * CGFloat(boardRows - 1))) / CGFloat(boardRows)
+            let tileFromHeight = (boardHeightLimit - Self.headerAndPadding - (Self.tileSpacing * CGFloat(game.maxGuesses - 1))) / CGFloat(game.maxGuesses)
+            let tileSize = floor(max(Self.minTile, min(Self.maxTile, tileFromWidth, tileFromHeight)))
+            let needsScroll = tileFromHeight < Self.minTile
+            let chunks = stride(from: 0, to: game.boards.count, by: columns).map { start in
+                Array(game.boards[start..<min(start + columns, game.boards.count)])
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+
+            ScrollView(.vertical, showsIndicators: needsScroll) {
+                VStack(spacing: Self.boardSpacing) {
+                    ForEach(chunks.indices, id: \.self) { rowIndex in
+                        HStack(alignment: .top, spacing: Self.boardSpacing) {
+                            ForEach(chunks[rowIndex]) { board in
+                                GameBoardView(
+                                    boardID: board.id,
+                                    rows: game.visibleRows(for: board),
+                                    status: game.status(for: board),
+                                    isFinished: board.isFinished,
+                                    isHelperTarget: game.helperFocusBoardID == board.id,
+                                    tileSize: tileSize
+                                )
+                            }
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, minHeight: needsScroll ? nil : proxy.size.height, alignment: .center)
+            }
+            .scrollDisabled(!needsScroll)
         }
     }
 }
@@ -312,6 +344,9 @@ private struct GameBoardView: View {
     let isHelperTarget: Bool
     let tileSize: CGFloat
     private var accent: Color { MurdlPalette.boardAccent(boardID) }
+    private var boardWidth: CGFloat {
+        tileSize * CGFloat(MurdlGame.wordLength) + 3 * CGFloat(MurdlGame.wordLength - 1)
+    }
 
     var body: some View {
         VStack(spacing: 6) {
@@ -340,6 +375,7 @@ private struct GameBoardView: View {
                 }
             }
         }
+        .frame(width: boardWidth)
         .padding(7)
         .background {
             RoundedRectangle(cornerRadius: 8)
@@ -642,7 +678,7 @@ private struct HelpDocument {
 private struct ColorStrip: View {
     var body: some View {
         HStack(spacing: 6) {
-            ForEach(0..<MurdlGame.boardCount, id: \.self) { index in
+            ForEach(0..<MurdlGame.boardCountOptions.max()!, id: \.self) { index in
                 RoundedRectangle(cornerRadius: 4)
                     .fill(MurdlPalette.boardAccent(index))
                     .frame(height: 10)
@@ -728,6 +764,14 @@ private enum MurdlPalette {
         Color(red: 0.56, green: 0.36, blue: 0.90),
         Color(red: 0.00, green: 0.63, blue: 0.67),
         Color(red: 0.83, green: 0.67, blue: 0.12),
-        Color(red: 0.88, green: 0.32, blue: 0.62)
+        Color(red: 0.88, green: 0.32, blue: 0.62),
+        Color(red: 0.36, green: 0.55, blue: 0.20),
+        Color(red: 0.80, green: 0.36, blue: 0.10),
+        Color(red: 0.24, green: 0.32, blue: 0.78),
+        Color(red: 0.62, green: 0.14, blue: 0.20),
+        Color(red: 0.40, green: 0.20, blue: 0.62),
+        Color(red: 0.10, green: 0.45, blue: 0.48),
+        Color(red: 0.60, green: 0.48, blue: 0.08),
+        Color(red: 0.62, green: 0.22, blue: 0.44)
     ]
 }

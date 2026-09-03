@@ -1,6 +1,6 @@
 # MURDL Help
 
-MURDL is the eight-board word game. You have 13 guesses to solve eight different five-letter words.
+MURDL is the multi-board word game. Choose 2, 4, 8, or 16 boards from the header or the File menu. You always get five more guesses than boards, so the classic 8-board game has 13 guesses and 16 boards has 21.
 
 Each guess is applied to every unfinished board:
 
@@ -12,6 +12,6 @@ Solved boards stop changing. Keep using later guesses to finish the remaining bo
 
 The on-screen keyboard shows the best result each letter has earned on any board. A key turns orange if the letter is present on at least one unfinished board, and green if it has been placed correctly anywhere, even when other boards showed it gray.
 
-Helper Mode is available from the sparkles button or the Game menu. It shows the next unfinished board and plays that board's answer as the next guess. Any letters you have already typed stay in place for your next guess. Use it one step at a time to watch all eight boards finish.
+Helper Mode is available from the sparkles button or the Game menu. It shows the next unfinished board and plays that board's answer as the next guess. Any letters you have already typed stay in place for your next guess. Use it one step at a time to watch every board finish.
 
-The final score is one digit per board: the row that board was solved on. Rows 10 through 14 are written as the letters A through E. If every board is solved, the digits are listed lowest first and lower scores are better. If any board is missed, unsolved boards score as row 14 (E) and the digits are listed highest first.
+The final score is one character per board: the row that board was solved on. Rows 10 and up are written as letters starting at A, so row 10 is A, row 13 is D, and row 21 is L. If every board is solved, the characters are listed lowest first and lower scores are better. If any board is missed, unsolved boards score as one past the last row and the characters are listed highest first.

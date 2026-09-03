@@ -2,13 +2,17 @@ import Foundation
 import Combine
 
 final class MurdlGame: ObservableObject {
-    static let boardCount = 8
     static let wordLength = 5
-    static let maxGuesses = 13
+    static let boardCountOptions = [2, 4, 8, 16]
+    static let defaultBoardCount = 8
+    /// Classic MURDL gives five more guesses than boards: 8 boards, 13 guesses.
+    static let extraGuesses = 5
 
     private let dictionary: WordDictionary
     private static let keyboardFontDefaultsKey = "MurdlKeyboardFontStyle"
+    private static let boardCountDefaultsKey = "MurdlBoardCount"
 
+    @Published private(set) var boardCount: Int
     @Published private(set) var boards: [MurdlBoard] = []
     @Published private(set) var currentGuess = ""
     @Published private(set) var currentRow = 0
@@ -28,6 +32,20 @@ final class MurdlGame: ObservableObject {
         } else {
             keyboardFontStyle = .monospaced
         }
+        let savedCount = UserDefaults.standard.integer(forKey: Self.boardCountDefaultsKey)
+        boardCount = Self.boardCountOptions.contains(savedCount) ? savedCount : Self.defaultBoardCount
+        startNewGame()
+    }
+
+    var maxGuesses: Int {
+        boardCount + Self.extraGuesses
+    }
+
+    /// Starts a new game with a different number of boards.
+    func setBoardCount(_ count: Int) {
+        guard Self.boardCountOptions.contains(count), count != boardCount else { return }
+        boardCount = count
+        UserDefaults.standard.set(count, forKey: Self.boardCountDefaultsKey)
         startNewGame()
     }
 
@@ -40,14 +58,15 @@ final class MurdlGame: ObservableObject {
     }
 
     var guessesRemaining: Int {
-        max(0, Self.maxGuesses - currentRow)
+        max(0, maxGuesses - currentRow)
     }
 
     var solvedCount: Int {
         boards.filter(\.isSolved).count
     }
 
-    /// One hex digit per board: the row it was solved on, or `maxGuesses + 1` if missed.
+    /// One character per board: the row it was solved on, or `maxGuesses + 1` if missed.
+    /// Rows 10 and up are written as letters starting at A so the score stays one character per board.
     var scoreText: String {
         guard isOver else { return "" }
 
@@ -55,11 +74,11 @@ final class MurdlGame: ObservableObject {
             if let solvedRow = board.solvedRow {
                 return solvedRow + 1
             }
-            return Self.maxGuesses + 1
+            return maxGuesses + 1
         }
 
         let sortedScores = didWin ? rawScores.sorted() : rawScores.sorted(by: >)
-        return sortedScores.map { String($0, radix: 16).uppercased() }.joined()
+        return sortedScores.map { String($0, radix: 36).uppercased() }.joined()
     }
 
     var helperTargetBoard: MurdlBoard? {
@@ -95,12 +114,12 @@ final class MurdlGame: ObservableObject {
     }
 
     func startNewGame() {
-        let answers = dictionary.randomAnswers(count: Self.boardCount)
+        let answers = dictionary.randomAnswers(count: boardCount)
         boards = answers.enumerated().map { index, answer in
             MurdlBoard(
                 id: index,
                 answer: answer,
-                rows: Array(repeating: .empty(wordLength: Self.wordLength), count: Self.maxGuesses)
+                rows: Array(repeating: .empty(wordLength: Self.wordLength), count: maxGuesses)
             )
         }
         currentGuess = ""
@@ -222,7 +241,7 @@ final class MurdlGame: ObservableObject {
 
             if scoredTiles.allSatisfy({ $0.mark == .correct }) {
                 boards[boardIndex].solvedRow = currentRow
-            } else if currentRow == Self.maxGuesses - 1 {
+            } else if currentRow == maxGuesses - 1 {
                 boards[boardIndex].isLost = true
             }
         }
@@ -234,7 +253,7 @@ final class MurdlGame: ObservableObject {
         } else if isOver {
             statusText = "Lost MURDL \(scoreText)"
         } else {
-            statusText = "\(solvedCount) of \(Self.boardCount) solved"
+            statusText = "\(solvedCount) of \(boardCount) solved"
         }
     }
 
@@ -251,17 +270,17 @@ final class MurdlGame: ObservableObject {
     }
 
     func visibleRows(for board: MurdlBoard) -> [[Tile]] {
-        (0..<Self.maxGuesses).map { visibleTiles(for: board, row: $0) }
+        (0..<maxGuesses).map { visibleTiles(for: board, row: $0) }
     }
 
     func status(for board: MurdlBoard) -> String {
         if let solvedRow = board.solvedRow {
-            return "Won \(solvedRow + 1)/\(Self.maxGuesses)"
+            return "Won \(solvedRow + 1)/\(maxGuesses)"
         }
         if board.isLost {
             return "Lost \(board.answer.uppercased())"
         }
-        return "Ready \(min(currentRow + 1, Self.maxGuesses))/\(Self.maxGuesses)"
+        return "Ready \(min(currentRow + 1, maxGuesses))/\(maxGuesses)"
     }
 
     private func mergeKeyMarks(_ tiles: [Tile]) {

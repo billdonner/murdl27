@@ -6,7 +6,11 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            HeaderView(game: game, showKeyboard: { openWindow(id: MurdlApp.keyboardWindowID) })
+            HeaderView(
+                game: game,
+                showKeyboard: { openWindow(id: MurdlApp.keyboardWindowID) },
+                showScores: { openWindow(id: MurdlApp.scoresWindowID) }
+            )
 
             if game.isHelperMode {
                 HelperBarView(game: game)
@@ -46,6 +50,7 @@ struct ContentView: View {
 private struct HeaderView: View {
     @ObservedObject var game: MurdlGame
     let showKeyboard: () -> Void
+    let showScores: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -92,6 +97,20 @@ private struct HeaderView: View {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
                     game.toggleHelperMode()
                 }
+            }
+
+            HeaderButton(systemImage: game.boardLayout == .grid ? "rectangle.split.2x2" : "rectangle.split.3x1",
+                         label: "Board layout: \(game.boardLayout.title)",
+                         help: "Switch to \((game.boardLayout == .grid ? BoardLayout.strip : .grid).title) layout (Command-L)") {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    game.toggleBoardLayout()
+                }
+            }
+
+            HeaderButton(systemImage: "list.number",
+                         label: "Scores",
+                         help: "Show scores (Command-Shift-S)") {
+                showScores()
             }
 
             HeaderButton(systemImage: "keyboard",
@@ -329,6 +348,13 @@ private struct BoardGridView: View {
     /// How much of the next row of boards stays visible when the grid has to scroll.
     private static let peek: CGFloat = 72
 
+    private struct Layout {
+        var columns: Int
+        var tile: CGFloat
+        var axes: Axis.Set
+        var scrolls: Bool
+    }
+
     /// Small games get bigger tiles so two boards do not float in an empty window.
     private static func maxTile(forBoards count: Int) -> CGFloat {
         switch count {
@@ -342,53 +368,86 @@ private struct BoardGridView: View {
         tile * CGFloat(MurdlGame.wordLength) + tileSpacing * CGFloat(MurdlGame.wordLength - 1) + boardPadding * 2
     }
 
-    /// Columns are whatever fits at the minimum tile size, capped at eight. On a narrow
+    private static func tileFromHeight(_ height: CGFloat, guesses: Int) -> CGFloat {
+        (height - headerAndPadding - tileSpacing * CGFloat(guesses - 1)) / CGFloat(guesses)
+    }
+
+    /// Grid: columns are whatever fits at the minimum tile size, capped at eight. On a narrow
     /// window (or an iPad) this wraps eight boards into two rows of four.
-    private static func columns(forBoards count: Int, width: CGFloat) -> Int {
+    private static func gridLayout(boards: Int, guesses: Int, size: CGSize) -> Layout {
         let minBoardWidth = boardWidth(tile: minTile)
-        let fit = Int((width + boardSpacing) / (minBoardWidth + boardSpacing))
-        return max(1, min(count, maxColumns, fit))
+        let fit = Int((size.width + boardSpacing) / (minBoardWidth + boardSpacing))
+        let columns = max(1, min(boards, maxColumns, fit))
+        let rows = Int((Double(boards) / Double(columns)).rounded(.up))
+        let boardWidthLimit = (size.width - boardSpacing * CGFloat(columns - 1)) / CGFloat(columns)
+        let fromWidth = (boardWidthLimit - boardPadding * 2 - tileSpacing * CGFloat(MurdlGame.wordLength - 1)) / CGFloat(MurdlGame.wordLength)
+        let boardHeightLimit = (size.height - boardSpacing * CGFloat(rows - 1)) / CGFloat(rows)
+        let fromHeight = tileFromHeight(boardHeightLimit, guesses: guesses)
+        var tile = floor(max(minTile, min(maxTile(forBoards: boards), fromWidth, fromHeight)))
+        let scrolls = fromHeight < minTile && rows > 1
+        if scrolls {
+            // Shrink just enough that the next row peeks above the fold.
+            let peekTile = floor(max(minTile, tileFromHeight(size.height - peek - boardSpacing, guesses: guesses)))
+            tile = min(tile, peekTile)
+        }
+        return Layout(columns: columns, tile: tile, axes: .vertical, scrolls: scrolls)
+    }
+
+    /// Strip: one row sized by height alone; scrolls sideways when the boards outrun the window.
+    private static func stripLayout(boards: Int, guesses: Int, size: CGSize) -> Layout {
+        let fromHeight = tileFromHeight(size.height, guesses: guesses)
+        let tile = floor(max(minTile, min(maxTile(forBoards: boards), fromHeight)))
+        let totalWidth = boardWidth(tile: tile) * CGFloat(boards) + boardSpacing * CGFloat(boards - 1)
+        return Layout(columns: boards, tile: tile, axes: .horizontal, scrolls: totalWidth > size.width)
     }
 
     var body: some View {
         GeometryReader { proxy in
-            let columns = Self.columns(forBoards: game.boardCount, width: proxy.size.width)
-            let boardRows = Int((Double(game.boardCount) / Double(columns)).rounded(.up))
-            let boardWidthLimit = (proxy.size.width - (Self.boardSpacing * CGFloat(columns - 1))) / CGFloat(columns)
-            let tileFromWidth = (boardWidthLimit - (Self.boardPadding * 2) - (Self.tileSpacing * CGFloat(MurdlGame.wordLength - 1))) / CGFloat(MurdlGame.wordLength)
-            let boardHeightLimit = (proxy.size.height - (Self.boardSpacing * CGFloat(boardRows - 1))) / CGFloat(boardRows)
-            let tileFromHeight = (boardHeightLimit - Self.headerAndPadding - (Self.tileSpacing * CGFloat(game.maxGuesses - 1))) / CGFloat(game.maxGuesses)
-            let tileSize = floor(max(Self.minTile, min(Self.maxTile(forBoards: game.boardCount), tileFromWidth, tileFromHeight)))
-            let needsScroll = tileFromHeight < Self.minTile && boardRows > 1
-            // When scrolling, shrink the tiles just enough that the next row peeks above the fold.
-            let peekTile = needsScroll
-                ? floor(max(Self.minTile, (proxy.size.height - Self.peek - Self.boardSpacing - Self.headerAndPadding - Self.tileSpacing * CGFloat(game.maxGuesses - 1)) / CGFloat(game.maxGuesses)))
-                : tileSize
-            let finalTile = min(tileSize, peekTile)
-            let chunks = stride(from: 0, to: game.boards.count, by: columns).map { start in
-                Array(game.boards[start..<min(start + columns, game.boards.count)])
+            let layout = game.boardLayout == .strip
+                ? Self.stripLayout(boards: game.boardCount, guesses: game.maxGuesses, size: proxy.size)
+                : Self.gridLayout(boards: game.boardCount, guesses: game.maxGuesses, size: proxy.size)
+            let chunks = stride(from: 0, to: game.boards.count, by: layout.columns).map { start in
+                Array(game.boards[start..<min(start + layout.columns, game.boards.count)])
             }
 
-            ScrollView(.vertical, showsIndicators: needsScroll) {
-                VStack(spacing: Self.boardSpacing) {
-                    ForEach(chunks.indices, id: \.self) { rowIndex in
-                        HStack(alignment: .top, spacing: Self.boardSpacing) {
-                            ForEach(chunks[rowIndex]) { board in
-                                GameBoardView(
-                                    boardID: board.id,
-                                    rows: game.visibleRows(for: board),
-                                    status: game.status(for: board),
-                                    isFinished: board.isFinished,
-                                    isHelperTarget: game.helperFocusBoardID == board.id,
-                                    tileSize: finalTile
-                                )
+            ScrollViewReader { scroller in
+                ScrollView(layout.axes, showsIndicators: layout.scrolls) {
+                    VStack(spacing: Self.boardSpacing) {
+                        ForEach(chunks.indices, id: \.self) { rowIndex in
+                            HStack(alignment: .top, spacing: Self.boardSpacing) {
+                                ForEach(chunks[rowIndex]) { board in
+                                    GameBoardView(
+                                        boardID: board.id,
+                                        rows: game.visibleRows(for: board),
+                                        status: game.status(for: board),
+                                        isFinished: board.isFinished,
+                                        isHelperTarget: game.helperFocusBoardID == board.id,
+                                        isFocused: game.focusedBoardID == board.id,
+                                        tileSize: layout.tile
+                                    )
+                                    .id(board.id)
+                                    .onTapGesture { game.focusBoard(board.id) }
+                                }
                             }
                         }
                     }
+                    .frame(
+                        minWidth: layout.axes == .horizontal ? proxy.size.width : nil,
+                        minHeight: layout.axes == .vertical && layout.scrolls ? nil : proxy.size.height,
+                        alignment: .center
+                    )
                 }
-                .frame(maxWidth: .infinity, minHeight: needsScroll ? nil : proxy.size.height, alignment: .center)
+                .scrollDisabled(!layout.scrolls)
+                .onChange(of: game.focusedBoardID) { _, id in
+                    guard let id else { return }
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        scroller.scrollTo(id, anchor: .center)
+                    }
+                }
+                .onChange(of: layout.columns, initial: true) { _, columns in
+                    game.layoutColumns = columns
+                }
             }
-            .scrollDisabled(!needsScroll)
         }
     }
 }
@@ -400,6 +459,7 @@ private struct GameBoardView: View {
     let status: String
     let isFinished: Bool
     let isHelperTarget: Bool
+    let isFocused: Bool
     let tileSize: CGFloat
     private var accent: Color { MurdlPalette.boardAccent(boardID) }
     private var boardWidth: CGFloat {
@@ -450,6 +510,13 @@ private struct GameBoardView: View {
         .overlay {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(accent.opacity(isHelperTarget || isFinished ? 0.95 : 0.58), lineWidth: isHelperTarget ? 3 : (isFinished ? 2 : 1))
+        }
+        .overlay {
+            if isFocused {
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(MurdlPalette.letter.opacity(0.9), lineWidth: 2)
+                    .padding(-3)
+            }
         }
         .shadow(color: isHelperTarget ? accent.opacity(0.38) : .clear, radius: 10, y: 3)
         .scaleEffect(isHelperTarget ? 1.012 : 1)

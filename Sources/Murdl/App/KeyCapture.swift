@@ -1,6 +1,6 @@
 import AppKit
 
-/// Routes unmodified letter, Return, and Delete key presses to the game from any of the app's
+/// Routes unmodified letter, arrow, Return, and Delete key presses to the game from any of the app's
 /// windows, so the player can type whether the board or the floating keyboard is in front.
 @MainActor
 final class KeyCapture {
@@ -18,7 +18,7 @@ final class KeyCapture {
         guard !game.isShowingHelp else { return false }
         let modifiers = event.modifierFlags
             .intersection(.deviceIndependentFlagsMask)
-            .subtracting([.shift, .capsLock])
+            .subtracting([.shift, .capsLock, .function, .numericPad])
         guard modifiers.isEmpty else { return false }
 
         switch event.keyCode {
@@ -27,6 +27,18 @@ final class KeyCapture {
             return true
         case 51: // Delete
             game.deleteLetter()
+            return true
+        case 123:
+            game.moveFocus(.left)
+            return true
+        case 124:
+            game.moveFocus(.right)
+            return true
+        case 125:
+            game.moveFocus(.down)
+            return true
+        case 126:
+            game.moveFocus(.up)
             return true
         default:
             break

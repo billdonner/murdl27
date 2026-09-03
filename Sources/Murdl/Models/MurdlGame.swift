@@ -11,6 +11,7 @@ final class MurdlGame: ObservableObject {
     private let dictionary: WordDictionary
     private static let keyboardFontDefaultsKey = "MurdlKeyboardFontStyle"
     private static let boardCountDefaultsKey = "MurdlBoardCount"
+    private static let boardLayoutDefaultsKey = "MurdlBoardLayout"
 
     @Published private(set) var boardCount: Int
     @Published private(set) var boards: [MurdlBoard] = []
@@ -23,6 +24,13 @@ final class MurdlGame: ObservableObject {
     /// Set by the last helper step; cleared whenever the player submits a guess themselves.
     @Published private(set) var helperMessage = ""
     @Published private(set) var keyboardFontStyle: KeyboardFontStyle
+    @Published private(set) var boardLayout: BoardLayout
+    @Published private(set) var records: [GameRecord] = ScoreStore.load()
+    /// Board highlighted by arrow-key navigation; the grid scrolls to keep it visible.
+    @Published private(set) var focusedBoardID: Int?
+    /// Boards per row in the current layout, reported by the grid view so up/down can move by a row.
+    var layoutColumns = 1
+    private var gameStartedAt = Date()
 
     init(dictionary: WordDictionary = .bundled) {
         self.dictionary = dictionary
@@ -34,7 +42,51 @@ final class MurdlGame: ObservableObject {
         }
         let savedCount = UserDefaults.standard.integer(forKey: Self.boardCountDefaultsKey)
         boardCount = Self.boardCountOptions.contains(savedCount) ? savedCount : Self.defaultBoardCount
+        if let rawLayout = UserDefaults.standard.string(forKey: Self.boardLayoutDefaultsKey),
+           let savedLayout = BoardLayout(rawValue: rawLayout) {
+            boardLayout = savedLayout
+        } else {
+            boardLayout = .grid
+        }
         startNewGame()
+    }
+
+    var scoreSummary: ScoreSummary {
+        ScoreSummary(records: records)
+    }
+
+    func setBoardLayout(_ layout: BoardLayout) {
+        boardLayout = layout
+        UserDefaults.standard.set(layout.rawValue, forKey: Self.boardLayoutDefaultsKey)
+    }
+
+    func toggleBoardLayout() {
+        setBoardLayout(boardLayout == .grid ? .strip : .grid)
+    }
+
+    func clearRecords() {
+        records = []
+        ScoreStore.save(records)
+    }
+
+    func focusBoard(_ id: Int?) {
+        focusedBoardID = id
+    }
+
+    /// Moves the focused board with the arrow keys. Left and right step one board; up and down step one row.
+    func moveFocus(_ direction: BoardDirection) {
+        guard !boards.isEmpty else { return }
+        let step: Int
+        switch direction {
+        case .left: step = -1
+        case .right: step = 1
+        case .up: step = -layoutColumns
+        case .down: step = layoutColumns
+        }
+        let current = focusedBoardID ?? (step > 0 ? -1 : boards.count)
+        let next = current + step
+        guard boards.indices.contains(next) else { return }
+        focusedBoardID = next
     }
 
     var maxGuesses: Int {
@@ -127,6 +179,8 @@ final class MurdlGame: ObservableObject {
         statusText = "Ready"
         keyMarks = [:]
         helperMessage = ""
+        focusedBoardID = nil
+        gameStartedAt = Date()
     }
 
     func showHelp() {
@@ -255,6 +309,24 @@ final class MurdlGame: ObservableObject {
         } else {
             statusText = "\(solvedCount) of \(boardCount) solved"
         }
+
+        if isOver {
+            recordFinishedGame()
+        }
+    }
+
+    private func recordFinishedGame() {
+        let record = GameRecord(
+            date: Date(),
+            boardCount: boardCount,
+            solvedCount: solvedCount,
+            guessesUsed: currentRow,
+            didWin: didWin,
+            score: scoreText,
+            seconds: Int(Date().timeIntervalSince(gameStartedAt))
+        )
+        records.insert(record, at: 0)
+        ScoreStore.save(records)
     }
 
     func visibleTiles(for board: MurdlBoard, row: Int) -> [Tile] {

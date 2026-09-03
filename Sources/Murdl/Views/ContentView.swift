@@ -77,19 +77,38 @@ private struct HeaderView: View {
             }
             .help("Solved boards and remaining guesses")
 
-            Picker("Boards", selection: Binding(
-                get: { game.boardCount },
-                set: { game.setBoardCount($0) }
-            )) {
-                ForEach(MurdlGame.boardCountOptions, id: \.self) { count in
-                    Text("\(count)").tag(count)
-                }
+            if let clockText = game.clockText {
+                ClockView(text: clockText, mode: game.mode, remaining: game.sprintRemaining, isRunning: game.clock.isRunning, hasStarted: game.clock.hasStarted, isOver: game.isOver)
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .frame(width: 168)
-            .accessibilityLabel("Number of boards")
-            .help("Number of boards. Changing it starts a new game.")
+
+            VStack(spacing: 4) {
+                Picker("Boards", selection: Binding(
+                    get: { game.boardCount },
+                    set: { game.setBoardCount($0) }
+                )) {
+                    ForEach(MurdlGame.boardCountOptions, id: \.self) { count in
+                        Text("\(count)").tag(count)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .accessibilityLabel("Number of boards")
+                .help("Number of boards. Changing it starts a new game.")
+
+                Picker("Mode", selection: Binding(
+                    get: { game.mode },
+                    set: { game.setMode($0) }
+                )) {
+                    ForEach(GameMode.allCases) { mode in
+                        Text(mode.title).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .accessibilityLabel("Game mode")
+                .help("Classic, Stopwatch, or Sprint. Changing it starts a new game.")
+            }
+            .frame(width: 236)
 
             HeaderButton(systemImage: "sparkles",
                          label: game.isHelperMode ? "Turn off helper mode" : "Turn on helper mode",
@@ -138,6 +157,43 @@ private struct HeaderView: View {
             }
         }
         .frame(maxWidth: 1380)
+    }
+}
+
+/// Elapsed time for Stopwatch, time remaining for Sprint. Amber under 30 seconds, red under 10.
+private struct ClockView: View {
+    let text: String
+    let mode: GameMode
+    let remaining: TimeInterval
+    let isRunning: Bool
+    let hasStarted: Bool
+    let isOver: Bool
+
+    private var caption: String {
+        if isOver { return "Final" }
+        if !hasStarted { return "Type to start" }
+        return isRunning ? mode.title : "Paused"
+    }
+
+    private var color: Color {
+        guard mode == .sprint, hasStarted else { return MurdlPalette.letter }
+        if remaining <= 10 { return Color(red: 0.90, green: 0.22, blue: 0.22) }
+        if remaining <= 30 { return Color(red: 0.95, green: 0.60, blue: 0.10) }
+        return MurdlPalette.letter
+    }
+
+    var body: some View {
+        VStack(alignment: .trailing, spacing: 2) {
+            Text(text)
+                .font(.system(size: 24, weight: .heavy, design: .rounded).monospacedDigit())
+                .foregroundStyle(color)
+            Text(caption)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .foregroundStyle(.secondary)
+        }
+        .frame(minWidth: 72, alignment: .trailing)
+        .accessibilityLabel(mode == .sprint ? "Time remaining \(text)" : "Elapsed time \(text)")
+        .help(mode == .sprint ? "Sprint: time remaining. Solving a board adds \(Int(GameMode.sprintBonusPerSolve)) seconds." : "Stopwatch: elapsed time since your first keystroke.")
     }
 }
 

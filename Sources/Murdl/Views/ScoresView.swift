@@ -13,6 +13,7 @@ struct ScoresView: View {
                 Stat(title: "Streak", value: "\(summary.currentStreak)")
                 Stat(title: "Best Streak", value: "\(summary.bestStreak)")
                 Stat(title: "Best Score", value: summary.bestScore ?? "–")
+                Stat(title: "Best Time (\(game.boardCount))", value: summary.bestTime.map { GameClock.format(TimeInterval($0)) } ?? "–")
                 Spacer()
                 Button("Clear", role: .destructive) {
                     game.clearRecords()
@@ -29,11 +30,15 @@ struct ScoresView: View {
                     Text("\(record.boardCount)")
                 }
                 .width(50)
+                TableColumn("Mode") { record in
+                    Text(record.mode.title)
+                }
+                .width(min: 70, ideal: 80)
                 TableColumn("Result") { record in
                     Text(record.resultText)
-                        .foregroundStyle(record.didWin ? MurdlPalette.correct : .secondary)
+                        .foregroundStyle(record.isHonestWin ? MurdlPalette.correct : .secondary)
                 }
-                .width(min: 70, ideal: 90)
+                .width(min: 90, ideal: 110)
                 TableColumn("Score") { record in
                     Text(record.score)
                         .font(.system(.body, design: .monospaced))
@@ -56,7 +61,7 @@ struct ScoresView: View {
             }
         }
         .padding(16)
-        .frame(minWidth: 560, minHeight: 320)
+        .frame(minWidth: 720, minHeight: 320)
     }
 }
 

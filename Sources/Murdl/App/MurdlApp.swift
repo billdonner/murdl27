@@ -50,6 +50,16 @@ struct MurdlApp: App {
                     }
                 }
                 .disabled(game.isShowingHelp)
+
+                Picker("Mode", selection: Binding(
+                    get: { game.mode },
+                    set: { game.setMode($0) }
+                )) {
+                    ForEach(GameMode.allCases) { mode in
+                        Text(mode.title).tag(mode)
+                    }
+                }
+                .disabled(game.isShowingHelp)
             }
 
             CommandMenu("Game") {
@@ -129,7 +139,7 @@ struct MurdlApp: App {
         Window("Scores", id: Self.scoresWindowID) {
             ScoresView(game: game)
         }
-        .defaultSize(width: 640, height: 400)
+        .defaultSize(width: 760, height: 400)
         .defaultLaunchBehavior(.suppressed)
     }
 }

@@ -16,8 +16,10 @@ Boards can be shown as a grid of up to eight per row, or as a single horizontal 
 
 The on-screen keyboard is a small floating window that shows each letter's status. Type on your real keyboard from any window; the floating one is only for mouse play. Close it if you do not need it and reopen it with Command-K. MURDL remembers where you put it.
 
+Three modes are available from the header or the File menu. Classic has no visible clock. Stopwatch counts up from your first keystroke, and the fastest win at each board count is kept as a best time. Sprint counts down from 45 seconds per board; every solved board adds 10 seconds, and when the clock reaches zero every unfinished board is lost. In both timed modes the clock waits for your first keystroke and pauses while Help is open or the app is in the background.
+
 Every finished game is recorded. Open Scores with Command-Shift-S to see games played, wins, streaks, best score, and the time each game took.
 
-Helper Mode is available from the sparkles button or the Game menu. It shows the next unfinished board and plays that board's answer as the next guess. Any letters you have already typed stay in place for your next guess. Use it one step at a time to watch every board finish.
+Helper Mode is available from the sparkles button or the Game menu. It shows the next unfinished board and plays that board's answer as the next guess. Any letters you have already typed stay in place for your next guess. Use it one step at a time to watch every board finish. A game that used the helper is recorded as assisted and does not count toward wins, streaks, or best times.
 
 The final score is one character per board: the row that board was solved on. Rows 10 and up are written as letters starting at A, so row 10 is A, row 13 is D, and row 21 is L. If every board is solved, the characters are listed lowest first and lower scores are better. If any board is missed, unsolved boards score as one past the last row and the characters are listed highest first.

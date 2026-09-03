@@ -13,6 +13,7 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Helper Mode: solves one unfinished board at a time from the app UI or Game menu
 - Keyboard: small floating window (`Command-K`); typing works from any window via an app-wide key monitor; position and open state persist
 - Board layout: grid (rows of up to 8, vertical scroll with the next row peeking) or horizontal strip (`Command-L`); scroll by trackpad swipe, scroll wheel, or arrow keys
+- Modes: Classic, Stopwatch (counts up from first keystroke, best time per board count), Sprint (45 s per board + 10 s per solve, unfinished boards lost at zero); clock pauses for Help and app background; helper games recorded as assisted
 - Scores: every finished game is recorded with result, score string, guesses, and time (`Command-Shift-S`)
 - Keyboard font: cycle with `Command-Shift-F`
 - Keyboard shortcuts live in the menu bar only; on-screen buttons mirror them

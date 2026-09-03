@@ -1,17 +1,20 @@
 import Foundation
 import Combine
+import AppKit
 
+@MainActor
 final class MurdlGame: ObservableObject {
-    static let wordLength = 5
-    static let boardCountOptions = [2, 4, 8, 16]
-    static let defaultBoardCount = 8
+    nonisolated static let wordLength = 5
+    nonisolated static let boardCountOptions = [2, 4, 8, 16]
+    nonisolated static let defaultBoardCount = 8
     /// Classic MURDL gives five more guesses than boards: 8 boards, 13 guesses.
-    static let extraGuesses = 5
+    nonisolated static let extraGuesses = 5
 
     private let dictionary: WordDictionary
     private static let keyboardFontDefaultsKey = "MurdlKeyboardFontStyle"
     private static let boardCountDefaultsKey = "MurdlBoardCount"
     private static let boardLayoutDefaultsKey = "MurdlBoardLayout"
+    private static let gameModeDefaultsKey = "MurdlGameMode"
 
     @Published private(set) var boardCount: Int
     @Published private(set) var boards: [MurdlBoard] = []
@@ -25,12 +28,23 @@ final class MurdlGame: ObservableObject {
     @Published private(set) var helperMessage = ""
     @Published private(set) var keyboardFontStyle: KeyboardFontStyle
     @Published private(set) var boardLayout: BoardLayout
+    @Published private(set) var mode: GameMode
     @Published private(set) var records: [GameRecord] = ScoreStore.load()
+    @Published private(set) var clock = GameClock()
+    /// Advances a few times a second while the clock runs so time labels refresh.
+    @Published private(set) var clockNow = Date()
+    /// Extra Sprint seconds earned by solving boards.
+    @Published private(set) var bonusSeconds: TimeInterval = 0
+    @Published private(set) var timedOut = false
+    private(set) var assisted = false
+    private var ticker: Timer?
+    private var pausedForHelp = false
+    private var pausedForBackground = false
+    private var lifecycleTokens: [NSObjectProtocol] = []
     /// Board highlighted by arrow-key navigation; the grid scrolls to keep it visible.
     @Published private(set) var focusedBoardID: Int?
     /// Boards per row in the current layout, reported by the grid view so up/down can move by a row.
     var layoutColumns = 1
-    private var gameStartedAt = Date()
 
     init(dictionary: WordDictionary = .bundled) {
         self.dictionary = dictionary
@@ -48,11 +62,114 @@ final class MurdlGame: ObservableObject {
         } else {
             boardLayout = .grid
         }
+        if let rawMode = UserDefaults.standard.string(forKey: Self.gameModeDefaultsKey),
+           let savedMode = GameMode(rawValue: rawMode) {
+            mode = savedMode
+        } else {
+            mode = .classic
+        }
         startNewGame()
+        observeAppActivity()
     }
 
     var scoreSummary: ScoreSummary {
-        ScoreSummary(records: records)
+        ScoreSummary(records: records, boardCount: boardCount)
+    }
+
+    // MARK: Timing
+
+    var elapsedSeconds: TimeInterval {
+        clock.elapsed(at: clockNow)
+    }
+
+    var sprintBudget: TimeInterval {
+        GameMode.sprintBudget(boards: boardCount) + bonusSeconds
+    }
+
+    var sprintRemaining: TimeInterval {
+        max(0, sprintBudget - elapsedSeconds)
+    }
+
+    /// What the header clock shows: elapsed for Stopwatch, remaining for Sprint, nothing for Classic.
+    var clockText: String? {
+        switch mode {
+        case .classic: return nil
+        case .stopwatch: return GameClock.format(elapsedSeconds)
+        case .sprint: return GameClock.format(sprintRemaining)
+        }
+    }
+
+    func setMode(_ newMode: GameMode) {
+        guard newMode != mode else { return }
+        mode = newMode
+        UserDefaults.standard.set(newMode.rawValue, forKey: Self.gameModeDefaultsKey)
+        startNewGame()
+    }
+
+    /// The clock starts on the first keystroke, not on New Game.
+    private func startClockIfNeeded() {
+        guard !clock.hasStarted, !isOver else { return }
+        clock.start()
+        updateTicker()
+    }
+
+    private func stopClock() {
+        clock.pause()
+        updateTicker()
+    }
+
+    private func setPaused(help: Bool? = nil, background: Bool? = nil) {
+        if let help { pausedForHelp = help }
+        if let background { pausedForBackground = background }
+        let shouldPause = pausedForHelp || pausedForBackground
+        if shouldPause {
+            clock.pause()
+        } else if !isOver {
+            clock.resume()
+        }
+        updateTicker()
+    }
+
+    private func updateTicker() {
+        if clock.isRunning {
+            guard ticker == nil else { return }
+            ticker = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+                MainActor.assumeIsolated { self?.tick() }
+            }
+        } else {
+            ticker?.invalidate()
+            ticker = nil
+        }
+    }
+
+    private func tick() {
+        clockNow = Date()
+        if mode == .sprint, !isOver, sprintRemaining <= 0 {
+            expireTime()
+        }
+    }
+
+    /// Sprint ran out: every unfinished board is lost.
+    private func expireTime() {
+        for index in boards.indices where !boards[index].isFinished {
+            boards[index].isLost = true
+        }
+        timedOut = true
+        stopClock()
+        statusText = "Time's up. Lost MURDL \(scoreText)"
+        recordFinishedGame()
+    }
+
+    private func observeAppActivity() {
+        let center = NotificationCenter.default
+        lifecycleTokens = [
+            center.addObserver(forName: NSApplication.didResignActiveNotification, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.setPaused(background: true) }
+            },
+            center.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.setPaused(background: false) }
+            }
+        ]
     }
 
     func setBoardLayout(_ layout: BoardLayout) {
@@ -180,15 +297,22 @@ final class MurdlGame: ObservableObject {
         keyMarks = [:]
         helperMessage = ""
         focusedBoardID = nil
-        gameStartedAt = Date()
+        clock = GameClock()
+        clockNow = Date()
+        bonusSeconds = 0
+        timedOut = false
+        assisted = false
+        updateTicker()
     }
 
     func showHelp() {
         isShowingHelp = true
+        setPaused(help: true)
     }
 
     func hideHelp() {
         isShowingHelp = false
+        setPaused(help: false)
     }
 
     func toggleHelperMode() {
@@ -226,6 +350,8 @@ final class MurdlGame: ObservableObject {
 
         let boardNumber = target.id + 1
         let answer = target.answer.uppercased()
+        assisted = true
+        startClockIfNeeded()
         play(word: target.answer)
 
         if isOver {
@@ -256,6 +382,7 @@ final class MurdlGame: ObservableObject {
         guard letter.count == 1, let scalar = letter.unicodeScalars.first else { return }
         guard scalar.value >= 65 && scalar.value <= 90 else { return }
 
+        startClockIfNeeded()
         currentGuess.append(letter)
         statusText = ""
     }
@@ -286,6 +413,7 @@ final class MurdlGame: ObservableObject {
 
     /// Scores `word` against every unfinished board and advances the row. Does not touch `currentGuess`.
     private func play(word: String) {
+        startClockIfNeeded()
         for boardIndex in boards.indices {
             guard !boards[boardIndex].isFinished else { continue }
 
@@ -295,6 +423,9 @@ final class MurdlGame: ObservableObject {
 
             if scoredTiles.allSatisfy({ $0.mark == .correct }) {
                 boards[boardIndex].solvedRow = currentRow
+                if mode == .sprint {
+                    bonusSeconds += GameMode.sprintBonusPerSolve
+                }
             } else if currentRow == maxGuesses - 1 {
                 boards[boardIndex].isLost = true
             }
@@ -311,6 +442,7 @@ final class MurdlGame: ObservableObject {
         }
 
         if isOver {
+            stopClock()
             recordFinishedGame()
         }
     }
@@ -323,7 +455,10 @@ final class MurdlGame: ObservableObject {
             guessesUsed: currentRow,
             didWin: didWin,
             score: scoreText,
-            seconds: Int(Date().timeIntervalSince(gameStartedAt))
+            seconds: Int(clock.elapsed().rounded()),
+            mode: mode,
+            assisted: assisted,
+            timedOut: timedOut
         )
         records.insert(record, at: 0)
         ScoreStore.save(records)

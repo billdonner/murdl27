@@ -20,6 +20,7 @@ struct MurdlApp: App {
         }
         .defaultSize(width: 1380, height: 820)
         .windowResizability(.contentMinSize)
+        .defaultLaunchBehavior(.presented)
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New Game") {

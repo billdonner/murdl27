@@ -1,0 +1,392 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0C82677BFC62A6B52065D613 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A906AE2E6D46B6006E5CE70C /* ContentView.swift */; };
+		3F3FB46479B86223A59DBDE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AF087AC77FA60C9648F1F1E /* Assets.xcassets */; };
+		4C02E0E17A38CA32A26E1EBA /* KeyboardFontStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */; };
+		50B3BB783D6E642384553BDA /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 46AFB0787B6B9C27E72E9C7C /* Help.md */; };
+		64EBEBCD3B09F1A88B3C62F6 /* wordl5.txt in Resources */ = {isa = PBXBuildFile; fileRef = D0B2E9F0A8C424A2456C0732 /* wordl5.txt */; };
+		6679E6BCFEC44BCB85CBC27A /* MurdlGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D134B08F1ED6B6E095972C7C /* MurdlGame.swift */; };
+		7E34F4956BE1580F92990A79 /* friendlies.txt in Resources */ = {isa = PBXBuildFile; fileRef = 16ACA40015D1A785E6CF7633 /* friendlies.txt */; };
+		931B5468BCDE3666BCE0C687 /* MurdlApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */; };
+		9760EDE94654D54B9B79369E /* WordDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AFDE065F206132A8C45D49 /* WordDictionary.swift */; };
+		EA8FEA15D4553DA80F966322 /* TileMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A306B05D489C59E19569F3 /* TileMark.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		05A306B05D489C59E19569F3 /* TileMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMark.swift; sourceTree = "<group>"; };
+		16ACA40015D1A785E6CF7633 /* friendlies.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = friendlies.txt; sourceTree = "<group>"; };
+		20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardFontStyle.swift; sourceTree = "<group>"; };
+		41A2EF757A36E110A9B6A3D3 /* MURDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MURDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		46AFB0787B6B9C27E72E9C7C /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Help.md; sourceTree = "<group>"; };
+		4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlApp.swift; sourceTree = "<group>"; };
+		675164CE195018740B97419B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8AF087AC77FA60C9648F1F1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		99AFDE065F206132A8C45D49 /* WordDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDictionary.swift; sourceTree = "<group>"; };
+		A906AE2E6D46B6006E5CE70C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D0B2E9F0A8C424A2456C0732 /* wordl5.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = wordl5.txt; sourceTree = "<group>"; };
+		D134B08F1ED6B6E095972C7C /* MurdlGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlGame.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0BDA7B4A315D03DB1216BC1B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41A2EF757A36E110A9B6A3D3 /* MURDL.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		389124C1AD3F0ADC2B938D37 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8AF087AC77FA60C9648F1F1E /* Assets.xcassets */,
+				46AFB0787B6B9C27E72E9C7C /* Help.md */,
+				CF0859B9991EE22F92435D23 /* Dictionaries */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		53E4F3CD1869504DB55970CD /* App */ = {
+			isa = PBXGroup;
+			children = (
+				675164CE195018740B97419B /* Info.plist */,
+				4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		69569E59A45E8ECC354BE9E8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */,
+				D134B08F1ED6B6E095972C7C /* MurdlGame.swift */,
+				05A306B05D489C59E19569F3 /* TileMark.swift */,
+				99AFDE065F206132A8C45D49 /* WordDictionary.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		84040EB6AA2A34C75CFDB9BE = {
+			isa = PBXGroup;
+			children = (
+				DFADFD422B6FA0C6FDC0B5E7 /* Sources */,
+				0BDA7B4A315D03DB1216BC1B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		847D28312953173B3BD54CEB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A906AE2E6D46B6006E5CE70C /* ContentView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CF0859B9991EE22F92435D23 /* Dictionaries */ = {
+			isa = PBXGroup;
+			children = (
+				16ACA40015D1A785E6CF7633 /* friendlies.txt */,
+				D0B2E9F0A8C424A2456C0732 /* wordl5.txt */,
+			);
+			path = Dictionaries;
+			sourceTree = "<group>";
+		};
+		D5729AB9D827A33E1A6F87EC /* Murdl */ = {
+			isa = PBXGroup;
+			children = (
+				53E4F3CD1869504DB55970CD /* App */,
+				69569E59A45E8ECC354BE9E8 /* Models */,
+				389124C1AD3F0ADC2B938D37 /* Resources */,
+				847D28312953173B3BD54CEB /* Views */,
+			);
+			path = Murdl;
+			sourceTree = "<group>";
+		};
+		DFADFD422B6FA0C6FDC0B5E7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D5729AB9D827A33E1A6F87EC /* Murdl */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4DBD752CA0D118E0BA4582EC /* Murdl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 995418ABE65015FCB83B36AF /* Build configuration list for PBXNativeTarget "Murdl" */;
+			buildPhases = (
+				42C94BF8865B6B2A7301701D /* Sources */,
+				C6C91F838BCBAC99F437122A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Murdl;
+			packageProductDependencies = (
+			);
+			productName = Murdl;
+			productReference = 41A2EF757A36E110A9B6A3D3 /* MURDL.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BE3681E0A392CA20A60AD21F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					4DBD752CA0D118E0BA4582EC = {
+						DevelopmentTeam = X2PQYA6S48;
+					};
+				};
+			};
+			buildConfigurationList = 6E113CAA9F83C6C70F5805E7 /* Build configuration list for PBXProject "Murdl" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 84040EB6AA2A34C75CFDB9BE;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4DBD752CA0D118E0BA4582EC /* Murdl */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C6C91F838BCBAC99F437122A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F3FB46479B86223A59DBDE2 /* Assets.xcassets in Resources */,
+				50B3BB783D6E642384553BDA /* Help.md in Resources */,
+				7E34F4956BE1580F92990A79 /* friendlies.txt in Resources */,
+				64EBEBCD3B09F1A88B3C62F6 /* wordl5.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		42C94BF8865B6B2A7301701D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C82677BFC62A6B52065D613 /* ContentView.swift in Sources */,
+				4C02E0E17A38CA32A26E1EBA /* KeyboardFontStyle.swift in Sources */,
+				931B5468BCDE3666BCE0C687 /* MurdlApp.swift in Sources */,
+				6679E6BCFEC44BCB85CBC27A /* MurdlGame.swift in Sources */,
+				EA8FEA15D4553DA80F966322 /* TileMark.swift in Sources */,
+				9760EDE94654D54B9B79369E /* WordDictionary.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1E263ED8DA48FEF4C795CB90 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = X2PQYA6S48;
+				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		ADAFCCDFF8CE7D5E2B27E9C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B2794FDB4811ED05565EEB49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = X2PQYA6S48;
+				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		F2327CCDF4EF9CC0D0BBA1B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6E113CAA9F83C6C70F5805E7 /* Build configuration list for PBXProject "Murdl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F2327CCDF4EF9CC0D0BBA1B9 /* Debug */,
+				ADAFCCDFF8CE7D5E2B27E9C0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		995418ABE65015FCB83B36AF /* Build configuration list for PBXNativeTarget "Murdl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E263ED8DA48FEF4C795CB90 /* Debug */,
+				B2794FDB4811ED05565EEB49 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BE3681E0A392CA20A60AD21F /* Project object */;
+}

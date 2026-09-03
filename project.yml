@@ -1,0 +1,54 @@
+name: Murdl
+options:
+  bundleIdPrefix: com.billdonner
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+
+targets:
+  Murdl:
+    type: application
+    platform: macOS
+    productName: MURDL
+    sources:
+      - path: Sources/Murdl/App
+      - path: Sources/Murdl/Models
+      - path: Sources/Murdl/Views
+      - path: Sources/Murdl/Resources/Assets.xcassets
+        buildPhase: resources
+      - path: Sources/Murdl/Resources/Dictionaries/wordl5.txt
+        buildPhase: resources
+      - path: Sources/Murdl/Resources/Dictionaries/friendlies.txt
+        buildPhase: resources
+      - path: Sources/Murdl/Resources/Help.md
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.billdonner.murdl
+        MARKETING_VERSION: "2.0"
+        CURRENT_PROJECT_VERSION: 2
+        SWIFT_VERSION: "6.0"
+        MACOSX_DEPLOYMENT_TARGET: "26.0"
+        ASSETCATALOG_COMPILER_APPICON_NAME: MURDLAppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        DEVELOPMENT_TEAM: X2PQYA6S48
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.word-games
+    info:
+      path: Sources/Murdl/App/Info.plist
+      properties:
+        CFBundleDisplayName: MURDL
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.word-games
+        NSHumanReadableCopyright: Copyright 1041soft.com
+
+schemes:
+  Murdl:
+    build:
+      targets:
+        Murdl: all
+    run:
+      config: Debug
+    archive:
+      config: Release

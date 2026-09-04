@@ -7,6 +7,7 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Target: native macOS 26.0 or later
 - Modes: 2, 4, 8, or 16 boards, 5 letters, guesses = boards + 5 (8 boards is the classic 13-guess game)
 - Engine: `MurdlCore/` Swift package (rules, scoring, dictionary, clock, records) with XCTest coverage; built and tested on Windows and macOS by `.github/workflows/core.yml`. The Mac app is a SwiftUI front end over it.
+- C bridge: `MurdlCore/Sources/MurdlBridge` exposes the engine as a C ABI (`murdl.h`) built as `MurdlBridge.dll` on Windows and `libMurdlBridge.dylib` on macOS; CI uploads the Windows DLL as a build artifact. Front ends drive it with `murdl_match_new`, `murdl_match_play`, and `murdl_match_state_json`.
 - Dictionaries: bundled inside MurdlCore, copied from `old-swift/MURDL/Documents/wtf/Dictionaries`
 - Visual assets: copied from `old-swift/MURDL/Documents/wtf/wtf/Assets.xcassets`
 - Help: bundled as `Sources/Murdl/Resources/Help.md`

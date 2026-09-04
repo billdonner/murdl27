@@ -22,6 +22,24 @@ jobs:
       - name: Build and test
         working-directory: MurdlCore
         run: swift test
+      - name: Build libMurdlBridge.dylib
+        working-directory: MurdlCore
+        run: |
+          swift build -c release --product MurdlBridge
+          ls -la .build/release/libMurdlBridge.dylib
+      - name: Build MurdlBridge.dll
+        working-directory: MurdlCore
+        run: |
+          swift build -c release --product MurdlBridge
+          dir .build\release\MurdlBridge.dll
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MurdlBridge-windows
+          path: |
+            MurdlCore/.build/release/MurdlBridge.dll
+            MurdlCore/.build/release/MurdlBridge.lib
+            MurdlCore/Sources/MurdlBridge/murdl.h
+          if-no-files-found: error
 
   macos:
     name: macOS (swift test)
@@ -33,3 +51,8 @@ jobs:
       - name: Build and test
         working-directory: MurdlCore
         run: swift test
+      - name: Build libMurdlBridge.dylib
+        working-directory: MurdlCore
+        run: |
+          swift build -c release --product MurdlBridge
+          ls -la .build/release/libMurdlBridge.dylib

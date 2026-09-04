@@ -667,7 +667,7 @@ private struct HelpView: View {
                             Text("MURDL")
                                 .font(.system(.largeTitle, design: .rounded, weight: .black))
                                 .foregroundStyle(MurdlPalette.titleGradient)
-                            Text("Eight boards. One guess. Thirteen rows.")
+                            Text("Every guess plays on every board.")
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(.secondary)
                         }

@@ -61,6 +61,10 @@ body {
 .controls button:hover { border-color: var(--ink-2); }
 .controls button:focus-visible, .controls select:focus-visible { outline: 2px solid var(--b2); outline-offset: 2px; }
 .controls .primary { background: var(--ink); color: var(--ground); border-color: var(--ink); min-width: 84px; }
+.acc { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font: 600 12px/1 -apple-system, "Helvetica Neue", Arial, sans-serif; color: var(--ink-2); }
+.acc input { width: 110px; accent-color: var(--b2); margin: 0; }
+.acc input:focus-visible { outline: 2px solid var(--b2); outline-offset: 2px; }
+.acc b { font: 700 13px/1 "IBM Plex Mono", monospace; color: var(--ink); min-width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
 
 /* Boards */
 .boards { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; flex: 1; align-content: start; }
@@ -159,6 +163,11 @@ body {
       <div class="stat"><b id="sWins">0</b><span>Won</span></div>
     </div>
     <div class="controls">
+      <label class="acc" title="How often the solver plays its best move. Below that it plays a plausible hunch instead.">
+        Accuracy
+        <input type="range" id="acc" min="0" max="100" value="70" aria-label="Solver accuracy percent">
+        <b id="accVal">70%</b>
+      </label>
       <select id="speed" aria-label="Pace">
         <option value="relaxed">Relaxed</option>
         <option value="brisk" selected>Brisk</option>
@@ -285,6 +294,16 @@ function letterFreq(cands) {
   for (const w of cands) for (const ch of new Set(w)) f[ch] = (f[ch] || 0) + 1;
   return f;
 }
+function accuracy() { return Number($("acc").value) / 100; }
+function pick(ranked, why) {
+  // At 100% the solver always plays its best move. Below that it sometimes plays a hunch:
+  // a word further down its own ranking, so the mistake still looks like a real player's.
+  const a = accuracy();
+  if (ranked.length === 1 || Math.random() < a) return { word: ranked[0], why };
+  const depth = Math.min(ranked.length - 1, 1 + Math.floor((1 - a) * 40));
+  const i = 1 + Math.floor(Math.random() * depth);
+  return { word: ranked[i], why: "playing a hunch", hunch: true };
+}
 function choose() {
   const open = game.boards.filter(b => b.solvedRow === null && !b.lost);
   if (game.row === 0) return { word: OPENERS[Math.floor(Math.random() * OPENERS.length)], why: "opening with a vowel-heavy word" };
@@ -292,33 +311,40 @@ function choose() {
   const tight = open.slice().sort((a, b) => a.cands.length - b.cands.length)[0];
   const remainingGuesses = GUESSES - game.row;
   if (tight.cands.length <= 2 || remainingGuesses <= open.length + 1) {
-    const w = tight.cands.find(c => !used.has(c)) || tight.cands[0];
-    return { word: w, target: tight.id, why: tight.cands.length === 1 ? `only one word fits board ${tight.id + 1}` : `${tight.cands.length} words fit board ${tight.id + 1}` };
+    const ranked = tight.cands.filter(c => !used.has(c));
+    if (!ranked.length) ranked.push(tight.cands[0]);
+    // A hunch here is a word that fits the board's greens but not every orange or gray.
+    const near = WORDS.filter(w => !used.has(w) && !ranked.includes(w) && tight.history.every(h => h.marks.every((m, i) => m !== "correct" || w[i] === h.guess[i])));
+    const r = pick(ranked.concat(near.slice(0, 40)), tight.cands.length === 1 ? `only one word fits board ${tight.id + 1}` : `${tight.cands.length} words fit board ${tight.id + 1}`);
+    return { ...r, target: tight.id };
   }
   // Exploration: reward letters that are still unknown on many boards.
   const freqs = open.map(b => ({ f: letterFreq(b.cands), n: b.cands.length, known: new Set(b.history.flatMap(h => h.guess.split(""))) }));
-  let best = null, bestScore = -1;
   const pool = tight.cands.length <= 6 ? tight.cands : WORDS;
+  const scored = [];
   for (const w of pool) {
     if (used.has(w)) continue;
-    let s = 0;
+    let sc = 0;
     for (const ch of new Set(w)) for (const fb of freqs) {
       if (fb.known.has(ch)) continue;
-      const p = (fb.f[ch] || 0) / fb.n; s += p * (1 - p) * 4;
+      const p = (fb.f[ch] || 0) / fb.n; sc += p * (1 - p) * 4;
     }
-    if (tight.cands.includes(w)) s += 0.6;
-    if (s > bestScore) { bestScore = s; best = w; }
+    if (tight.cands.includes(w)) sc += 0.6;
+    scored.push([sc, w]);
   }
-  return { word: best, target: tight.cands.includes(best) ? tight.id : undefined, why: tight.cands.length <= 6 ? `narrowing board ${tight.id + 1}` : `splitting ${open.length} open boards` };
+  scored.sort((x, y) => y[0] - x[0]);
+  const ranked = scored.map(x => x[1]);
+  const r = pick(ranked, tight.cands.length <= 6 ? `narrowing board ${tight.id + 1}` : `splitting ${open.length} open boards`);
+  return { ...r, target: tight.cands.includes(r.word) ? tight.id : undefined };
 }
 
 async function waitIfPaused() { while (paused) await sleep(120); }
 
 async function playGuess() {
   const pace = PACE[$("speed").value];
-  const { word, target, why } = choose();
+  const { word, target, why, hunch } = choose();
   game.boards.forEach(b => $("b" + b.id).classList.toggle("target", b.id === target));
-  say(`Guess ${game.row + 1}: ${word.toUpperCase()}`, `The solver is ${why}.`);
+  say(`Guess ${game.row + 1}: ${word.toUpperCase()}`, hunch ? "The solver is playing a hunch." : `The solver is ${why}.`);
   if (!startedAt) startedAt = Date.now();
   const open = game.boards.filter(b => b.solvedRow === null && !b.lost);
   for (let c = 0; c < LEN; c++) {
@@ -401,6 +427,7 @@ async function loop(token) {
 }
 
 function restart() { running = Symbol(); loop(running); }
+$("acc").addEventListener("input", () => { $("accVal").textContent = $("acc").value + "%"; });
 $("pause").addEventListener("click", () => {
   paused = !paused; $("pause").textContent = paused ? "Resume" : "Pause"; $("pause").setAttribute("aria-pressed", paused);
 });

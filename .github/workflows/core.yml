@@ -22,11 +22,6 @@ jobs:
       - name: Build and test
         working-directory: MurdlCore
         run: swift test
-      - name: Build libMurdlBridge.dylib
-        working-directory: MurdlCore
-        run: |
-          swift build -c release --product MurdlBridge
-          ls -la .build/release/libMurdlBridge.dylib
       - name: Build MurdlBridge.dll
         working-directory: MurdlCore
         run: |

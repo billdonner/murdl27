@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 @main
 struct MurdlApp: App {
@@ -7,6 +8,11 @@ struct MurdlApp: App {
 
     @StateObject private var game = MurdlGame()
     @State private var keyCapture = KeyCapture()
+
+    init() {
+        // One board window per game; no "Show Tab Bar" in the View menu.
+        NSWindow.allowsAutomaticWindowTabbing = false
+    }
     @Environment(\.openWindow) private var openWindow
 
     /// Game commands stay off while the Help sheet is up so its keys cannot reach the board behind it.
@@ -76,6 +82,12 @@ struct MurdlApp: App {
                     game.deleteLetter()
                 }
                 .keyboardShortcut(.delete, modifiers: [])
+                .disabled(gameLocked || game.currentGuess.isEmpty)
+
+                Button("Clear Letters") {
+                    game.clearGuess()
+                }
+                .keyboardShortcut(.escape, modifiers: [])
                 .disabled(gameLocked || game.currentGuess.isEmpty)
 
                 Divider()
@@ -154,8 +166,8 @@ struct MurdlApp: App {
             }
 
             CommandGroup(replacing: .help) {
-                Button("MURDL Help") {
-                    game.showHelp()
+                Button(game.isShowingHelp ? "Close MURDL Help" : "MURDL Help") {
+                    game.toggleHelp()
                 }
                 .keyboardShortcut("/", modifiers: [.command])
             }

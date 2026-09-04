@@ -691,6 +691,8 @@ private struct HelpView: View {
                     } label: {
                         Label("Done", systemImage: "checkmark")
                     }
+                    .keyboardShortcut(.cancelAction)
+                    .help("Close Help (Escape or Command-/)")
                 }
             }
         }

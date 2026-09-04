@@ -12,7 +12,7 @@ Type a five-letter word and press Return. The same word lands on every unfinishe
 
 A board turns green all the way across when it is solved and stops taking guesses. Keep going with the rest. You always have five more guesses than boards, so 2 boards gives 7 guesses, 8 gives 13, and 16 gives 21.
 
-Letters you type appear on every unfinished board in the current row. Delete removes the last letter. A guess must be a real word, and any answer word is always accepted.
+Letters you type appear on every unfinished board in the current row. Delete removes the last letter and Escape clears them all. A guess must be a real word, and any answer word is always accepted.
 
 ## Boards and layout
 
@@ -52,15 +52,20 @@ The score string has one character per board, giving the row that board was solv
 
 The summary shows games played, wins, win percentage, current and best streak, best score, and best time for the current board count. Clear removes every record.
 
+## Playing without a mouse
+
+Everything in MURDL can be done from the keyboard. Every button in the header has a menu item and a shortcut, the board highlight moves with the arrow keys, Help closes with Escape or Command-/, and the Keyboard and Scores windows close with Command-W. When a game ends, Command-N starts the next one.
+
 ## Keyboard shortcuts
 
 - Command-N: new game.
 - Command-1, 2, 3, 4: play 2, 4, 8, or 16 boards.
 - Option-Command-1, 2, 3: Classic, Stopwatch, or Sprint mode.
-- Return: submit the guess. Delete: remove the last letter.
+- Return: submit the guess. Delete: remove the last letter. Escape: clear the letters.
 - Arrow keys: move the board highlight.
 - Command-Shift-H: Helper Mode on or off. Command-Shift-G: play the next helper step.
 - Command-L: switch between grid and strip. Option-Command-G: grid. Option-Command-T: strip.
 - Command-Shift-F: next keyboard font. Control-Command-1, 2, 3, 4: System, Rounded, Monospaced, or Serif.
 - Command-K: show the keyboard window. Command-Shift-S: show Scores.
-- Command-/: this help.
+- Command-/: open or close this help. Escape also closes it.
+- Command-W: close the Keyboard or Scores window.

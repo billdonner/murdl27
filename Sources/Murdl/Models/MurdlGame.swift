@@ -315,6 +315,17 @@ final class MurdlGame: ObservableObject {
         setPaused(help: false)
     }
 
+    func toggleHelp() {
+        isShowingHelp ? hideHelp() : showHelp()
+    }
+
+    /// Escape: drop every typed letter of the current guess.
+    func clearGuess() {
+        guard !isOver, !currentGuess.isEmpty else { return }
+        currentGuess = ""
+        statusText = ""
+    }
+
     func toggleHelperMode() {
         setHelperMode(!isHelperMode)
     }

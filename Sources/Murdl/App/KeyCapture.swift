@@ -15,13 +15,22 @@ final class KeyCapture {
     }
 
     private static func handle(_ event: NSEvent, game: MurdlGame) -> Bool {
-        guard !game.isShowingHelp else { return false }
         let modifiers = event.modifierFlags
             .intersection(.deviceIndependentFlagsMask)
             .subtracting([.shift, .capsLock, .function, .numericPad])
         guard modifiers.isEmpty else { return false }
 
+        if game.isShowingHelp {
+            // Escape closes Help; every other key stays with the sheet.
+            guard event.keyCode == 53 else { return false }
+            game.hideHelp()
+            return true
+        }
+
         switch event.keyCode {
+        case 53: // Escape
+            game.clearGuess()
+            return true
         case 36, 76: // Return, keypad Enter
             game.submitGuess()
             return true

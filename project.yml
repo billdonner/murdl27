@@ -1,4 +1,8 @@
 name: Murdl
+packages:
+  MurdlCore:
+    path: MurdlCore
+
 options:
   bundleIdPrefix: com.billdonner
   deploymentTarget:
@@ -16,17 +20,15 @@ targets:
       - path: Sources/Murdl/Views
       - path: Sources/Murdl/Resources/Assets.xcassets
         buildPhase: resources
-      - path: Sources/Murdl/Resources/Dictionaries/wordl5.txt
-        buildPhase: resources
-      - path: Sources/Murdl/Resources/Dictionaries/friendlies.txt
-        buildPhase: resources
       - path: Sources/Murdl/Resources/Help.md
         buildPhase: resources
+    dependencies:
+      - package: MurdlCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.billdonner.murdl
         MARKETING_VERSION: "2.0"
-        CURRENT_PROJECT_VERSION: 8
+        CURRENT_PROJECT_VERSION: 9
         SWIFT_VERSION: "6.0"
         MACOSX_DEPLOYMENT_TARGET: "26.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: MURDLAppIcon

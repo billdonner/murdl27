@@ -1,0 +1,35 @@
+name: MurdlCore
+
+on:
+  push:
+    paths: ["MurdlCore/**", ".github/workflows/core.yml"]
+  pull_request:
+    paths: ["MurdlCore/**", ".github/workflows/core.yml"]
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Windows (swift test)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: compnerd/gha-setup-swift@main
+        with:
+          branch: swift-6.1-release
+          tag: 6.1-RELEASE
+      - name: Swift version
+        run: swift --version
+      - name: Build and test
+        working-directory: MurdlCore
+        run: swift test
+
+  macos:
+    name: macOS (swift test)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Build and test
+        working-directory: MurdlCore
+        run: swift test

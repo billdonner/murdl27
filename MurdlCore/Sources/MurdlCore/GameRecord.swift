@@ -1,32 +1,32 @@
 import Foundation
 
 /// One finished game. Abandoned games (New Game mid-play) are not recorded.
-struct GameRecord: Codable, Identifiable, Equatable {
-    var id = UUID()
-    var date: Date
-    var boardCount: Int
-    var solvedCount: Int
-    var guessesUsed: Int
-    var didWin: Bool
-    var score: String
-    var seconds: Int
-    var mode: GameMode = .classic
+public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
+    public var id = UUID()
+    public var date: Date
+    public var boardCount: Int
+    public var solvedCount: Int
+    public var guessesUsed: Int
+    public var didWin: Bool
+    public var score: String
+    public var seconds: Int
+    public var mode: GameMode = .classic
     /// Helper Mode was used at some point; excluded from streaks and best times.
-    var assisted = false
-    var timedOut = false
+    public var assisted = false
+    public var timedOut = false
 
-    var maxGuesses: Int { boardCount + MurdlGame.extraGuesses }
+    public var maxGuesses: Int { boardCount + MurdlMatch.extraGuesses }
 
     /// Counts toward wins, streaks, and best times.
-    var isHonestWin: Bool { didWin && !assisted }
+    public var isHonestWin: Bool { didWin && !assisted }
 
-    var resultText: String {
+    public var resultText: String {
         if assisted { return didWin ? "Helper" : "Helper, lost" }
         if timedOut { return "Time up \(solvedCount)/\(boardCount)" }
         return didWin ? "Won" : "Lost \(solvedCount)/\(boardCount)"
     }
 
-    var timeText: String {
+    public var timeText: String {
         GameClock.format(TimeInterval(seconds))
     }
 
@@ -34,8 +34,8 @@ struct GameRecord: Codable, Identifiable, Equatable {
         case id, date, boardCount, solvedCount, guessesUsed, didWin, score, seconds, mode, assisted, timedOut
     }
 
-    init(date: Date, boardCount: Int, solvedCount: Int, guessesUsed: Int, didWin: Bool,
-         score: String, seconds: Int, mode: GameMode, assisted: Bool, timedOut: Bool) {
+    public init(date: Date, boardCount: Int, solvedCount: Int, guessesUsed: Int, didWin: Bool,
+                score: String, seconds: Int, mode: GameMode, assisted: Bool, timedOut: Bool) {
         self.date = date
         self.boardCount = boardCount
         self.solvedCount = solvedCount
@@ -49,7 +49,7 @@ struct GameRecord: Codable, Identifiable, Equatable {
     }
 
     /// Older records predate `mode`, `assisted`, and `timedOut`.
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(UUID.self, forKey: .id)
         date = try c.decode(Date.self, forKey: .date)
@@ -65,22 +65,22 @@ struct GameRecord: Codable, Identifiable, Equatable {
     }
 }
 
-/// Aggregate stats over a set of records.
-struct ScoreSummary {
-    let played: Int
-    let won: Int
-    let currentStreak: Int
-    let bestStreak: Int
-    let bestScore: String?
+/// Aggregate stats over a set of records, newest first.
+public struct ScoreSummary: Sendable {
+    public let played: Int
+    public let won: Int
+    public let currentStreak: Int
+    public let bestStreak: Int
+    public let bestScore: String?
     /// Fastest unassisted timed win at the given board count.
-    let bestTime: Int?
+    public let bestTime: Int?
 
-    var winPercent: Int {
+    public var winPercent: Int {
         played == 0 ? 0 : Int((Double(won) / Double(played) * 100).rounded())
     }
 
     /// Helper games count as played but never as wins, and they break a streak.
-    init(records: [GameRecord], boardCount: Int) {
+    public init(records: [GameRecord], boardCount: Int) {
         played = records.count
         won = records.filter(\.isHonestWin).count
 
@@ -107,20 +107,20 @@ struct ScoreSummary {
     }
 }
 
-enum ScoreStore {
+public enum ScoreStore {
     private static let key = "MurdlGameRecords"
 
-    static func load() -> [GameRecord] {
-        guard let data = UserDefaults.standard.data(forKey: key),
+    public static func load(from defaults: UserDefaults = .standard) -> [GameRecord] {
+        guard let data = defaults.data(forKey: key),
               let records = try? JSONDecoder().decode([GameRecord].self, from: data) else {
             return []
         }
         return records
     }
 
-    static func save(_ records: [GameRecord]) {
+    public static func save(_ records: [GameRecord], to defaults: UserDefaults = .standard) {
         if let data = try? JSONEncoder().encode(records) {
-            UserDefaults.standard.set(data, forKey: key)
+            defaults.set(data, forKey: key)
         }
     }
 }

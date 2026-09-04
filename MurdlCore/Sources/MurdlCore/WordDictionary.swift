@@ -1,18 +1,16 @@
 import Foundation
-import os
 
-struct WordDictionary {
-    private static let logger = Logger(subsystem: "com.billdonner.murdl", category: "WordDictionary")
-
+public struct WordDictionary: Sendable {
     private let allowedWords: Set<String>
     private let answerWords: [String]
 
-    static let bundled = WordDictionary(
+    /// The word lists shipped inside MurdlCore.
+    public static let bundled = WordDictionary(
         allowedWords: WordDictionary.loadWords(named: "wordl5"),
         answerWords: WordDictionary.loadWords(named: "friendlies")
     )
 
-    init(allowedWords: [String], answerWords: [String]) {
+    public init(allowedWords: [String], answerWords: [String]) {
         let normalizedAllowed = WordDictionary.normalized(words: allowedWords)
         let normalizedAnswers = WordDictionary.normalized(words: answerWords)
         let fallbackAnswers = [
@@ -21,7 +19,7 @@ struct WordDictionary {
         ]
 
         if normalizedAnswers.isEmpty {
-            Self.logger.error("No answer words loaded; falling back to \(fallbackAnswers.count) built-in answers")
+            Self.report("No answer words loaded; falling back to \(fallbackAnswers.count) built-in answers")
         }
 
         let finalAnswers = normalizedAnswers.isEmpty ? fallbackAnswers : normalizedAnswers
@@ -30,11 +28,13 @@ struct WordDictionary {
         self.answerWords = finalAnswers
     }
 
-    func contains(_ word: String) -> Bool {
+    public var answerCount: Int { answerWords.count }
+
+    public func contains(_ word: String) -> Bool {
         allowedWords.contains(Self.normalize(word))
     }
 
-    func randomAnswers(count: Int) -> [String] {
+    public func randomAnswers(count: Int) -> [String] {
         let shuffled = answerWords.shuffled()
         if shuffled.count >= count {
             return Array(shuffled.prefix(count))
@@ -48,17 +48,21 @@ struct WordDictionary {
     }
 
     private static func loadWords(named name: String) -> [String] {
-        guard let url = Bundle.main.url(forResource: name, withExtension: "txt") else {
-            logger.error("Dictionary resource \(name).txt is missing from the app bundle")
+        guard let url = Bundle.module.url(forResource: name, withExtension: "txt", subdirectory: "Dictionaries") else {
+            report("Dictionary resource \(name).txt is missing from MurdlCore")
             return []
         }
 
         do {
             return try String(contentsOf: url, encoding: .utf8).components(separatedBy: .newlines)
         } catch {
-            logger.error("Dictionary resource \(name).txt could not be read: \(error.localizedDescription)")
+            report("Dictionary resource \(name).txt could not be read: \(error)")
             return []
         }
+    }
+
+    private static func report(_ message: String) {
+        FileHandle.standardError.write(Data("MurdlCore: \(message)\n".utf8))
     }
 
     private static func normalized(words: [String]) -> [String] {

@@ -1,3 +1,4 @@
+import MurdlCore
 import AppKit
 
 /// Routes unmodified letter, arrow, Return, and Delete key presses to the game from any of the app's

@@ -8,30 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		0C82677BFC62A6B52065D613 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A906AE2E6D46B6006E5CE70C /* ContentView.swift */; };
+		3179CAACD815C790CAFD002B /* MurdlCore in Frameworks */ = {isa = PBXBuildFile; productRef = 241C7F4988507912CD0772D2 /* MurdlCore */; };
 		3F3FB46479B86223A59DBDE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AF087AC77FA60C9648F1F1E /* Assets.xcassets */; };
-		40306F59B8E3327A3A11DEED /* GameRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6B0F7F44D43B6BB58A2F69 /* GameRecord.swift */; };
 		4C02E0E17A38CA32A26E1EBA /* KeyboardFontStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */; };
 		50B3BB783D6E642384553BDA /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 46AFB0787B6B9C27E72E9C7C /* Help.md */; };
 		5691F7E1BAB92E215B2B0A33 /* ScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */; };
-		64EBEBCD3B09F1A88B3C62F6 /* wordl5.txt in Resources */ = {isa = PBXBuildFile; fileRef = D0B2E9F0A8C424A2456C0732 /* wordl5.txt */; };
 		6679E6BCFEC44BCB85CBC27A /* MurdlGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D134B08F1ED6B6E095972C7C /* MurdlGame.swift */; };
 		6C22CB39AC438BE21F04151E /* BoardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F89112C717E3A73416FBE /* BoardLayout.swift */; };
-		7E34F4956BE1580F92990A79 /* friendlies.txt in Resources */ = {isa = PBXBuildFile; fileRef = 16ACA40015D1A785E6CF7633 /* friendlies.txt */; };
 		931B5468BCDE3666BCE0C687 /* MurdlApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */; };
 		95EA0C680CC272DCBADA22C6 /* MurdlPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843694FE9F154C3AC3325A81 /* MurdlPalette.swift */; };
-		9760EDE94654D54B9B79369E /* WordDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AFDE065F206132A8C45D49 /* WordDictionary.swift */; };
 		A59D006AE219A420BB657434 /* KeyCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1F63AC1979CBD1FDB08CAE /* KeyCapture.swift */; };
-		A819ECDD8B704CD7A0440E3C /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E41296DEEB1134D739C1C1 /* GameMode.swift */; };
 		DF3CE55F37F59AE9ADA38528 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */; };
-		EA8FEA15D4553DA80F966322 /* TileMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A306B05D489C59E19569F3 /* TileMark.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		029F89112C717E3A73416FBE /* BoardLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLayout.swift; sourceTree = "<group>"; };
-		05A306B05D489C59E19569F3 /* TileMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMark.swift; sourceTree = "<group>"; };
-		16ACA40015D1A785E6CF7633 /* friendlies.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = friendlies.txt; sourceTree = "<group>"; };
 		20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardFontStyle.swift; sourceTree = "<group>"; };
-		2A6B0F7F44D43B6BB58A2F69 /* GameRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRecord.swift; sourceTree = "<group>"; };
 		2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoresView.swift; sourceTree = "<group>"; };
 		41A2EF757A36E110A9B6A3D3 /* MURDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MURDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		46AFB0787B6B9C27E72E9C7C /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Help.md; sourceTree = "<group>"; };
@@ -40,13 +32,22 @@
 		675164CE195018740B97419B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6F1F63AC1979CBD1FDB08CAE /* KeyCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCapture.swift; sourceTree = "<group>"; };
 		843694FE9F154C3AC3325A81 /* MurdlPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlPalette.swift; sourceTree = "<group>"; };
-		89E41296DEEB1134D739C1C1 /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
 		8AF087AC77FA60C9648F1F1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		99AFDE065F206132A8C45D49 /* WordDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDictionary.swift; sourceTree = "<group>"; };
 		A906AE2E6D46B6006E5CE70C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		D0B2E9F0A8C424A2456C0732 /* wordl5.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = wordl5.txt; sourceTree = "<group>"; };
 		D134B08F1ED6B6E095972C7C /* MurdlGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlGame.swift; sourceTree = "<group>"; };
+		FBD74DD6C6150E645F5DB2AE /* MurdlCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MurdlCore; path = MurdlCore; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		40CDAF571D93DA36A932D560 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3179CAACD815C790CAFD002B /* MurdlCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0BDA7B4A315D03DB1216BC1B /* Products */ = {
@@ -62,7 +63,6 @@
 			children = (
 				8AF087AC77FA60C9648F1F1E /* Assets.xcassets */,
 				46AFB0787B6B9C27E72E9C7C /* Help.md */,
-				CF0859B9991EE22F92435D23 /* Dictionaries */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -81,12 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				029F89112C717E3A73416FBE /* BoardLayout.swift */,
-				89E41296DEEB1134D739C1C1 /* GameMode.swift */,
-				2A6B0F7F44D43B6BB58A2F69 /* GameRecord.swift */,
 				20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */,
 				D134B08F1ED6B6E095972C7C /* MurdlGame.swift */,
-				05A306B05D489C59E19569F3 /* TileMark.swift */,
-				99AFDE065F206132A8C45D49 /* WordDictionary.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -94,6 +90,7 @@
 		84040EB6AA2A34C75CFDB9BE = {
 			isa = PBXGroup;
 			children = (
+				BDF088CB3944FB3B260624B4 /* Packages */,
 				DFADFD422B6FA0C6FDC0B5E7 /* Sources */,
 				0BDA7B4A315D03DB1216BC1B /* Products */,
 			);
@@ -110,13 +107,12 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		CF0859B9991EE22F92435D23 /* Dictionaries */ = {
+		BDF088CB3944FB3B260624B4 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				16ACA40015D1A785E6CF7633 /* friendlies.txt */,
-				D0B2E9F0A8C424A2456C0732 /* wordl5.txt */,
+				FBD74DD6C6150E645F5DB2AE /* MurdlCore */,
 			);
-			path = Dictionaries;
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		D5729AB9D827A33E1A6F87EC /* Murdl */ = {
@@ -147,6 +143,7 @@
 			buildPhases = (
 				42C94BF8865B6B2A7301701D /* Sources */,
 				C6C91F838BCBAC99F437122A /* Resources */,
+				40CDAF571D93DA36A932D560 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -154,6 +151,7 @@
 			);
 			name = Murdl;
 			packageProductDependencies = (
+				241C7F4988507912CD0772D2 /* MurdlCore */,
 			);
 			productName = Murdl;
 			productReference = 41A2EF757A36E110A9B6A3D3 /* MURDL.app */;
@@ -183,6 +181,9 @@
 			);
 			mainGroup = 84040EB6AA2A34C75CFDB9BE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				71A695F933214C48AF6F5190 /* XCLocalSwiftPackageReference "MurdlCore" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -199,8 +200,6 @@
 			files = (
 				3F3FB46479B86223A59DBDE2 /* Assets.xcassets in Resources */,
 				50B3BB783D6E642384553BDA /* Help.md in Resources */,
-				7E34F4956BE1580F92990A79 /* friendlies.txt in Resources */,
-				64EBEBCD3B09F1A88B3C62F6 /* wordl5.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,8 +212,6 @@
 			files = (
 				6C22CB39AC438BE21F04151E /* BoardLayout.swift in Sources */,
 				0C82677BFC62A6B52065D613 /* ContentView.swift in Sources */,
-				A819ECDD8B704CD7A0440E3C /* GameMode.swift in Sources */,
-				40306F59B8E3327A3A11DEED /* GameRecord.swift in Sources */,
 				A59D006AE219A420BB657434 /* KeyCapture.swift in Sources */,
 				4C02E0E17A38CA32A26E1EBA /* KeyboardFontStyle.swift in Sources */,
 				DF3CE55F37F59AE9ADA38528 /* KeyboardView.swift in Sources */,
@@ -222,8 +219,6 @@
 				6679E6BCFEC44BCB85CBC27A /* MurdlGame.swift in Sources */,
 				95EA0C680CC272DCBADA22C6 /* MurdlPalette.swift in Sources */,
 				5691F7E1BAB92E215B2B0A33 /* ScoresView.swift in Sources */,
-				EA8FEA15D4553DA80F966322 /* TileMark.swift in Sources */,
-				9760EDE94654D54B9B79369E /* WordDictionary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,7 +231,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = X2PQYA6S48;
 				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
@@ -314,7 +309,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = X2PQYA6S48;
 				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
@@ -415,6 +410,20 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		71A695F933214C48AF6F5190 /* XCLocalSwiftPackageReference "MurdlCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = MurdlCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		241C7F4988507912CD0772D2 /* MurdlCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MurdlCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BE3681E0A392CA20A60AD21F /* Project object */;
 }

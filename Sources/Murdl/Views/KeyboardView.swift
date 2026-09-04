@@ -1,3 +1,4 @@
+import MurdlCore
 import SwiftUI
 
 /// Compact letter-status keyboard shown in its own floating window. Typing is handled

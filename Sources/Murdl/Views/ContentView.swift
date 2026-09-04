@@ -1,3 +1,4 @@
+import MurdlCore
 import SwiftUI
 
 struct ContentView: View {

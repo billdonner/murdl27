@@ -41,36 +41,41 @@ struct MurdlApp: App {
                 .keyboardShortcut("n", modifiers: [.command])
                 .disabled(game.isShowingHelp)
 
-                Picker("Boards", selection: Binding(
-                    get: { game.boardCount },
-                    set: { game.setBoardCount($0) }
-                )) {
-                    ForEach(MurdlGame.boardCountOptions, id: \.self) { count in
-                        Text("\(count) Boards, \(count + MurdlGame.extraGuesses) Guesses").tag(count)
+                Menu("Boards") {
+                    ForEach(Array(MurdlGame.boardCountOptions.enumerated()), id: \.element) { index, count in
+                        Toggle("\(count) Boards, \(count + MurdlGame.extraGuesses) Guesses", isOn: Binding(
+                            get: { game.boardCount == count },
+                            set: { if $0 { game.setBoardCount(count) } }
+                        ))
+                        .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [.command])
                     }
                 }
                 .disabled(game.isShowingHelp)
 
-                Picker("Mode", selection: Binding(
-                    get: { game.mode },
-                    set: { game.setMode($0) }
-                )) {
-                    ForEach(GameMode.allCases) { mode in
-                        Text(mode.title).tag(mode)
+                Menu("Mode") {
+                    ForEach(Array(GameMode.allCases.enumerated()), id: \.element) { index, mode in
+                        Toggle(mode.title, isOn: Binding(
+                            get: { game.mode == mode },
+                            set: { if $0 { game.setMode(mode) } }
+                        ))
+                        .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [.command, .option])
                     }
                 }
                 .disabled(game.isShowingHelp)
             }
 
             CommandMenu("Game") {
+                // Return and Delete are handled app-wide by KeyCapture; the shortcuts here document them.
                 Button("Submit Guess") {
                     game.submitGuess()
                 }
+                .keyboardShortcut(.return, modifiers: [])
                 .disabled(gameLocked)
 
                 Button("Delete Letter") {
                     game.deleteLetter()
                 }
+                .keyboardShortcut(.delete, modifiers: [])
                 .disabled(gameLocked || game.currentGuess.isEmpty)
 
                 Divider()
@@ -93,7 +98,47 @@ struct MurdlApp: App {
 
                 Divider()
 
-                Button("Keyboard Font: \(game.keyboardFontStyle.title)") {
+                Button("Previous Board") { game.moveFocus(.left) }
+                    .keyboardShortcut(.leftArrow, modifiers: [])
+                Button("Next Board") { game.moveFocus(.right) }
+                    .keyboardShortcut(.rightArrow, modifiers: [])
+                Button("Board Above") { game.moveFocus(.up) }
+                    .keyboardShortcut(.upArrow, modifiers: [])
+                Button("Board Below") { game.moveFocus(.down) }
+                    .keyboardShortcut(.downArrow, modifiers: [])
+            }
+
+            CommandGroup(after: .toolbar) {
+                Menu("Board Layout") {
+                    Toggle("Grid", isOn: Binding(
+                        get: { game.boardLayout == .grid },
+                        set: { if $0 { game.setBoardLayout(.grid) } }
+                    ))
+                    .keyboardShortcut("g", modifiers: [.command, .option])
+
+                    Toggle("Horizontal Strip", isOn: Binding(
+                        get: { game.boardLayout == .strip },
+                        set: { if $0 { game.setBoardLayout(.strip) } }
+                    ))
+                    .keyboardShortcut("t", modifiers: [.command, .option])
+                }
+
+                Button("Toggle Board Layout") {
+                    game.toggleBoardLayout()
+                }
+                .keyboardShortcut("l", modifiers: [.command])
+
+                Menu("Keyboard Font") {
+                    ForEach(Array(KeyboardFontStyle.allCases.enumerated()), id: \.element) { index, style in
+                        Toggle(style.title, isOn: Binding(
+                            get: { game.keyboardFontStyle == style },
+                            set: { if $0 { game.setKeyboardFontStyle(style) } }
+                        ))
+                        .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [.command, .control])
+                    }
+                }
+
+                Button("Next Keyboard Font") {
                     game.cycleKeyboardFontStyle()
                 }
                 .keyboardShortcut("f", modifiers: [.command, .shift])
@@ -102,21 +147,10 @@ struct MurdlApp: App {
             CommandGroup(after: .windowArrangement) {
                 OpenWindowCommand(title: "Show Keyboard", windowID: Self.keyboardWindowID, key: "k", modifiers: [.command])
                 OpenWindowCommand(title: "Show Scores", windowID: Self.scoresWindowID, key: "s", modifiers: [.command, .shift])
-            }
-
-            CommandGroup(after: .toolbar) {
-                Picker("Board Layout", selection: Binding(
-                    get: { game.boardLayout },
-                    set: { game.setBoardLayout($0) }
-                )) {
-                    ForEach(BoardLayout.allCases) { layout in
-                        Text(layout.title).tag(layout)
-                    }
+                Button("Clear Scores") {
+                    game.clearRecords()
                 }
-                Button("Toggle Board Layout") {
-                    game.toggleBoardLayout()
-                }
-                .keyboardShortcut("l", modifiers: [.command])
+                .disabled(game.records.isEmpty)
             }
 
             CommandGroup(replacing: .help) {

@@ -140,7 +140,7 @@ private struct HeaderView: View {
 
             HeaderButton(systemImage: "textformat",
                          label: "Change keyboard font",
-                         help: "Change keyboard font: \(game.keyboardFontStyle.title) (Command-Shift-F)") {
+                         help: "Next keyboard font: \(game.keyboardFontStyle.title) (Command-Shift-F)") {
                 game.cycleKeyboardFontStyle()
             }
 
@@ -706,6 +706,11 @@ private struct HelpBlockView: View {
             Text(text)
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.primary)
+        case .subheading(let text):
+            Text(text)
+                .font(.headline.weight(.bold))
+                .foregroundStyle(MurdlPalette.brand)
+                .padding(.top, 6)
         case .paragraph(let text):
             Text(text)
                 .font(.body)
@@ -734,6 +739,7 @@ private struct HelpBlockView: View {
 private struct HelpDocument {
     enum Block {
         case heading(String)
+        case subheading(String)
         case paragraph(AttributedString)
         case bullets([AttributedString])
     }
@@ -751,6 +757,9 @@ private struct HelpDocument {
     }
 
     private static func block(from chunk: String) -> Block {
+        if chunk.hasPrefix("## ") {
+            return .subheading(String(chunk.dropFirst(3)))
+        }
         if chunk.hasPrefix("# ") {
             return .heading(String(chunk.dropFirst(2)))
         }

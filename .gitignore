@@ -3,3 +3,7 @@ xcuserdata/
 *.xcuserstate
 DerivedData/
 .build/
+bin/
+obj/
+dist/
+*.user

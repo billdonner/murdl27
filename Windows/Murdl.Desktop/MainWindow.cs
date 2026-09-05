@@ -50,7 +50,8 @@ public sealed class MainWindow : Window
     public MainWindow()
     {
         Title = "MURDL";
-        Width = 1280; Height = 820; MinWidth = 900; MinHeight = 600;
+        Width = 1180; Height = 760; MinWidth = 860; MinHeight = 560;
+        WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Background = Ground;
         FontFamily = new FontFamily("Inter, Segoe UI, Helvetica, sans-serif");
 
@@ -284,7 +285,11 @@ public sealed class MainWindow : Window
         if (target == null) return;
         _assisted = true;
         Play(target.Answer);
-        if (!_state.IsOver) { _status = $"Helper solved board {target.Id + 1} with {target.Answer.ToUpperInvariant()}."; Refresh(); }
+        // Letters the player had typed stay in place for the next guess, as in the Mac app.
+        _match.SetTyping(_typing);
+        _state = _match.State();
+        if (!_state.IsOver) _status = $"Helper solved board {target.Id + 1} with {target.Answer.ToUpperInvariant()}.";
+        Refresh();
     }
 
     private void NewGame(int boardCount)

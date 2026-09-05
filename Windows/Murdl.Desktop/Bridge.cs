@@ -19,6 +19,7 @@ internal static class Native
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int murdl_match_validate(IntPtr match, [MarshalAs(UnmanagedType.LPUTF8Str)] string word);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int murdl_match_play(IntPtr match, [MarshalAs(UnmanagedType.LPUTF8Str)] string word);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr murdl_match_state_json(IntPtr match);
+    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern void murdl_match_lose_unfinished(IntPtr match);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern void murdl_string_free(IntPtr s);
 
     public static string TakeString(IntPtr p)
@@ -48,6 +49,9 @@ public sealed class Match : IDisposable
 
     /// <summary>Boards solved by the word, or -1 if refused.</summary>
     public int Play(string word) => Native.murdl_match_play(_handle, word);
+
+    /// <summary>Sprint ran out: every unfinished board is lost.</summary>
+    public void LoseUnfinished() => Native.murdl_match_lose_unfinished(_handle);
 
     public Snapshot State()
     {

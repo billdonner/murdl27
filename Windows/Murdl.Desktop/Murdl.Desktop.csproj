@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>MURDL</AssemblyName>
+    <RootNamespace>Murdl.Desktop</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- Where the release Swift build put the engine. Override with the BridgeDir property. -->
+    <BridgeDir Condition="'$(BridgeDir)' == ''">$(MSBuildThisFileDirectory)../../MurdlCore/.build/release/</BridgeDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.2" />
+  </ItemGroup>
+
+  <!-- The Swift engine and its dictionary bundle ride along next to the executable. -->
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <None Include="$(BridgeDir)libMurdlBridge.dylib" Link="libMurdlBridge.dylib" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(BridgeDir)MurdlCore_MurdlCore.bundle/**" Link="MurdlCore_MurdlCore.bundle/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <None Include="$(BridgeDir)MurdlBridge.dll" Link="MurdlBridge.dll" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(BridgeDir)MurdlCore_MurdlCore.resources/**" Link="MurdlCore_MurdlCore.resources/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(SwiftRuntimeDir)*.dll" Condition="'$(SwiftRuntimeDir)' != ''" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

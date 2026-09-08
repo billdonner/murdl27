@@ -169,7 +169,7 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					4DBD752CA0D118E0BA4582EC = {
-						DevelopmentTeam = X2PQYA6S48;
+						DevelopmentTeam = NEAY582ME4;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -237,7 +237,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 11;
-				DEVELOPMENT_TEAM = X2PQYA6S48;
+				DEVELOPMENT_TEAM = NEAY582ME4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
@@ -318,7 +318,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 11;
-				DEVELOPMENT_TEAM = X2PQYA6S48;
+				DEVELOPMENT_TEAM = NEAY582ME4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";

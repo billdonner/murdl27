@@ -39,7 +39,7 @@ targets:
         MACOSX_DEPLOYMENT_TARGET: "26.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: MURDLAppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
-        DEVELOPMENT_TEAM: X2PQYA6S48
+        DEVELOPMENT_TEAM: NEAY582ME4
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.word-games
     info:
       path: Sources/Murdl/App/Info.plist

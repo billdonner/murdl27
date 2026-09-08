@@ -236,7 +236,7 @@
 				CODE_SIGN_ENTITLEMENTS = Sources/Murdl/App/Murdl.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = X2PQYA6S48;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
@@ -247,7 +247,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl;
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
 			};
@@ -317,7 +317,7 @@
 				CODE_SIGN_ENTITLEMENTS = Sources/Murdl/App/Murdl.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = X2PQYA6S48;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
@@ -328,7 +328,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl;
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
 			};

@@ -293,7 +293,7 @@ public sealed class MainWindow : Window
     {
         if (_help != null) return;
         const string text =
-            "MURDL is Wordle with more boards. Type a five-letter word and press Enter; it is played on every unfinished board. " +
+            "MURDL is the five-letter word game with more boards. Type a five-letter word and press Enter; it is played on every unfinished board. " +
             "Green: right letter, right place. Orange: in that board's answer, elsewhere. Gray: not in that board's answer. " +
             "You get five more guesses than boards.\n\n" +
             "Modes: Classic has no clock. Stopwatch counts up from your first keystroke. Sprint counts down from 45 seconds per board, " +

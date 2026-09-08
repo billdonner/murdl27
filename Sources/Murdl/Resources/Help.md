@@ -1,6 +1,6 @@
 # MURDL Help
 
-MURDL is Wordle with more boards. Every guess you type is played on every board at once, and each board has its own five-letter answer. Solve them all before the guesses run out.
+MURDL is the five-letter word game with more boards. Every guess you type is played on every board at once, and each board has its own five-letter answer. Solve them all before the guesses run out.
 
 ## The basics
 

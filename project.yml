@@ -32,9 +32,9 @@ targets:
       base:
         ENABLE_HARDENED_RUNTIME: YES
         CODE_SIGN_STYLE: Automatic
-        PRODUCT_BUNDLE_IDENTIFIER: com.billdonner.murdl
+        PRODUCT_BUNDLE_IDENTIFIER: com.billdonner.murdl27
         MARKETING_VERSION: "2.0"
-        CURRENT_PROJECT_VERSION: 10
+        CURRENT_PROJECT_VERSION: 11
         SWIFT_VERSION: "6.0"
         MACOSX_DEPLOYMENT_TARGET: "26.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: MURDLAppIcon

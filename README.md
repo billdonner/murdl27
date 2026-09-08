@@ -3,7 +3,7 @@
 Modern SwiftUI rebuild of the archived MURDL game.
 
 - Source archive: `/Users/billdonner/old-swift/MURDL`
-- App id: `com.billdonner.murdl`
+- App id: `com.billdonner.murdl27`
 - Target: native macOS 26.0 or later
 - Modes: 2, 4, 8, or 16 boards, 5 letters, guesses = boards + 5 (8 boards is the classic 13-guess game)
 - Engine: `MurdlCore/` Swift package (rules, scoring, dictionary, clock, records) with XCTest coverage; built and tested on Windows and macOS by `.github/workflows/core.yml`. The Mac app is a SwiftUI front end over it.

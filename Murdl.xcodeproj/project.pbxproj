@@ -23,6 +23,7 @@
 
 /* Begin PBXFileReference section */
 		029F89112C717E3A73416FBE /* BoardLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLayout.swift; sourceTree = "<group>"; };
+		19607FBF74FE2B7C8134CC07 /* Murdl.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Murdl.entitlements; sourceTree = "<group>"; };
 		20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardFontStyle.swift; sourceTree = "<group>"; };
 		2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoresView.swift; sourceTree = "<group>"; };
 		41A2EF757A36E110A9B6A3D3 /* MURDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MURDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,6 +73,7 @@
 			children = (
 				675164CE195018740B97419B /* Info.plist */,
 				6F1F63AC1979CBD1FDB08CAE /* KeyCapture.swift */,
+				19607FBF74FE2B7C8134CC07 /* Murdl.entitlements */,
 				4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */,
 			);
 			path = App;
@@ -168,6 +170,7 @@
 				TargetAttributes = {
 					4DBD752CA0D118E0BA4582EC = {
 						DevelopmentTeam = X2PQYA6S48;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -230,9 +233,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Sources/Murdl/App/Murdl.entitlements;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = X2PQYA6S48;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -308,9 +314,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Sources/Murdl/App/Murdl.entitlements;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = X2PQYA6S48;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Murdl/App/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
 				LD_RUNPATH_SEARCH_PATHS = (

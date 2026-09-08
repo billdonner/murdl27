@@ -22,6 +22,10 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             StatusStripView(game: game)
+
+            Text(AppVersion.label)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 12)
@@ -797,4 +801,14 @@ private struct ColorStrip: View {
         }
         .accessibilityHidden(true)
     }
+}
+
+enum AppVersion {
+    /// "v2.0 (10)" from the bundle, so the label never drifts from what shipped.
+    static let label: String = {
+        let info = Bundle.main.infoDictionary ?? [:]
+        let version = info["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info["CFBundleVersion"] as? String ?? "?"
+        return "v\(version) (\(build))"
+    }()
 }

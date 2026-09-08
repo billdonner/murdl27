@@ -20,6 +20,13 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Every action has a menu item and shortcut: `⌘1-4` boards, `⌥⌘1-3` mode, `⌘L`/`⌥⌘G`/`⌥⌘T` layout, `⇧⌘F`/`⌃⌘1-4` keyboard font, arrows move the board highlight, `⌘K` keyboard, `⇧⌘S` scores, `⌘/` help
 - Keyboard shortcuts live in the menu bar only; on-screen buttons mirror them
 
+## Mac App Store
+
+- Sandboxed (no extra entitlements) with hardened runtime; version and build shown at the foot of the main window.
+- Listing copy lives in `~/coworking/MURDL-AppStore.md` (pushed with `/asc-push MURDL` once the ASC record exists).
+- `Screenshots/` holds 2560x1600 captures taken from the app at 1280x800 points: eight boards with the keyboard window, sixteen boards, Sprint, Scores, Help.
+- Archive through Xcode Cloud (this Mac runs a macOS beta; local archives fail ingestion). Two workflows: Build on main, Archive on the `release` branch with App Store deployment. Pin Xcode 26.6.
+
 Run the engine tests on any platform with Swift 6:
 
 ```sh

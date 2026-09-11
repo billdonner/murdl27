@@ -4,6 +4,7 @@ import AppKit
 
 @main
 struct MurdlApp: App {
+    static let boardWindowID = "board"
     static let keyboardWindowID = "keyboard"
     static let scoresWindowID = "scores"
 
@@ -22,7 +23,9 @@ struct MurdlApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
+        // A single board window: closing it must not strand the game with no way back
+        // (App Review, guideline 4), so the Window menu lists it and Command-0 reopens it.
+        Window("MURDL", id: Self.boardWindowID) {
             ContentView(game: game)
                 .frame(minWidth: 1160, minHeight: 640)
                 .onAppear {
@@ -158,6 +161,7 @@ struct MurdlApp: App {
             }
 
             CommandGroup(after: .windowArrangement) {
+                OpenWindowCommand(title: "Game Board", windowID: Self.boardWindowID, key: "0", modifiers: [.command])
                 OpenWindowCommand(title: "Show Keyboard", windowID: Self.keyboardWindowID, key: "k", modifiers: [.command])
                 OpenWindowCommand(title: "Show Scores", windowID: Self.scoresWindowID, key: "s", modifiers: [.command, .shift])
                 Button("Clear Scores") {

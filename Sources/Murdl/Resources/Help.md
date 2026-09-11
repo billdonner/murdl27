@@ -66,6 +66,6 @@ Everything in MURDL can be done from the keyboard. Every button in the header ha
 - Command-Shift-H: Helper Mode on or off. Command-Shift-G: play the next helper step.
 - Command-L: switch between grid and strip. Option-Command-G: grid. Option-Command-T: strip.
 - Command-Shift-F: next keyboard font. Control-Command-1, 2, 3, 4: System, Rounded, Monospaced, or Serif.
-- Command-K: show the keyboard window. Command-Shift-S: show Scores.
+- Command-0: show the game board. Command-K: show the keyboard window. Command-Shift-S: show Scores.
 - Command-/: open or close this help. Escape also closes it.
-- Command-W: close the Keyboard or Scores window.
+- Command-W: close a window. The game board comes back from the Window menu or Command-0.

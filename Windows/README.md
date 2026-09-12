@@ -29,7 +29,17 @@ macOS job uploads `MURDL-macOS-arm64.zip`, a self-contained bundle that needs no
 Letters type, Enter submits, Backspace deletes, Escape clears, F2 plays a helper step,
 F1 shows help, Ctrl-N starts a new game. Board count is the drop-down in the header.
 
-## Not yet ported from the Mac app
+## Feature parity with the Mac app
 
-Timers and modes, the score book, board layouts and arrow navigation, and the floating keyboard.
-The engine already supports all of them; they are front-end work.
+Modes and timers, the score book, grid and strip layouts, arrow navigation, the floating
+keyboard, and the menu bar are all ported (commit 220689a). The Windows build is x64 only;
+there is no ARM64 build yet.
+
+## Handing the Windows build to a tester
+
+Download the `MURDL-windows-x64` artifact from the latest green "MURDL Desktop" run on
+GitHub Actions (or `gh run download <run-id> -n MURDL-windows-x64`), zip the folder, and
+send it. The tester unzips it anywhere and double-clicks `MURDL.exe`; nothing else needs
+installing (.NET and the Swift runtime are inside the folder). The executable is unsigned,
+so SmartScreen shows "Windows protected your PC": click **More info**, then **Run anyway**.
+Artifacts expire after 90 days; rerun the workflow from the Actions tab to get a fresh one.

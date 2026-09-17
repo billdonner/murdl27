@@ -25,7 +25,21 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Sandboxed (no extra entitlements) with hardened runtime; version and build shown at the foot of the main window.
 - Listing copy lives in `~/coworking/MURDL-AppStore.md` (pushed with `/asc-push MURDL` once the ASC record exists).
 - `Screenshots/` holds 2560x1600 captures taken from the app at 1280x800 points: eight boards with the keyboard window, sixteen boards, Sprint, Scores, Help.
-- Archive through Xcode Cloud (this Mac runs a macOS beta; local archives fail ingestion). Two workflows: Build on main, Archive on the `release` branch with App Store deployment. Pin Xcode 26.6.
+- Archive through Xcode Cloud (this Mac runs a macOS beta; local archives fail ingestion). Two workflows per platform: Build on main, Archive on the `release` branch with App Store deployment (`scripts/xcode-cloud-workflows.py` creates them). Pin Xcode 26.6.
+- Build numbers follow Xcode Cloud's counter for both platforms; after each cloud archive set `CURRENT_PROJECT_VERSION` in `project.yml` to the number it used.
+
+## iOS (iPad first)
+
+- Second XcodeGen target `MurdlIOS` (scheme `MurdlIOS`, product MURDL) on the same bundle id and App Store record as the Mac app, so it is a universal purchase. iOS 26.0 or later.
+- Shares `Sources/Murdl/Models` and `Sources/Murdl/Views` with the Mac app; `Sources/MurdlIOS` holds the app entry, a two-row header, the docked keyboard (with a Clear key), and its own `Help.md`. `MurdlGame` is platform-neutral; each app reports foreground and background so timed games pause.
+- iPad only for now (`TARGETED_DEVICE_FAMILY` 2, all orientations). The grid picks the column count with the biggest tiles among those that fill every row, so eight boards wrap into two rows of four in portrait. A hardware keyboard types through `.onKeyPress`; arrows move the board highlight.
+- Planned next version: iPhone, portrait only, one board per page with a board switcher strip (`TARGETED_DEVICE_FAMILY` 1,2).
+
+Build for the simulator with:
+
+```sh
+xcodebuild -project Murdl.xcodeproj -scheme MurdlIOS -destination 'generic/platform=iOS Simulator' build
+```
 
 Run the engine tests on any platform with Swift 6:
 

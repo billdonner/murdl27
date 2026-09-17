@@ -49,7 +49,8 @@ struct KeyboardView: View {
                 mark: game.keyMarks[letter] ?? .empty,
                 font: font,
                 fontTitle: game.keyboardFontStyle.title,
-                width: unit
+                width: unit,
+                height: Self.keyHeight
             ) {
                 game.enter(letter)
             }
@@ -57,19 +58,21 @@ struct KeyboardView: View {
     }
 }
 
-private struct KeyboardLetterButton: View {
+/// One letter key. Shared by the Mac floating keyboard and the iOS docked keyboard.
+struct KeyboardLetterButton: View {
     let letter: String
     let mark: TileMark
     let font: Font
     let fontTitle: String
     let width: CGFloat
+    let height: CGFloat
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Text(letter)
                 .font(font)
-                .frame(width: width, height: KeyboardView.keyHeight)
+                .frame(width: width, height: height)
         }
         .buttonStyle(.plain)
         .foregroundStyle(MurdlPalette.keyText(for: mark))
@@ -79,17 +82,19 @@ private struct KeyboardLetterButton: View {
     }
 }
 
-private struct KeyboardCommandButton: View {
+struct KeyboardCommandButton: View {
     let title: String
     let systemImage: String
     let width: CGFloat
+    var height: CGFloat = KeyboardView.keyHeight
+    var iconSize: CGFloat = 13
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Image(systemName: systemImage)
-                .font(.system(size: 13, weight: .heavy))
-                .frame(width: width, height: KeyboardView.keyHeight)
+                .font(.system(size: iconSize, weight: .heavy))
+                .frame(width: width, height: height)
         }
         .buttonStyle(.plain)
         .foregroundStyle(MurdlPalette.keyText(for: .empty))

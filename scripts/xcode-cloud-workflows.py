@@ -2,13 +2,14 @@
 # dependencies = ["cryptography", "pyjwt", "requests"]
 # ///
 """
-Create MURDL's two Xcode Cloud workflows once the Cloud product exists.
+Create MURDL's Xcode Cloud workflows once the Cloud product exists.
 
 The product itself must be created once in Xcode (Product > Xcode Cloud > Create
 Workflow); the API cannot do that. Everything after is scripted here, following the
-KinFlash playbook: a BUILD workflow on every push to main, and an ARCHIVE workflow on
-pushes to the release branch that uploads to App Store Connect. Both pinned to Xcode 26.6
-(Latest Release becomes 27 the day it ships and resurrects ITMS-90111).
+KinFlash playbook: a BUILD workflow for main and an ARCHIVE workflow for the release branch
+that uploads to App Store Connect, one pair per platform (Mac scheme Murdl, iOS scheme
+MurdlIOS). All pinned to Xcode 26.6 (Latest Release becomes 27 the day it ships and
+resurrects ITMS-90111). Per house policy every workflow is started manually.
 
     uv run scripts/xcode-cloud-workflows.py            # create or report
 """
@@ -53,17 +54,18 @@ print("macOS", macos["id"], macos["attributes"]["name"])
 existing = {w["attributes"]["name"]: w for w in get(f"ciProducts/{product['id']}/workflows", limit=50)["data"]}
 
 
-def workflow(name, branch, archive):
+def workflow(name, branch, archive, scheme=SCHEME, platform="MACOS", destination="ANY_MAC"):
     if name in existing:
         print(f"exists: {name} ({existing[name]['id']})")
         return
+    label = platform.replace("MACOS", "macOS").replace("IOS", "iOS")
     actions = [{
-        "name": "Archive - macOS" if archive else "Build - macOS",
+        "name": f"{'Archive' if archive else 'Build'} - {label}",
         "actionType": "ARCHIVE" if archive else "BUILD",
-        "destination": "ANY_MAC",
+        "destination": destination,
         "buildDistributionAudience": "APP_STORE_ELIGIBLE" if archive else None,
-        "scheme": SCHEME,
-        "platform": "MACOS",
+        "scheme": scheme,
+        "platform": platform,
         "isRequiredToPass": True,
     }]
     body = {"data": {"type": "ciWorkflows", "attributes": {
@@ -86,6 +88,8 @@ def workflow(name, branch, archive):
 
 workflow("Build - main", "main", archive=False)
 workflow("Archive - App Store", "release", archive=True)
+workflow("Build iOS - main", "main", archive=False, scheme="MurdlIOS", platform="IOS", destination="ANY_IOS_DEVICE")
+workflow("Archive iOS - App Store", "release", archive=True, scheme="MurdlIOS", platform="IOS", destination="ANY_IOS_DEVICE")
 
 for w in get(f"ciProducts/{product['id']}/workflows", limit=50, **{"fields[ciWorkflows]": "name,isEnabled"})["data"]:
     x = get(f"ciWorkflows/{w['id']}/xcodeVersion")["data"]["attributes"]["name"]

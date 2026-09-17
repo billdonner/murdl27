@@ -26,10 +26,15 @@ struct MurdlApp: App {
         // A single board window: closing it must not strand the game with no way back
         // (App Review, guideline 4), so the Window menu lists it and Command-0 reopens it.
         Window("MURDL", id: Self.boardWindowID) {
-            ContentView(game: game)
+            ContentView(
+                game: game,
+                showKeyboard: { openWindow(id: Self.keyboardWindowID) },
+                showScores: { openWindow(id: Self.scoresWindowID) }
+            )
                 .frame(minWidth: 1160, minHeight: 640)
                 .onAppear {
                     keyCapture.attach(to: game)
+                    AppActivity.observe(game)
                     KeyboardWindowState.trackUntilQuit()
                     // With restoration enabled SwiftUI reopens the keyboard itself when there is saved
                     // state. On a first launch there is none, so open it once restoration has settled.
@@ -207,6 +212,26 @@ private struct OpenWindowCommand: View {
             openWindow(id: windowID)
         }
         .keyboardShortcut(key, modifiers: modifiers)
+    }
+}
+
+/// Pauses timed games while MURDL is not the active app. On the Mac that is app deactivation,
+/// which SwiftUI's scenePhase does not report while a window stays visible.
+@MainActor
+enum AppActivity {
+    private static var tokens: [NSObjectProtocol] = []
+
+    static func observe(_ game: MurdlGame) {
+        guard tokens.isEmpty else { return }
+        let center = NotificationCenter.default
+        tokens = [
+            center.addObserver(forName: NSApplication.didResignActiveNotification, object: nil, queue: .main) { [weak game] _ in
+                MainActor.assumeIsolated { game?.setBackgrounded(true) }
+            },
+            center.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak game] _ in
+                MainActor.assumeIsolated { game?.setBackgrounded(false) }
+            }
+        ]
     }
 }
 

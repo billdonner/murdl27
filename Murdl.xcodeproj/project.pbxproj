@@ -8,16 +8,30 @@
 
 /* Begin PBXBuildFile section */
 		0C82677BFC62A6B52065D613 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A906AE2E6D46B6006E5CE70C /* ContentView.swift */; };
+		3098552473DAF65EC27971C1 /* MurdlPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843694FE9F154C3AC3325A81 /* MurdlPalette.swift */; };
 		3179CAACD815C790CAFD002B /* MurdlCore in Frameworks */ = {isa = PBXBuildFile; productRef = 241C7F4988507912CD0772D2 /* MurdlCore */; };
+		3827BD20C7F3C18CA5C929A3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A906AE2E6D46B6006E5CE70C /* ContentView.swift */; };
 		3F3FB46479B86223A59DBDE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AF087AC77FA60C9648F1F1E /* Assets.xcassets */; };
+		493C32FBFA3D0E9982739AC6 /* IOSHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D143B9AAFD56E0D4D335797 /* IOSHeaderView.swift */; };
+		4A613E0DAF794280CD539EB7 /* BoardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F89112C717E3A73416FBE /* BoardLayout.swift */; };
 		4C02E0E17A38CA32A26E1EBA /* KeyboardFontStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */; };
 		50B3BB783D6E642384553BDA /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 46AFB0787B6B9C27E72E9C7C /* Help.md */; };
+		51DF5D86A18E640326BD1AE7 /* MurdlGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D134B08F1ED6B6E095972C7C /* MurdlGame.swift */; };
 		5691F7E1BAB92E215B2B0A33 /* ScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */; };
+		5B2B9659AAD3466CFBFA5B99 /* MurdlIOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D98B328860A92616C1CFB8 /* MurdlIOSApp.swift */; };
+		61342DDEFE9F5E83F9182E7D /* BottomKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC97DA1AFF1DAB7D79F5488 /* BottomKeyboardView.swift */; };
 		6679E6BCFEC44BCB85CBC27A /* MurdlGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D134B08F1ED6B6E095972C7C /* MurdlGame.swift */; };
 		6C22CB39AC438BE21F04151E /* BoardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F89112C717E3A73416FBE /* BoardLayout.swift */; };
+		7688D38B8F3A3FBD8B66D721 /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 33431909F7ADE8F2E48A67F3 /* Help.md */; };
+		77FE597672A4AED93712100C /* ScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */; };
+		8B6586C98B4FE1B35E064731 /* KeyboardFontStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */; };
 		931B5468BCDE3666BCE0C687 /* MurdlApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */; };
+		936DC77993E3F7A5BC27238C /* IOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8133818ED19A39BAB9884C /* IOSRootView.swift */; };
 		95EA0C680CC272DCBADA22C6 /* MurdlPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843694FE9F154C3AC3325A81 /* MurdlPalette.swift */; };
+		968367D985E0B5E0EECF4EE2 /* MurdlCore in Frameworks */ = {isa = PBXBuildFile; productRef = 503FA5BE16B8E4C7562D36DA /* MurdlCore */; };
+		A395D05BC21EEA1F2DC45E50 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */; };
 		A59D006AE219A420BB657434 /* KeyCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1F63AC1979CBD1FDB08CAE /* KeyCapture.swift */; };
+		D0F12C61BBC50BFA947215EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AF087AC77FA60C9648F1F1E /* Assets.xcassets */; };
 		DF3CE55F37F59AE9ADA38528 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */; };
 /* End PBXBuildFile section */
 
@@ -25,17 +39,24 @@
 		029F89112C717E3A73416FBE /* BoardLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardLayout.swift; sourceTree = "<group>"; };
 		19607FBF74FE2B7C8134CC07 /* Murdl.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Murdl.entitlements; sourceTree = "<group>"; };
 		20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardFontStyle.swift; sourceTree = "<group>"; };
+		29D98B328860A92616C1CFB8 /* MurdlIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlIOSApp.swift; sourceTree = "<group>"; };
 		2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoresView.swift; sourceTree = "<group>"; };
+		33431909F7ADE8F2E48A67F3 /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Help.md; sourceTree = "<group>"; };
 		41A2EF757A36E110A9B6A3D3 /* MURDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MURDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		46AFB0787B6B9C27E72E9C7C /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Help.md; sourceTree = "<group>"; };
 		4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlApp.swift; sourceTree = "<group>"; };
 		5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
+		629D930CE49846EAC7A1D911 /* MURDL.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MURDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		675164CE195018740B97419B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6F1F63AC1979CBD1FDB08CAE /* KeyCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCapture.swift; sourceTree = "<group>"; };
+		7D143B9AAFD56E0D4D335797 /* IOSHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSHeaderView.swift; sourceTree = "<group>"; };
 		843694FE9F154C3AC3325A81 /* MurdlPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlPalette.swift; sourceTree = "<group>"; };
+		851021F4FA44543CD28C4C39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8AF087AC77FA60C9648F1F1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A906AE2E6D46B6006E5CE70C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BC8133818ED19A39BAB9884C /* IOSRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSRootView.swift; sourceTree = "<group>"; };
 		D134B08F1ED6B6E095972C7C /* MurdlGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlGame.swift; sourceTree = "<group>"; };
+		EAC97DA1AFF1DAB7D79F5488 /* BottomKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomKeyboardView.swift; sourceTree = "<group>"; };
 		FBD74DD6C6150E645F5DB2AE /* MurdlCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MurdlCore; path = MurdlCore; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -48,6 +69,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		51783B0A3DD86E3C4C79A727 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				968367D985E0B5E0EECF4EE2 /* MurdlCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -55,8 +84,18 @@
 			isa = PBXGroup;
 			children = (
 				41A2EF757A36E110A9B6A3D3 /* MURDL.app */,
+				629D930CE49846EAC7A1D911 /* MURDL.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2791CAA23E2DFAF2A2E93021 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				851021F4FA44543CD28C4C39 /* Info.plist */,
+				29D98B328860A92616C1CFB8 /* MurdlIOSApp.swift */,
+			);
+			path = App;
 			sourceTree = "<group>";
 		};
 		389124C1AD3F0ADC2B938D37 /* Resources */ = {
@@ -89,6 +128,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		7ECCE2953C29F0C74C92B29F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				33431909F7ADE8F2E48A67F3 /* Help.md */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		84040EB6AA2A34C75CFDB9BE = {
 			isa = PBXGroup;
 			children = (
@@ -105,6 +152,16 @@
 				5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */,
 				843694FE9F154C3AC3325A81 /* MurdlPalette.swift */,
 				2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		85E1A87FD8C6257D22166BE2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				EAC97DA1AFF1DAB7D79F5488 /* BottomKeyboardView.swift */,
+				7D143B9AAFD56E0D4D335797 /* IOSHeaderView.swift */,
+				BC8133818ED19A39BAB9884C /* IOSRootView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -132,8 +189,19 @@
 			isa = PBXGroup;
 			children = (
 				D5729AB9D827A33E1A6F87EC /* Murdl */,
+				F576D575842DC83B56A899E7 /* MurdlIOS */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		F576D575842DC83B56A899E7 /* MurdlIOS */ = {
+			isa = PBXGroup;
+			children = (
+				2791CAA23E2DFAF2A2E93021 /* App */,
+				7ECCE2953C29F0C74C92B29F /* Resources */,
+				85E1A87FD8C6257D22166BE2 /* Views */,
+			);
+			path = MurdlIOS;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,6 +227,26 @@
 			productReference = 41A2EF757A36E110A9B6A3D3 /* MURDL.app */;
 			productType = "com.apple.product-type.application";
 		};
+		85BCF6F41A632BC13620E000 /* MurdlIOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1DF19B8E0F980F549220C30 /* Build configuration list for PBXNativeTarget "MurdlIOS" */;
+			buildPhases = (
+				1BEFE56BF16964B878F02B9B /* Sources */,
+				EB14671FA43323F7F07CD8B0 /* Resources */,
+				51783B0A3DD86E3C4C79A727 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MurdlIOS;
+			packageProductDependencies = (
+				503FA5BE16B8E4C7562D36DA /* MurdlCore */,
+			);
+			productName = MurdlIOS;
+			productReference = 629D930CE49846EAC7A1D911 /* MURDL.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -169,6 +257,10 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					4DBD752CA0D118E0BA4582EC = {
+						DevelopmentTeam = NEAY582ME4;
+						ProvisioningStyle = Automatic;
+					};
+					85BCF6F41A632BC13620E000 = {
 						DevelopmentTeam = NEAY582ME4;
 						ProvisioningStyle = Automatic;
 					};
@@ -192,6 +284,7 @@
 			projectRoot = "";
 			targets = (
 				4DBD752CA0D118E0BA4582EC /* Murdl */,
+				85BCF6F41A632BC13620E000 /* MurdlIOS */,
 			);
 		};
 /* End PBXProject section */
@@ -206,9 +299,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EB14671FA43323F7F07CD8B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D0F12C61BBC50BFA947215EA /* Assets.xcassets in Resources */,
+				7688D38B8F3A3FBD8B66D721 /* Help.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1BEFE56BF16964B878F02B9B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A613E0DAF794280CD539EB7 /* BoardLayout.swift in Sources */,
+				61342DDEFE9F5E83F9182E7D /* BottomKeyboardView.swift in Sources */,
+				3827BD20C7F3C18CA5C929A3 /* ContentView.swift in Sources */,
+				493C32FBFA3D0E9982739AC6 /* IOSHeaderView.swift in Sources */,
+				936DC77993E3F7A5BC27238C /* IOSRootView.swift in Sources */,
+				8B6586C98B4FE1B35E064731 /* KeyboardFontStyle.swift in Sources */,
+				A395D05BC21EEA1F2DC45E50 /* KeyboardView.swift in Sources */,
+				51DF5D86A18E640326BD1AE7 /* MurdlGame.swift in Sources */,
+				5B2B9659AAD3466CFBFA5B99 /* MurdlIOSApp.swift in Sources */,
+				3098552473DAF65EC27971C1 /* MurdlPalette.swift in Sources */,
+				77FE597672A4AED93712100C /* ScoresView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		42C94BF8865B6B2A7301701D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -246,12 +366,62 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2.1;
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
+		};
+		3ECA07A21ECE1394255885CC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = NEAY582ME4;
+				INFOPLIST_FILE = Sources/MurdlIOS/App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
+				PRODUCT_NAME = MURDL;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		9D364A00EC19013DFF2FF7FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = NEAY582ME4;
+				INFOPLIST_FILE = Sources/MurdlIOS/App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
+				PRODUCT_NAME = MURDL;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
 		};
 		ADAFCCDFF8CE7D5E2B27E9C0 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -298,11 +468,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -327,7 +497,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2.1;
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
@@ -385,12 +555,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -418,6 +588,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		B1DF19B8E0F980F549220C30 /* Build configuration list for PBXNativeTarget "MurdlIOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3ECA07A21ECE1394255885CC /* Debug */,
+				9D364A00EC19013DFF2FF7FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -429,6 +608,10 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		241C7F4988507912CD0772D2 /* MurdlCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MurdlCore;
+		};
+		503FA5BE16B8E4C7562D36DA /* MurdlCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MurdlCore;
 		};

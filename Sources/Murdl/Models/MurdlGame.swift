@@ -1,9 +1,9 @@
 import Foundation
 import Combine
-import AppKit
 import MurdlCore
 
-/// The Mac session around a `MurdlMatch`: typing, timers, helper, layout, persistence.
+/// The session around a `MurdlMatch`: typing, timers, helper, layout, persistence.
+/// Platform-neutral: the Mac and iOS apps drive it and report their own lifecycle.
 /// Everything about the rules lives in MurdlCore; this class only drives it.
 @MainActor
 final class MurdlGame: ObservableObject {
@@ -43,7 +43,6 @@ final class MurdlGame: ObservableObject {
     private var ticker: Timer?
     private var pausedForHelp = false
     private var pausedForBackground = false
-    private var lifecycleTokens: [NSObjectProtocol] = []
 
     init(dictionary: WordDictionary = .bundled) {
         self.dictionary = dictionary
@@ -55,7 +54,11 @@ final class MurdlGame: ObservableObject {
         let boardCount = Self.boardCountOptions.contains(savedCount) ? savedCount : Self.defaultBoardCount
         match = MurdlMatch(boardCount: boardCount, dictionary: dictionary)
         startNewGame()
-        observeAppActivity()
+    }
+
+    /// The app reports when it leaves and returns to the foreground; timed games pause meanwhile.
+    func setBackgrounded(_ inactive: Bool) {
+        setPaused(background: inactive)
     }
 
     // MARK: Forwarded match state
@@ -391,6 +394,8 @@ final class MurdlGame: ObservableObject {
             clock.pause()
         } else if !isOver {
             clock.resume()
+            // Refresh at once so a Sprint that ran out while paused ends now, not a tick later.
+            tick()
         }
         updateTicker()
     }
@@ -421,17 +426,5 @@ final class MurdlGame: ObservableObject {
         stopClock()
         statusText = "Time's up. Lost MURDL \(scoreText)"
         recordFinishedGame()
-    }
-
-    private func observeAppActivity() {
-        let center = NotificationCenter.default
-        lifecycleTokens = [
-            center.addObserver(forName: NSApplication.didResignActiveNotification, object: nil, queue: .main) { [weak self] _ in
-                MainActor.assumeIsolated { self?.setPaused(background: true) }
-            },
-            center.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
-                MainActor.assumeIsolated { self?.setPaused(background: false) }
-            }
-        ]
     }
 }

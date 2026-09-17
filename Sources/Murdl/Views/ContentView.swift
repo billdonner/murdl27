@@ -1,17 +1,15 @@
 import MurdlCore
 import SwiftUI
 
+/// The Mac board window. The app supplies how the Keyboard and Scores windows open.
 struct ContentView: View {
     @ObservedObject var game: MurdlGame
-    @Environment(\.openWindow) private var openWindow
+    let showKeyboard: () -> Void
+    let showScores: () -> Void
 
     var body: some View {
         VStack(spacing: 10) {
-            HeaderView(
-                game: game,
-                showKeyboard: { openWindow(id: MurdlApp.keyboardWindowID) },
-                showScores: { openWindow(id: MurdlApp.scoresWindowID) }
-            )
+            HeaderView(game: game, showKeyboard: showKeyboard, showScores: showScores)
 
             if game.isHelperMode {
                 HelperBarView(game: game)
@@ -52,7 +50,7 @@ struct ContentView: View {
 }
 
 // Keyboard shortcuts are declared once, in the app's menus. The buttons below mirror them.
-private struct HeaderView: View {
+struct HeaderView: View {
     @ObservedObject var game: MurdlGame
     let showKeyboard: () -> Void
     let showScores: () -> Void
@@ -166,7 +164,7 @@ private struct HeaderView: View {
 }
 
 /// Elapsed time for Stopwatch, time remaining for Sprint. Amber under 30 seconds, red under 10.
-private struct ClockView: View {
+struct ClockView: View {
     let text: String
     let mode: GameMode
     let remaining: TimeInterval
@@ -202,7 +200,7 @@ private struct ClockView: View {
     }
 }
 
-private struct HeaderButton: View {
+struct HeaderButton: View {
     let systemImage: String
     let label: String
     let help: String
@@ -221,7 +219,7 @@ private struct HeaderButton: View {
     }
 }
 
-private struct MurdlLogo: View {
+struct MurdlLogo: View {
     let size: CGFloat
 
     var body: some View {
@@ -234,7 +232,7 @@ private struct MurdlLogo: View {
     }
 }
 
-private struct HelperBarView: View {
+struct HelperBarView: View {
     @ObservedObject var game: MurdlGame
 
     private var accent: Color {
@@ -397,7 +395,7 @@ private struct HelperBoardChip: View {
     }
 }
 
-private struct BoardGridView: View {
+struct BoardGridView: View {
     @ObservedObject var game: MurdlGame
 
     private static let maxColumns = 8
@@ -433,12 +431,20 @@ private struct BoardGridView: View {
         (height - headerAndPadding - tileSpacing * CGFloat(guesses - 1)) / CGFloat(guesses)
     }
 
-    /// Grid: columns are whatever fits at the minimum tile size, capped at eight. On a narrow
-    /// window (or an iPad) this wraps eight boards into two rows of four.
+    /// Grid: up to eight columns. Of the column counts that fill every row and fit without
+    /// scrolling, the one with the biggest tiles wins, so a tall iPad screen wraps eight boards
+    /// into two rows of four instead of one cramped row. When every count scrolls, the widest is kept.
     private static func gridLayout(boards: Int, guesses: Int, size: CGSize) -> Layout {
         let minBoardWidth = boardWidth(tile: minTile)
         let fit = Int((size.width + boardSpacing) / (minBoardWidth + boardSpacing))
-        let columns = max(1, min(boards, maxColumns, fit))
+        let widest = max(1, min(boards, maxColumns, fit))
+        let even = (1...widest).reversed().filter { boards % $0 == 0 }
+        let candidates = even.map { gridLayout(boards: boards, guesses: guesses, size: size, columns: $0) }
+        return candidates.filter { !$0.scrolls }.max { $0.tile < $1.tile }
+            ?? gridLayout(boards: boards, guesses: guesses, size: size, columns: widest)
+    }
+
+    private static func gridLayout(boards: Int, guesses: Int, size: CGSize, columns: Int) -> Layout {
         let rows = Int((Double(boards) / Double(columns)).rounded(.up))
         let boardWidthLimit = (size.width - boardSpacing * CGFloat(columns - 1)) / CGFloat(columns)
         let fromWidth = (boardWidthLimit - boardPadding * 2 - tileSpacing * CGFloat(MurdlGame.wordLength - 1)) / CGFloat(MurdlGame.wordLength)
@@ -493,7 +499,7 @@ private struct BoardGridView: View {
                         }
                     }
                     .frame(
-                        minWidth: layout.axes == .horizontal ? proxy.size.width : nil,
+                        minWidth: proxy.size.width,
                         minHeight: layout.axes == .vertical && layout.scrolls ? nil : proxy.size.height,
                         alignment: .center
                     )
@@ -514,7 +520,7 @@ private struct BoardGridView: View {
 }
 
 /// Renders one board from plain values so SwiftUI can skip boards whose inputs did not change.
-private struct GameBoardView: View {
+struct GameBoardView: View {
     let boardID: Int
     let rows: [[Tile]]
     let status: String
@@ -640,7 +646,7 @@ private struct TileView: View {
     }
 }
 
-private struct StatusStripView: View {
+struct StatusStripView: View {
     @ObservedObject var game: MurdlGame
 
     var body: some View {
@@ -658,7 +664,7 @@ private struct StatusStripView: View {
     }
 }
 
-private struct HelpView: View {
+struct HelpView: View {
     let dismiss: () -> Void
 
     var body: some View {

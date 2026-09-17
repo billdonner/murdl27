@@ -71,8 +71,9 @@ def workflow(name, branch, archive, scheme=SCHEME, platform="MACOS", destination
     body = {"data": {"type": "ciWorkflows", "attributes": {
         "name": name,
         "description": "Created by scripts/xcode-cloud-workflows.py",
-        "branchStartCondition": {"source": {"isAllMatch": False, "patterns": [{"pattern": branch, "isPrefix": False}]},
-                                 "filesAndFoldersRule": None, "autoCancel": True},
+        # Manual start only (house policy): the branch is recorded in the name and chosen at start time.
+        "branchStartCondition": None,
+        "manualBranchStartCondition": {"source": {"isAllMatch": False, "patterns": [{"pattern": branch, "isPrefix": False}]}},
         "isEnabled": True, "isLockedForEditing": False, "clean": False,
         "containerFilePath": "Murdl.xcodeproj",
         "actions": actions,

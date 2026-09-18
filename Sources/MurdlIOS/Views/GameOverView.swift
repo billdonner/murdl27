@@ -21,6 +21,7 @@ struct GameOverView: View {
 
     private var detail: String {
         var parts = ["\(game.currentRow) of \(game.maxGuesses) guesses"]
+        if let daily = game.dailyNumber { parts.insert("Daily #\(daily)", at: 0) }
         if game.mode == .stopwatch { parts.append(GameClock.format(game.elapsedSeconds)) }
         if !game.didWin { parts.append("\(game.solvedCount) of \(game.boardCount) solved") }
         return parts.joined(separator: "  ·  ")

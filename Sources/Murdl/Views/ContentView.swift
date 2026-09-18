@@ -63,7 +63,7 @@ struct HeaderView: View {
                 Text("MURDL")
                     .font(.system(size: 34, weight: .black, design: .rounded))
                     .foregroundStyle(MurdlPalette.titleGradient)
-                Text("\(game.boardCount) \(game.boardCount == 1 ? "board" : "boards")  \(game.maxGuesses) guesses")
+                Text(game.subtitle)
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(.secondary)
             }
@@ -112,6 +112,12 @@ struct HeaderView: View {
                 .help("Classic, Stopwatch, or Sprint. Changing it starts a new game.")
             }
             .frame(width: 236)
+
+            HeaderButton(systemImage: "calendar",
+                         label: "Today's daily puzzle",
+                         help: "Play today's Daily, the same boards for everyone (Command-D)") {
+                game.startDailyGame()
+            }
 
             HeaderButton(systemImage: "sparkles",
                          label: game.isHelperMode ? "Turn off helper mode" : "Turn on helper mode",
@@ -510,7 +516,8 @@ struct BoardGridView: View {
                                         isFinished: board.isFinished,
                                         isHelperTarget: game.helperFocusBoardID == board.id,
                                         isFocused: game.focusedBoardID == board.id,
-                                        tileSize: layout.tile
+                                        tileSize: layout.tile,
+                                        highContrast: game.highContrast
                                     )
                                     .id(board.id)
                                     .onTapGesture {
@@ -554,6 +561,8 @@ struct GameBoardView: View {
     let isHelperTarget: Bool
     let isFocused: Bool
     let tileSize: CGFloat
+    /// Passed in (not read from the palette) so a toggle re-renders boards whose rows did not change.
+    var highContrast = false
     private var accent: Color { MurdlPalette.boardAccent(boardID) }
     private var boardWidth: CGFloat {
         tileSize * CGFloat(MurdlGame.wordLength) + 3 * CGFloat(MurdlGame.wordLength - 1)
@@ -582,7 +591,7 @@ struct GameBoardView: View {
                 ForEach(rows.indices, id: \.self) { row in
                     HStack(spacing: 3) {
                         ForEach(rows[row].indices, id: \.self) { column in
-                            TileView(tile: rows[row][column], boardID: boardID, tileSize: tileSize)
+                            TileView(tile: rows[row][column], boardID: boardID, row: row, tileSize: tileSize, highContrast: highContrast)
                         }
                     }
                 }
@@ -614,6 +623,8 @@ struct GameBoardView: View {
         .shadow(color: isHelperTarget ? accent.opacity(0.38) : .clear, radius: 10, y: 3)
         .scaleEffect(isHelperTarget ? 1.012 : 1)
         .help("Board \(boardID + 1): \(status)")
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Board \(boardID + 1), \(status)")
     }
 
     /// "Ready 3/21" becomes "3/21"; "Won 2/21" becomes "Won 2"; "Lost WORD" stays.
@@ -631,7 +642,9 @@ struct GameBoardView: View {
 private struct TileView: View {
     let tile: Tile
     let boardID: Int
+    let row: Int
     let tileSize: CGFloat
+    var highContrast = false
 
     var body: some View {
         Text(tile.letter)
@@ -645,6 +658,36 @@ private struct TileView: View {
                 RoundedRectangle(cornerRadius: 4)
                     .strokeBorder(border, lineWidth: tile.mark == .editing ? 2 : 1)
             )
+            .overlay(alignment: .topTrailing) {
+                // In high-contrast mode a glyph says what the color says.
+                if highContrast, let glyph = contrastGlyph, tileSize >= 20 {
+                    Image(systemName: glyph)
+                        .font(.system(size: max(7, tileSize * 0.2), weight: .black))
+                        .foregroundStyle(.white)
+                        .padding(2)
+                }
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(accessibilityText)
+    }
+
+    private var contrastGlyph: String? {
+        switch tile.mark {
+        case .correct: return "checkmark"
+        case .present: return "arrow.left.and.right"
+        default: return nil
+        }
+    }
+
+    private var accessibilityText: String {
+        let letter = tile.letter.isEmpty ? "blank" : tile.letter
+        switch tile.mark {
+        case .empty: return "Row \(row + 1), \(letter)"
+        case .editing: return "Row \(row + 1), \(letter), typing"
+        case .absent: return "Row \(row + 1), \(letter), not in the word"
+        case .present: return "Row \(row + 1), \(letter), in the word, wrong place"
+        case .correct: return "Row \(row + 1), \(letter), correct"
+        }
     }
 
     private var fill: Color {

@@ -17,6 +17,7 @@ final class MurdlGame: ObservableObject {
     private static let boardCountDefaultsKey = "MurdlBoardCount"
     private static let boardLayoutDefaultsKey = "MurdlBoardLayout"
     private static let gameModeDefaultsKey = "MurdlGameMode"
+    private static let highContrastDefaultsKey = "MurdlHighContrast"
 
     @Published private(set) var match: MurdlMatch
     @Published private(set) var currentGuess = ""
@@ -37,6 +38,10 @@ final class MurdlGame: ObservableObject {
     @Published private(set) var timedOut = false
     /// Board highlighted by arrow-key navigation; the grid scrolls to keep it visible.
     @Published private(set) var focusedBoardID: Int?
+    /// Daily puzzle number while playing today's Daily; nil in practice.
+    @Published private(set) var dailyNumber: Int?
+    /// Orange/blue tiles with glyphs instead of green/orange.
+    @Published private(set) var highContrast: Bool
     private(set) var assisted = false
     /// Boards per row in the current layout, reported by the grid view so up/down can move by a row.
     var layoutColumns = 1
@@ -50,6 +55,9 @@ final class MurdlGame: ObservableObject {
         keyboardFontStyle = defaults.string(forKey: Self.keyboardFontDefaultsKey).flatMap(KeyboardFontStyle.init) ?? .monospaced
         boardLayout = defaults.string(forKey: Self.boardLayoutDefaultsKey).flatMap(BoardLayout.init) ?? .grid
         mode = defaults.string(forKey: Self.gameModeDefaultsKey).flatMap(GameMode.init) ?? .classic
+        let contrast = defaults.bool(forKey: Self.highContrastDefaultsKey)
+        highContrast = contrast
+        MurdlPalette.highContrast = contrast
         let savedCount = defaults.integer(forKey: Self.boardCountDefaultsKey)
         let boardCount = Self.boardCountOptions.contains(savedCount) ? savedCount : Self.defaultBoardCount
         match = MurdlMatch(boardCount: boardCount, dictionary: dictionary)
@@ -95,19 +103,63 @@ final class MurdlGame: ObservableObject {
         case .sprint: notes.append("Sprint, \(GameClock.format(sprintRemaining)) left")
         }
         if assisted { notes.append("assisted") }
-        return match.shareText(note: notes.joined(separator: ", "))
+        let title = dailyNumber.map { "MURDL Daily #\($0)" } ?? "MURDL"
+        return match.shareText(note: notes.joined(separator: ", "), title: title)
     }
 
     var scoreSummary: ScoreSummary {
         ScoreSummary(records: records, boardCount: boardCount)
     }
 
+    /// "8 boards  13 guesses", with the Daily number in front while playing one.
+    var subtitle: String {
+        let counts = "\(boardCount) \(boardCount == 1 ? "board" : "boards")  \(maxGuesses) guesses"
+        if let dailyNumber { return "Daily #\(dailyNumber)  \(counts)" }
+        return counts
+    }
+
+    /// Today's Daily number, whether or not it is being played.
+    var todaysDailyNumber: Int { DailyPuzzle.number() }
+
+    /// The first recorded result for today's Daily at this board count, if it has been played.
+    var todaysDailyRecord: GameRecord? {
+        records.last { $0.daily == todaysDailyNumber && $0.boardCount == boardCount }
+    }
+
     // MARK: Game flow
 
+    /// Practice: fresh random answers.
     func startNewGame() {
+        dailyNumber = nil
         match = MurdlMatch(boardCount: boardCount, dictionary: dictionary)
+        reset(status: "Ready")
+    }
+
+    /// Today's Daily at the current board count: the same answers for everyone. A replay is
+    /// allowed but only the first result counts in Scores.
+    func startDailyGame() {
+        let number = todaysDailyNumber
+        dailyNumber = number
+        match = MurdlMatch(answers: DailyPuzzle.answers(number: number, boardCount: boardCount, from: dictionary), dictionary: dictionary)
+        if let done = todaysDailyRecord {
+            reset(status: "Daily #\(number) again. First result: \(done.resultText) \(done.score)")
+        } else {
+            reset(status: "Daily #\(number)")
+        }
+    }
+
+    /// New answers for the current kind of game, Daily or practice.
+    private func restart() {
+        if dailyNumber != nil {
+            startDailyGame()
+        } else {
+            startNewGame()
+        }
+    }
+
+    private func reset(status: String) {
         currentGuess = ""
-        statusText = "Ready"
+        statusText = status
         helperMessage = ""
         focusedBoardID = nil
         clock = GameClock()
@@ -123,14 +175,20 @@ final class MurdlGame: ObservableObject {
         guard Self.boardCountOptions.contains(count), count != boardCount else { return }
         UserDefaults.standard.set(count, forKey: Self.boardCountDefaultsKey)
         match = MurdlMatch(boardCount: count, dictionary: dictionary)
-        startNewGame()
+        restart()
     }
 
     func setMode(_ newMode: GameMode) {
         guard newMode != mode else { return }
         mode = newMode
         UserDefaults.standard.set(newMode.rawValue, forKey: Self.gameModeDefaultsKey)
-        startNewGame()
+        restart()
+    }
+
+    func setHighContrast(_ enabled: Bool) {
+        highContrast = enabled
+        MurdlPalette.highContrast = enabled
+        UserDefaults.standard.set(enabled, forKey: Self.highContrastDefaultsKey)
     }
 
     func enter(_ rawLetter: String) {
@@ -211,7 +269,8 @@ final class MurdlGame: ObservableObject {
             seconds: Int(clock.elapsed().rounded()),
             mode: mode,
             assisted: assisted,
-            timedOut: timedOut
+            timedOut: timedOut,
+            daily: dailyNumber
         )
         records.insert(record, at: 0)
         ScoreStore.save(records)

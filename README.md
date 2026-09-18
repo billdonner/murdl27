@@ -16,6 +16,8 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Keyboard: small floating window (`Command-K`); typing works from any window via an app-wide key monitor; position and open state persist
 - Board layout: grid (rows of up to 8, vertical scroll with the next row peeking) or horizontal strip (`Command-L`); scroll by trackpad swipe, scroll wheel, or arrow keys
 - Modes: Classic, Stopwatch (counts up from first keystroke, best time per board count), Sprint (45 s per board + 10 s per solve, unfinished boards lost at zero); clock pauses for Help and app background; helper games recorded as assisted
+- Daily: `DailyPuzzle` (MurdlCore) derives the day's answers per board count from the day number and a SplitMix64 seed, so every player gets the same boards; Daily #1 is 2026-09-18 local. `GameRecord.daily` marks Daily results; `ScoreSummary` adds daily played/won/streak (first result per day counts, replays never do). Share text says "MURDL Daily #N". Command-D on the Mac, calendar button or More menu on iOS.
+- High contrast: `MurdlPalette.highContrast` swaps green/orange for orange/blue and tiles gain a check or arrow glyph; persisted in `MurdlHighContrast`. VoiceOver: boards are containers, tiles read row, letter, and state; keys read their letter state.
 - Scores: every finished game is recorded with result, score string, guesses, and time (`Command-Shift-S`)
 - Every action has a menu item and shortcut: `⌘1-4` boards, `⌥⌘1-3` mode, `⌘L`/`⌥⌘G`/`⌥⌘T` layout, `⇧⌘F`/`⌃⌘1-4` keyboard font, arrows move the board highlight, `⌘K` keyboard, `⇧⌘S` scores, `⌘/` help
 - Keyboard shortcuts live in the menu bar only; on-screen buttons mirror them

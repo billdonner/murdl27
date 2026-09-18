@@ -23,8 +23,15 @@ enum MurdlPalette {
     static let brand = Color("AccentColor")
     static let letter = Color("LetterForeGround")
     static let status = Color("BonusRowBackGround")
-    static let correct = Color("MatchExactApple")
-    static let present = Color("MatchWrongPosApple")
+    /// High-contrast (color-blind) mode swaps green/orange for orange/blue, as the other word games
+    /// do, and the tiles add a glyph so color is never the only signal. Set by `MurdlGame`.
+    @MainActor static var highContrast = false
+    private static let standardCorrect = Color("MatchExactApple")
+    private static let standardPresent = Color("MatchWrongPosApple")
+    private static let contrastCorrect = Color(red: 0.96, green: 0.47, blue: 0.23)
+    private static let contrastPresent = Color(red: 0.16, green: 0.47, blue: 0.87)
+    @MainActor static var correct: Color { highContrast ? contrastCorrect : standardCorrect }
+    @MainActor static var present: Color { highContrast ? contrastPresent : standardPresent }
     static let absent = Color("NoMatchApple")
     static let commandKey = Color("KeyCapBackGround")
     static let keyForeground = Color("KeyCapForeGround")
@@ -47,7 +54,7 @@ enum MurdlPalette {
     }
 
     /// Keys use the same three result colors as the tiles.
-    static func keyFill(for mark: TileMark) -> Color {
+    @MainActor static func keyFill(for mark: TileMark) -> Color {
         switch mark {
         case .empty, .editing:
             return commandKey

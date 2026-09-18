@@ -87,7 +87,8 @@ struct PagedBoardsView: View {
             isFinished: board.isFinished,
             isHelperTarget: game.helperFocusBoardID == board.id,
             isFocused: false,
-            tileSize: tile
+            tileSize: tile,
+            highContrast: game.highContrast
         )
         .scaleEffect(celebrating ? 1.03 : 1)
         .overlay(alignment: .bottom) {

@@ -19,8 +19,9 @@ struct IOSHeaderView: View {
                     Text("MURDL")
                         .font(.system(size: isCompact ? 22 : 30, weight: .black, design: .rounded))
                         .foregroundStyle(MurdlPalette.titleGradient)
-                    Text("\(game.boardCount) \(game.boardCount == 1 ? "board" : "boards")  \(game.maxGuesses) guesses")
+                    Text(game.subtitle)
                         .font(.system(size: isCompact ? 11 : 13, weight: .semibold, design: .rounded))
+                        .lineLimit(2)
                         .foregroundStyle(.secondary)
                 }
 
@@ -48,6 +49,13 @@ struct IOSHeaderView: View {
                 }
 
                 Menu {
+                    Button("Today's Daily #\(game.todaysDailyNumber)", systemImage: "calendar") {
+                        game.startDailyGame()
+                    }
+                    Button("New Practice Game", systemImage: "arrow.clockwise") {
+                        game.startNewGame()
+                    }
+                    Divider()
                     if isCompact {
                         boardsMenu
                         modeMenu
@@ -59,6 +67,11 @@ struct IOSHeaderView: View {
                             game.toggleHelperMode()
                         }
                     }
+
+                    Toggle("High Contrast Colors", systemImage: "circle.lefthalf.filled", isOn: Binding(
+                        get: { game.highContrast },
+                        set: { game.setHighContrast($0) }
+                    ))
 
                     Menu("Keyboard Font") {
                         ForEach(KeyboardFontStyle.allCases) { style in
@@ -96,6 +109,10 @@ struct IOSHeaderView: View {
                         .frame(maxWidth: 280)
 
                     Spacer(minLength: 8)
+
+                    HeaderButton(systemImage: "calendar", label: "Today's daily puzzle", help: "Play today's Daily, the same boards for everyone") {
+                        game.startDailyGame()
+                    }
 
                     HeaderButton(systemImage: game.boardLayout == .grid ? "rectangle.split.2x2" : "rectangle.split.3x1",
                                  label: "Board layout: \(game.boardLayout.title)",

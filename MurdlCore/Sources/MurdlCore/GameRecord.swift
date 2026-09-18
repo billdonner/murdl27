@@ -14,6 +14,8 @@ public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
     /// Helper Mode was used at some point; excluded from streaks and best times.
     public var assisted = false
     public var timedOut = false
+    /// Daily puzzle number when this was a Daily; nil for practice.
+    public var daily: Int? = nil
 
     public var maxGuesses: Int { boardCount + MurdlMatch.extraGuesses }
 
@@ -31,11 +33,11 @@ public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, date, boardCount, solvedCount, guessesUsed, didWin, score, seconds, mode, assisted, timedOut
+        case id, date, boardCount, solvedCount, guessesUsed, didWin, score, seconds, mode, assisted, timedOut, daily
     }
 
     public init(date: Date, boardCount: Int, solvedCount: Int, guessesUsed: Int, didWin: Bool,
-                score: String, seconds: Int, mode: GameMode, assisted: Bool, timedOut: Bool) {
+                score: String, seconds: Int, mode: GameMode, assisted: Bool, timedOut: Bool, daily: Int? = nil) {
         self.date = date
         self.boardCount = boardCount
         self.solvedCount = solvedCount
@@ -46,9 +48,10 @@ public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
         self.mode = mode
         self.assisted = assisted
         self.timedOut = timedOut
+        self.daily = daily
     }
 
-    /// Older records predate `mode`, `assisted`, and `timedOut`.
+    /// Older records predate `mode`, `assisted`, `timedOut`, and `daily`.
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(UUID.self, forKey: .id)
@@ -62,6 +65,7 @@ public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
         mode = try c.decodeIfPresent(GameMode.self, forKey: .mode) ?? .classic
         assisted = try c.decodeIfPresent(Bool.self, forKey: .assisted) ?? false
         timedOut = try c.decodeIfPresent(Bool.self, forKey: .timedOut) ?? false
+        daily = try c.decodeIfPresent(Int.self, forKey: .daily)
     }
 }
 
@@ -74,6 +78,12 @@ public struct ScoreSummary: Sendable {
     public let bestScore: String?
     /// Fastest unassisted timed win at the given board count.
     public let bestTime: Int?
+    /// Daily puzzles at the given board count: played, won, and the run of consecutive daily
+    /// numbers won ending at the most recent one.
+    public let dailyPlayed: Int
+    public let dailyWon: Int
+    public let dailyStreak: Int
+    public let dailyBestStreak: Int
 
     public var winPercent: Int {
         played == 0 ? 0 : Int((Double(won) / Double(played) * 100).rounded())
@@ -104,6 +114,39 @@ public struct ScoreSummary: Sendable {
             .filter { $0.isHonestWin && $0.mode.isTimed && $0.boardCount == boardCount }
             .map(\.seconds)
             .min()
+
+        // One entry per daily number, newest first, first result only (a replay never counts).
+        var seen = Set<Int>()
+        let dailies = records
+            .filter { $0.daily != nil && $0.boardCount == boardCount }
+            .sorted { $0.date < $1.date }
+            .filter { seen.insert($0.daily!).inserted }
+            .sorted { $0.daily! > $1.daily! }
+        dailyPlayed = dailies.count
+        dailyWon = dailies.filter(\.isHonestWin).count
+
+        var streak = 0
+        var expected: Int?
+        for record in dailies {
+            guard record.isHonestWin, expected == nil || record.daily == expected else { break }
+            streak += 1
+            expected = record.daily! - 1
+        }
+        dailyStreak = streak
+
+        var bestDaily = 0
+        var dailyRun = 0
+        var previous: Int?
+        for record in dailies.reversed() {
+            if record.isHonestWin, previous == nil || record.daily == previous! + 1 {
+                dailyRun += 1
+            } else {
+                dailyRun = record.isHonestWin ? 1 : 0
+            }
+            bestDaily = max(bestDaily, dailyRun)
+            previous = record.daily
+        }
+        dailyBestStreak = bestDaily
     }
 }
 

@@ -35,6 +35,12 @@ enum Demo {
                 try? await Task.sleep(for: .seconds(1.5))
                 submit(game, game.boards[0].answer)
             }
+        case "daily":
+            game.setBoardCount(4)
+            game.setMode(.classic)
+            game.setHighContrast(true)
+            game.startDailyGame()
+            play(game, words: ["CRANE", "SLATE"], answersOf: [1], typing: "PO")
         case "helper":
             start(game, boards: 4, mode: .classic)
             play(game, words: ["CRANE", "STORM"], answersOf: [], typing: "")

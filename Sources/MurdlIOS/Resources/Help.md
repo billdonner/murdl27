@@ -40,6 +40,14 @@ Pick a mode from the header, or from the More menu on iPhone. Changing mode star
 
 In both timed modes the clock does not start until your first letter, so you can study the board first. It pauses while Help is open or while MURDL is in the background, and resumes when you come back.
 
+## The Daily
+
+Every day there is one Daily puzzle at each board count, and everyone who plays it gets the same answers. Start it with the calendar button on iPad or from the More menu on iPhone. Your first result is the one that counts in Scores, where Daily games keep their own streak, and the share text says which Daily you played. Practice games, started with New Game, use fresh random answers and never affect the Daily streak.
+
+## High contrast colors
+
+If green and orange are hard to tell apart, turn on High Contrast Colors in the More menu. Correct letters become orange with a check mark, misplaced letters blue with an arrow, so color is never the only signal. The setting is remembered.
+
 ## Starting words
 
 Good openers cover many different common letters. These sequences are accepted by the dictionary and score well on multi-board play; play them in order, then switch to solving.

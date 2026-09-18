@@ -78,7 +78,17 @@ struct KeyboardLetterButton: View {
         .foregroundStyle(MurdlPalette.keyText(for: mark))
         .background(MurdlPalette.keyFill(for: mark), in: RoundedRectangle(cornerRadius: 5))
         .accessibilityLabel("Letter \(letter)")
+        .accessibilityValue(accessibilityState)
         .help("Type \(letter). Keyboard font: \(fontTitle)")
+    }
+
+    private var accessibilityState: String {
+        switch mark {
+        case .empty, .editing: return "unused"
+        case .absent: return "not in any word"
+        case .present: return "in a word, wrong place"
+        case .correct: return "placed correctly"
+        }
     }
 }
 

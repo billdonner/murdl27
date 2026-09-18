@@ -27,6 +27,8 @@ struct ScoresView: View {
                 ("Best Streak", "\(summary.bestStreak)"),
                 ("Best Score", summary.bestScore ?? "–"),
                 ("Best Time (\(game.boardCount))", summary.bestTime.map { GameClock.format(TimeInterval($0)) } ?? "–"),
+                ("Daily Streak (\(game.boardCount))", "\(summary.dailyStreak)"),
+                ("Dailies Won (\(game.boardCount))", "\(summary.dailyWon)/\(summary.dailyPlayed)"),
             ]
             if isCompact {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 96), alignment: .leading)], alignment: .leading, spacing: 10) {
@@ -62,7 +64,7 @@ struct ScoresView: View {
                         }
                         .font(.body.weight(.semibold))
                         HStack {
-                            Text("\(record.boardCount) \(record.boardCount == 1 ? "board" : "boards")  \(record.mode.title)")
+                            Text("\(record.daily.map { "Daily #\($0)  " } ?? "")\(record.boardCount) \(record.boardCount == 1 ? "board" : "boards")  \(record.mode.title)")
                             Spacer()
                             Text("\(record.score)  \(record.guessesUsed)/\(record.maxGuesses)  \(record.timeText)")
                                 .font(.system(.subheadline, design: .monospaced))
@@ -99,6 +101,10 @@ struct ScoresView: View {
                     Text("\(record.boardCount)")
                 }
                 .width(50)
+                TableColumn("Daily") { record in
+                    Text(record.daily.map { "#\($0)" } ?? "")
+                }
+                .width(60)
                 TableColumn("Mode") { record in
                     Text(record.mode.title)
                 }

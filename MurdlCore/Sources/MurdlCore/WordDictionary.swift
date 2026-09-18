@@ -34,6 +34,15 @@ public struct WordDictionary: Sendable {
         allowedWords.contains(Self.normalize(word))
     }
 
+    /// Deterministic pick: the same seed and count always give the same answers, in the same
+    /// order, on every device. Answers are sorted first so the file order does not matter.
+    public func answers(seed: UInt64, count: Int) -> [String] {
+        var generator = SeededGenerator(seed: seed)
+        let shuffled = answerWords.sorted().shuffled(using: &generator)
+        guard !shuffled.isEmpty else { return Array(repeating: "adieu", count: count) }
+        return (0..<count).map { shuffled[$0 % shuffled.count] }
+    }
+
     public func randomAnswers(count: Int) -> [String] {
         let shuffled = answerWords.shuffled()
         if shuffled.count >= count {

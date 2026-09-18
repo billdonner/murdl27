@@ -6,17 +6,18 @@ extension MurdlMatch {
     /// `note` is an extra line under the headline, such as the mode and clock.
     public var shareText: String { shareText(note: nil) }
 
-    public func shareText(note: String?) -> String {
+    /// `title` replaces the leading "MURDL", for example "MURDL Daily #12".
+    public func shareText(note: String?, title: String = "MURDL") -> String {
         var lines: [String] = []
         let noun = boardCount == 1 ? "board" : "boards"
         if isOver {
             let outcome = didWin ? "Solved all \(boardCount)" : "Solved \(solvedCount) of \(boardCount)"
-            lines.append("MURDL \(boardCount) \(noun): \(outcome) in \(currentRow)/\(maxGuesses) guesses")
+            lines.append("\(title) \(boardCount) \(noun): \(outcome) in \(currentRow)/\(maxGuesses) guesses")
             if !scoreText.isEmpty {
                 lines.append("Score \(scoreText)")
             }
         } else {
-            lines.append("MURDL \(boardCount) \(noun): \(solvedCount) solved, \(guessesRemaining) of \(maxGuesses) guesses left")
+            lines.append("\(title) \(boardCount) \(noun): \(solvedCount) solved, \(guessesRemaining) of \(maxGuesses) guesses left")
         }
         if let note, !note.isEmpty {
             lines.append(note)

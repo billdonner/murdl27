@@ -56,6 +56,12 @@ struct MurdlApp: App {
                 .keyboardShortcut("n", modifiers: [.command])
                 .disabled(game.isShowingHelp)
 
+                Button("Today's Daily") {
+                    game.startDailyGame()
+                }
+                .keyboardShortcut("d", modifiers: [.command])
+                .disabled(game.isShowingHelp)
+
                 Menu("Boards") {
                     ForEach(Array(MurdlGame.boardCountOptions.enumerated()), id: \.element) { index, count in
                         Toggle("\(count) \(count == 1 ? "Board" : "Boards"), \(count + MurdlGame.extraGuesses) Guesses", isOn: Binding(
@@ -156,6 +162,11 @@ struct MurdlApp: App {
                     game.toggleBoardLayout()
                 }
                 .keyboardShortcut("l", modifiers: [.command])
+
+                Toggle("High Contrast Colors", isOn: Binding(
+                    get: { game.highContrast },
+                    set: { game.setHighContrast($0) }
+                ))
 
                 Menu("Keyboard Font") {
                     ForEach(Array(KeyboardFontStyle.allCases.enumerated()), id: \.element) { index, style in

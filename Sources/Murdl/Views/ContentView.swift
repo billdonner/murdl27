@@ -509,16 +509,22 @@ struct BoardGridView: View {
                         ForEach(chunks.indices, id: \.self) { rowIndex in
                             HStack(alignment: .top, spacing: Self.boardSpacing) {
                                 ForEach(chunks[rowIndex]) { board in
-                                    GameBoardView(
-                                        boardID: board.id,
-                                        rows: game.visibleRows(for: board),
-                                        status: game.status(for: board),
-                                        isFinished: board.isFinished,
-                                        isHelperTarget: game.helperFocusBoardID == board.id,
-                                        isFocused: game.focusedBoardID == board.id,
-                                        tileSize: layout.tile,
-                                        highContrast: game.highContrast
-                                    )
+                                    Group {
+                                        if game.isBoardVisible(board.id) {
+                                            GameBoardView(
+                                                boardID: board.id,
+                                                rows: game.visibleRows(for: board),
+                                                status: game.status(for: board),
+                                                isFinished: board.isFinished,
+                                                isHelperTarget: game.helperFocusBoardID == board.id,
+                                                isFocused: game.focusedBoardID == board.id,
+                                                tileSize: layout.tile,
+                                                highContrast: game.highContrast
+                                            )
+                                        } else {
+                                            HiddenBoardView(boardID: board.id, guesses: game.maxGuesses, tileSize: layout.tile)
+                                        }
+                                    }
                                     .id(board.id)
                                     .onTapGesture {
                                         // A tapped board is already on screen; only key navigation scrolls.
@@ -549,6 +555,42 @@ struct BoardGridView: View {
                 }
             }
         }
+    }
+}
+
+/// A board that Sequence has not revealed yet: same footprint, no letters.
+struct HiddenBoardView: View {
+    let boardID: Int
+    let guesses: Int
+    let tileSize: CGFloat
+    private var accent: Color { MurdlPalette.boardAccent(boardID) }
+
+    var body: some View {
+        let width = tileSize * CGFloat(MurdlGame.wordLength) + 3 * CGFloat(MurdlGame.wordLength - 1)
+        let height = tileSize * CGFloat(guesses) + 3 * CGFloat(guesses - 1) + (tileSize < 26 ? 4 : 6) + 22
+        VStack(spacing: 6) {
+            Image(systemName: "lock.fill")
+                .font(.system(size: max(12, tileSize * 0.6), weight: .bold))
+            Text("Board \(boardID + 1)")
+                .font(.system(size: max(10, tileSize * 0.36), weight: .heavy, design: .rounded))
+            if tileSize >= 26 {
+                Text("Solve the boards before it")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .foregroundStyle(accent.opacity(0.8))
+        .frame(width: width, height: height)
+        .padding(7)
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(accent.opacity(0.10))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(accent.opacity(0.45), style: StrokeStyle(lineWidth: 1, dash: [6, 4]))
+        }
+        .accessibilityLabel("Board \(boardID + 1), hidden until the boards before it are solved")
     }
 }
 

@@ -40,6 +40,19 @@ Pick a mode from the header, or from the More menu on iPhone. Changing mode star
 
 In both timed modes the clock does not start until your first letter, so you can study the board first. It pauses while Help is open or while MURDL is in the background, and resumes when you come back.
 
+## Sequence and Rescue
+
+Standard play shows every board from the start. Two variants change the deal, chosen from the More menu:
+
+- Sequence reveals one board at a time. Only the first unsolved board is on screen; the others are locked until you solve it. Every guess still plays on every board, and the extra guesses, one more per four boards, make up for playing the later boards blind.
+- Rescue plays strong openers for you, CRANE and SLOTH for one or two boards, CHIMP, ROBED, and SLANT above that, and hands you the rest. The clock does not start until you type.
+
+Both work with the Daily and with every clock mode, and Scores notes the variant.
+
+## Scores on every device
+
+Finished games sync through iCloud to every Mac, iPad, and iPhone signed into the same account, with nothing to set up. Games played offline merge when the device is back online. Clear removes the records everywhere.
+
 ## The Daily
 
 Every day there is one Daily puzzle at each board count, and everyone who plays it gets the same answers. Start it with the calendar button on iPad or from the More menu on iPhone. Your first result is the one that counts in Scores, where Daily games keep their own streak, and the share text says which Daily you played. Practice games, started with New Game, use fresh random answers and never affect the Daily streak.

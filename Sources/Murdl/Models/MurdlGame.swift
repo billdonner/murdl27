@@ -18,6 +18,7 @@ final class MurdlGame: ObservableObject {
     private static let boardLayoutDefaultsKey = "MurdlBoardLayout"
     private static let gameModeDefaultsKey = "MurdlGameMode"
     private static let highContrastDefaultsKey = "MurdlHighContrast"
+    private static let variantDefaultsKey = "MurdlVariant"
 
     @Published private(set) var match: MurdlMatch
     @Published private(set) var currentGuess = ""
@@ -29,6 +30,7 @@ final class MurdlGame: ObservableObject {
     @Published private(set) var keyboardFontStyle: KeyboardFontStyle
     @Published private(set) var boardLayout: BoardLayout
     @Published private(set) var mode: GameMode
+    @Published private(set) var variant: GameVariant
     @Published private(set) var records: [GameRecord] = ScoreStore.load()
     @Published private(set) var clock = GameClock()
     /// Advances a few times a second while the clock runs so time labels refresh.
@@ -48,6 +50,7 @@ final class MurdlGame: ObservableObject {
     private var ticker: Timer?
     private var pausedForHelp = false
     private var pausedForBackground = false
+    private var sync: ScoreSync?
 
     init(dictionary: WordDictionary = .bundled) {
         self.dictionary = dictionary
@@ -58,10 +61,19 @@ final class MurdlGame: ObservableObject {
         let contrast = defaults.bool(forKey: Self.highContrastDefaultsKey)
         highContrast = contrast
         MurdlPalette.highContrast = contrast
+        variant = defaults.string(forKey: Self.variantDefaultsKey).flatMap(GameVariant.init) ?? .standard
         let savedCount = defaults.integer(forKey: Self.boardCountDefaultsKey)
         let boardCount = Self.boardCountOptions.contains(savedCount) ? savedCount : Self.defaultBoardCount
         match = MurdlMatch(boardCount: boardCount, dictionary: dictionary)
         startNewGame()
+        // iCloud: merge what other devices recorded, and keep listening.
+        let sync = ScoreSync { [weak self] merged in
+            self?.records = merged
+            ScoreStore.save(merged)
+        }
+        self.sync = sync
+        records = sync.merged(with: records)
+        ScoreStore.save(records)
     }
 
     /// The app reports when it leaves and returns to the foreground; timed games pause meanwhile.
@@ -103,6 +115,7 @@ final class MurdlGame: ObservableObject {
         case .sprint: notes.append("Sprint, \(GameClock.format(sprintRemaining)) left")
         }
         if assisted { notes.append("assisted") }
+        if variant != .standard { notes.insert(variant.title, at: 0) }
         let title = dailyNumber.map { "MURDL Daily #\($0)" } ?? "MURDL"
         return match.shareText(note: notes.joined(separator: ", "), title: title)
     }
@@ -111,11 +124,20 @@ final class MurdlGame: ObservableObject {
         ScoreSummary(records: records, boardCount: boardCount)
     }
 
-    /// "8 boards  13 guesses", with the Daily number in front while playing one.
+    /// "8 boards  13 guesses", with the Daily number and any variant in front.
     var subtitle: String {
-        let counts = "\(boardCount) \(boardCount == 1 ? "board" : "boards")  \(maxGuesses) guesses"
-        if let dailyNumber { return "Daily #\(dailyNumber)  \(counts)" }
-        return counts
+        var parts: [String] = []
+        if let dailyNumber { parts.append("Daily #\(dailyNumber)") }
+        if variant != .standard { parts.append(variant.title) }
+        parts.append("\(boardCount) \(boardCount == 1 ? "board" : "boards")  \(maxGuesses) guesses")
+        return parts.joined(separator: "  ")
+    }
+
+    /// Sequence hides every board past the first unfinished one; the others are always visible.
+    func isBoardVisible(_ id: Int) -> Bool {
+        guard variant == .sequence else { return true }
+        let frontier = match.nextUnfinishedBoard?.id ?? boards.count - 1
+        return id <= frontier
     }
 
     /// Today's Daily number, whether or not it is being played.
@@ -131,8 +153,9 @@ final class MurdlGame: ObservableObject {
     /// Practice: fresh random answers.
     func startNewGame() {
         dailyNumber = nil
-        match = MurdlMatch(boardCount: boardCount, dictionary: dictionary)
+        match = MurdlMatch(boardCount: boardCount, extraGuesses: variant.extraGuesses(boards: boardCount), dictionary: dictionary)
         reset(status: "Ready")
+        playOpeners()
     }
 
     /// Today's Daily at the current board count: the same answers for everyone. A replay is
@@ -140,12 +163,35 @@ final class MurdlGame: ObservableObject {
     func startDailyGame() {
         let number = todaysDailyNumber
         dailyNumber = number
-        match = MurdlMatch(answers: DailyPuzzle.answers(number: number, boardCount: boardCount, from: dictionary), dictionary: dictionary)
+        match = MurdlMatch(answers: DailyPuzzle.answers(number: number, boardCount: boardCount, from: dictionary),
+                           extraGuesses: variant.extraGuesses(boards: boardCount), dictionary: dictionary)
         if let done = todaysDailyRecord {
             reset(status: "Daily #\(number) again. First result: \(done.resultText) \(done.score)")
         } else {
             reset(status: "Daily #\(number)")
         }
+        playOpeners()
+    }
+
+    /// Rescue: the openers go in before the clock starts, so the player takes over mid-game.
+    private func playOpeners() {
+        let openers = variant.openers(boards: boardCount)
+        guard !openers.isEmpty else { return }
+        for word in openers where !isOver {
+            match.play(word: word)
+        }
+        if isOver {
+            recordFinishedGame()
+        } else {
+            statusText = "Rescue: \(openers.map { $0.uppercased() }.joined(separator: ", ")) played. \(guessesRemaining) guesses left"
+        }
+    }
+
+    func setVariant(_ newVariant: GameVariant) {
+        guard newVariant != variant else { return }
+        variant = newVariant
+        UserDefaults.standard.set(newVariant.rawValue, forKey: Self.variantDefaultsKey)
+        restart()
     }
 
     /// New answers for the current kind of game, Daily or practice.
@@ -270,15 +316,19 @@ final class MurdlGame: ObservableObject {
             mode: mode,
             assisted: assisted,
             timedOut: timedOut,
-            daily: dailyNumber
+            daily: dailyNumber,
+            variant: variant
         )
         records.insert(record, at: 0)
         ScoreStore.save(records)
+        sync?.push(records)
     }
 
     func clearRecords() {
         records = []
+        ScoreStore.markCleared()
         ScoreStore.save(records)
+        sync?.push(records)
     }
 
     // MARK: Help

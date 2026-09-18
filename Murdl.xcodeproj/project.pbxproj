@@ -31,9 +31,11 @@
 		936DC77993E3F7A5BC27238C /* IOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8133818ED19A39BAB9884C /* IOSRootView.swift */; };
 		95EA0C680CC272DCBADA22C6 /* MurdlPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843694FE9F154C3AC3325A81 /* MurdlPalette.swift */; };
 		968367D985E0B5E0EECF4EE2 /* MurdlCore in Frameworks */ = {isa = PBXBuildFile; productRef = 503FA5BE16B8E4C7562D36DA /* MurdlCore */; };
+		9E5700BE027924CEBFAB36E9 /* ScoreSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51B708A950827AEB1C61B71 /* ScoreSync.swift */; };
 		A395D05BC21EEA1F2DC45E50 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */; };
 		A59D006AE219A420BB657434 /* KeyCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1F63AC1979CBD1FDB08CAE /* KeyCapture.swift */; };
 		A7D83AF007BA7B4C682C2B33 /* Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9E46407A4354611CDA06D /* Demo.swift */; };
+		B2A9A2F579B0F5BE1B73B90C /* ScoreSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51B708A950827AEB1C61B71 /* ScoreSync.swift */; };
 		D0F12C61BBC50BFA947215EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AF087AC77FA60C9648F1F1E /* Assets.xcassets */; };
 		DF3CE55F37F59AE9ADA38528 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */; };
 /* End PBXBuildFile section */
@@ -61,8 +63,10 @@
 		A5E9E46407A4354611CDA06D /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		A906AE2E6D46B6006E5CE70C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BC8133818ED19A39BAB9884C /* IOSRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSRootView.swift; sourceTree = "<group>"; };
+		CFBDB115B79C99CBDF6FB6EF /* MurdlIOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MurdlIOS.entitlements; sourceTree = "<group>"; };
 		D134B08F1ED6B6E095972C7C /* MurdlGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlGame.swift; sourceTree = "<group>"; };
 		EAC97DA1AFF1DAB7D79F5488 /* BottomKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomKeyboardView.swift; sourceTree = "<group>"; };
+		F51B708A950827AEB1C61B71 /* ScoreSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreSync.swift; sourceTree = "<group>"; };
 		FBD74DD6C6150E645F5DB2AE /* MurdlCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MurdlCore; path = MurdlCore; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -100,6 +104,7 @@
 			children = (
 				A5E9E46407A4354611CDA06D /* Demo.swift */,
 				851021F4FA44543CD28C4C39 /* Info.plist */,
+				CFBDB115B79C99CBDF6FB6EF /* MurdlIOS.entitlements */,
 				29D98B328860A92616C1CFB8 /* MurdlIOSApp.swift */,
 			);
 			path = App;
@@ -131,6 +136,7 @@
 				029F89112C717E3A73416FBE /* BoardLayout.swift */,
 				20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */,
 				D134B08F1ED6B6E095972C7C /* MurdlGame.swift */,
+				F51B708A950827AEB1C61B71 /* ScoreSync.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -337,6 +343,7 @@
 				5B2B9659AAD3466CFBFA5B99 /* MurdlIOSApp.swift in Sources */,
 				3098552473DAF65EC27971C1 /* MurdlPalette.swift in Sources */,
 				7A1AB3B96A737067E9EDC651 /* PagedBoardsView.swift in Sources */,
+				B2A9A2F579B0F5BE1B73B90C /* ScoreSync.swift in Sources */,
 				77FE597672A4AED93712100C /* ScoresView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -353,6 +360,7 @@
 				931B5468BCDE3666BCE0C687 /* MurdlApp.swift in Sources */,
 				6679E6BCFEC44BCB85CBC27A /* MurdlGame.swift in Sources */,
 				95EA0C680CC272DCBADA22C6 /* MurdlPalette.swift in Sources */,
+				9E5700BE027924CEBFAB36E9 /* ScoreSync.swift in Sources */,
 				5691F7E1BAB92E215B2B0A33 /* ScoresView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -390,6 +398,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Sources/MurdlIOS/App/MurdlIOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 10;
@@ -415,6 +424,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = MURDLAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Sources/MurdlIOS/App/MurdlIOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 10;

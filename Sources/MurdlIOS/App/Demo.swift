@@ -41,6 +41,17 @@ enum Demo {
             game.setHighContrast(true)
             game.startDailyGame()
             play(game, words: ["CRANE", "SLATE"], answersOf: [1], typing: "PO")
+        case "sequence":
+            game.setBoardCount(4)
+            game.setMode(.classic)
+            game.setVariant(.sequence)
+            game.startNewGame()
+            play(game, words: ["CRANE", "SLATE"], answersOf: [0], typing: "PO")
+        case "rescue":
+            game.setBoardCount(8)
+            game.setMode(.classic)
+            game.setVariant(.rescue)
+            game.startNewGame()
         case "helper":
             start(game, boards: 4, mode: .classic)
             play(game, words: ["CRANE", "STORM"], answersOf: [], typing: "")

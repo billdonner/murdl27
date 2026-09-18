@@ -84,6 +84,16 @@ struct MurdlApp: App {
                 }
                 .disabled(game.isShowingHelp)
 
+                Menu("Variant") {
+                    ForEach(GameVariant.allCases) { variant in
+                        Toggle(variant.title, isOn: Binding(
+                            get: { game.variant == variant },
+                            set: { if $0 { game.setVariant(variant) } }
+                        ))
+                    }
+                }
+                .disabled(game.isShowingHelp)
+
                 Divider()
 
                 Button("Copy Board as Text") {

@@ -25,6 +25,10 @@ targets:
         buildPhase: resources
     dependencies:
       - package: MurdlCore
+    entitlements:
+      path: Sources/MurdlIOS/App/MurdlIOS.entitlements
+      properties:
+        com.apple.developer.ubiquity-kvstore-identifier: $(TeamIdentifierPrefix)$(CFBundleIdentifier)
     settings:
       base:
         CODE_SIGN_STYLE: Automatic
@@ -75,6 +79,7 @@ targets:
       path: Sources/Murdl/App/Murdl.entitlements
       properties:
         com.apple.security.app-sandbox: true
+        com.apple.developer.ubiquity-kvstore-identifier: $(TeamIdentifierPrefix)$(CFBundleIdentifier)
     settings:
       base:
         ENABLE_HARDENED_RUNTIME: YES

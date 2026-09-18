@@ -53,6 +53,8 @@ struct ScoresView: View {
                 }
             }
 
+            GuessDistributionView(distribution: summary.distribution, maxGuesses: game.maxGuesses, boardCount: game.boardCount)
+
             if isCompact {
                 List(game.records) { record in
                     VStack(alignment: .leading, spacing: 3) {
@@ -64,7 +66,7 @@ struct ScoresView: View {
                         }
                         .font(.body.weight(.semibold))
                         HStack {
-                            Text("\(record.daily.map { "Daily #\($0)  " } ?? "")\(record.boardCount) \(record.boardCount == 1 ? "board" : "boards")  \(record.mode.title)")
+                            Text("\(record.daily.map { "Daily #\($0)  " } ?? "")\(record.boardCount) \(record.boardCount == 1 ? "board" : "boards")  \(record.mode.title)\(record.variant == .standard ? "" : "  \(record.variant.title)")")
                             Spacer()
                             Text("\(record.score)  \(record.guessesUsed)/\(record.maxGuesses)  \(record.timeText)")
                                 .font(.system(.subheadline, design: .monospaced))
@@ -106,9 +108,9 @@ struct ScoresView: View {
                 }
                 .width(60)
                 TableColumn("Mode") { record in
-                    Text(record.mode.title)
+                    Text(record.variant == .standard ? record.mode.title : "\(record.mode.title), \(record.variant.title)")
                 }
-                .width(min: 70, ideal: 80)
+                .width(min: 70, ideal: 120)
                 TableColumn("Result") { record in
                     Text(record.resultText)
                         .foregroundStyle(record.isHonestWin ? MurdlPalette.correct : .secondary)
@@ -134,6 +136,48 @@ struct ScoresView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+    }
+}
+
+/// Wins at the current board count by guesses used, Wordle-style. Empty rows stay so the shape reads.
+private struct GuessDistributionView: View {
+    let distribution: [Int: Int]
+    let maxGuesses: Int
+    let boardCount: Int
+
+    var body: some View {
+        let peak = max(1, distribution.values.max() ?? 1)
+        let rows = Array(1...maxGuesses)
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Guess distribution (\(boardCount) \(boardCount == 1 ? "board" : "boards"))")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            ForEach(rows, id: \.self) { guesses in
+                let count = distribution[guesses] ?? 0
+                HStack(spacing: 6) {
+                    Text("\(guesses)")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .frame(width: 22, alignment: .trailing)
+                        .foregroundStyle(.secondary)
+                    GeometryReader { proxy in
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(count == 0 ? MurdlPalette.divider : MurdlPalette.correct)
+                            .frame(width: max(count == 0 ? 6 : 22, proxy.size.width * CGFloat(count) / CGFloat(peak)))
+                            .overlay(alignment: .trailing) {
+                                if count > 0 {
+                                    Text("\(count)")
+                                        .font(.system(size: 11, weight: .heavy, design: .rounded))
+                                        .foregroundStyle(.white)
+                                        .padding(.trailing, 5)
+                                }
+                            }
+                    }
+                    .frame(height: 14)
+                }
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(rows.map { "\($0) guesses: \(distribution[$0] ?? 0)" }.joined(separator: ", "))
     }
 }
 

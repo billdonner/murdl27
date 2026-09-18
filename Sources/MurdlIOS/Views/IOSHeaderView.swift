@@ -59,8 +59,9 @@ struct IOSHeaderView: View {
                     if isCompact {
                         boardsMenu
                         modeMenu
-                        Divider()
                     }
+                    variantMenu
+                    Divider()
 
                     Button(game.isHelperMode ? "Turn Off Helper Mode" : "Turn On Helper Mode", systemImage: "sparkles") {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
@@ -170,6 +171,20 @@ struct IOSHeaderView: View {
                     get: { game.boardCount == count },
                     set: { if $0 { game.setBoardCount(count) } }
                 ))
+            }
+        }
+    }
+
+    private var variantMenu: some View {
+        Menu("Variant: \(game.variant.title)", systemImage: "square.stack.3d.up") {
+            ForEach(GameVariant.allCases) { variant in
+                Toggle(isOn: Binding(
+                    get: { game.variant == variant },
+                    set: { if $0 { game.setVariant(variant) } }
+                )) {
+                    Text(variant.title)
+                    Text(variant.summary)
+                }
             }
         }
     }

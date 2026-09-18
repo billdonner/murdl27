@@ -78,7 +78,16 @@ struct PagedBoardsView: View {
         game.boards.filter(\.isFinished).count
     }
 
+    @ViewBuilder
     private func boardView(_ board: MurdlBoard, tile: CGFloat) -> some View {
+        if game.isBoardVisible(board.id) {
+            revealedBoardView(board, tile: tile)
+        } else {
+            HiddenBoardView(boardID: board.id, guesses: game.maxGuesses, tileSize: tile)
+        }
+    }
+
+    private func revealedBoardView(_ board: MurdlBoard, tile: CGFloat) -> some View {
         let celebrating = celebratingBoardID == board.id
         return GameBoardView(
             boardID: board.id,
@@ -207,6 +216,7 @@ struct BoardSwitcherStrip: View {
                     ForEach(game.boards) { board in
                         let accent = MurdlPalette.boardAccent(board.id)
                         let isCurrent = game.focusedBoardID == board.id
+                        let hidden = !game.isBoardVisible(board.id)
                         Button {
                             withAnimation(.easeInOut(duration: 0.25)) { game.focusBoard(board.id) }
                         } label: {
@@ -216,6 +226,7 @@ struct BoardSwitcherStrip: View {
                                 .frame(minWidth: 36, minHeight: 36)
                                 .background(fill(for: board, accent: accent, isCurrent: isCurrent), in: Capsule())
                                 .overlay(Capsule().stroke(accent, lineWidth: isCurrent ? 2.5 : 1))
+                                .opacity(hidden ? 0.35 : 1)
                         }
                         .buttonStyle(.plain)
                         .id(board.id)

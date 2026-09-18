@@ -23,20 +23,22 @@ public struct MurdlMatch: Equatable, Sendable {
     public static let extraGuesses = 5
 
     public let boardCount: Int
+    public let maxGuesses: Int
     public private(set) var boards: [MurdlBoard]
     public private(set) var currentRow = 0
     public private(set) var keyMarks: [String: TileMark] = [:]
     private let dictionary: WordDictionary
 
-    public init(boardCount: Int, dictionary: WordDictionary = .bundled) {
-        self.init(answers: dictionary.randomAnswers(count: boardCount), dictionary: dictionary)
+    public init(boardCount: Int, extraGuesses: Int = MurdlMatch.extraGuesses, dictionary: WordDictionary = .bundled) {
+        self.init(answers: dictionary.randomAnswers(count: boardCount), extraGuesses: extraGuesses, dictionary: dictionary)
     }
 
-    /// Fixed answers, for tests and shared daily games.
-    public init(answers: [String], dictionary: WordDictionary = .bundled) {
+    /// Fixed answers, for tests and shared daily games. `extraGuesses` lets a variant widen the budget.
+    public init(answers: [String], extraGuesses: Int = MurdlMatch.extraGuesses, dictionary: WordDictionary = .bundled) {
         self.boardCount = answers.count
         self.dictionary = dictionary
-        let guesses = answers.count + Self.extraGuesses
+        let guesses = answers.count + extraGuesses
+        maxGuesses = guesses
         boards = answers.enumerated().map { index, answer in
             MurdlBoard(
                 id: index,
@@ -46,7 +48,6 @@ public struct MurdlMatch: Equatable, Sendable {
         }
     }
 
-    public var maxGuesses: Int { boardCount + Self.extraGuesses }
     public var isOver: Bool { boards.allSatisfy(\.isFinished) }
     public var didWin: Bool { boards.allSatisfy(\.isSolved) }
     public var guessesRemaining: Int { max(0, maxGuesses - currentRow) }

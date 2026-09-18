@@ -16,8 +16,9 @@ public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
     public var timedOut = false
     /// Daily puzzle number when this was a Daily; nil for practice.
     public var daily: Int? = nil
+    public var variant: GameVariant = .standard
 
-    public var maxGuesses: Int { boardCount + MurdlMatch.extraGuesses }
+    public var maxGuesses: Int { boardCount + variant.extraGuesses(boards: boardCount) }
 
     /// Counts toward wins, streaks, and best times.
     public var isHonestWin: Bool { didWin && !assisted }
@@ -33,11 +34,12 @@ public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, date, boardCount, solvedCount, guessesUsed, didWin, score, seconds, mode, assisted, timedOut, daily
+        case id, date, boardCount, solvedCount, guessesUsed, didWin, score, seconds, mode, assisted, timedOut, daily, variant
     }
 
     public init(date: Date, boardCount: Int, solvedCount: Int, guessesUsed: Int, didWin: Bool,
-                score: String, seconds: Int, mode: GameMode, assisted: Bool, timedOut: Bool, daily: Int? = nil) {
+                score: String, seconds: Int, mode: GameMode, assisted: Bool, timedOut: Bool,
+                daily: Int? = nil, variant: GameVariant = .standard) {
         self.date = date
         self.boardCount = boardCount
         self.solvedCount = solvedCount
@@ -49,6 +51,7 @@ public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
         self.assisted = assisted
         self.timedOut = timedOut
         self.daily = daily
+        self.variant = variant
     }
 
     /// Older records predate `mode`, `assisted`, `timedOut`, and `daily`.
@@ -66,6 +69,7 @@ public struct GameRecord: Codable, Identifiable, Equatable, Sendable {
         assisted = try c.decodeIfPresent(Bool.self, forKey: .assisted) ?? false
         timedOut = try c.decodeIfPresent(Bool.self, forKey: .timedOut) ?? false
         daily = try c.decodeIfPresent(Int.self, forKey: .daily)
+        variant = try c.decodeIfPresent(GameVariant.self, forKey: .variant) ?? .standard
     }
 }
 
@@ -84,6 +88,8 @@ public struct ScoreSummary: Sendable {
     public let dailyWon: Int
     public let dailyStreak: Int
     public let dailyBestStreak: Int
+    /// Unassisted wins at the given board count, keyed by guesses used.
+    public let distribution: [Int: Int]
 
     public var winPercent: Int {
         played == 0 ? 0 : Int((Double(won) / Double(played) * 100).rounded())
@@ -147,11 +153,47 @@ public struct ScoreSummary: Sendable {
             previous = record.daily
         }
         dailyBestStreak = bestDaily
+
+        var counts: [Int: Int] = [:]
+        for record in records where record.isHonestWin && record.boardCount == boardCount {
+            counts[record.guessesUsed, default: 0] += 1
+        }
+        distribution = counts
     }
 }
 
 public enum ScoreStore {
     private static let key = "MurdlGameRecords"
+    private static let clearedKey = "MurdlGameRecordsClearedAt"
+    /// Cloud key-value storage allows about a megabyte; this keeps the synced copy well under it.
+    public static let syncLimit = 1500
+
+    /// When Clear was last pressed on any device. Records dated before it stay gone everywhere.
+    public static func clearedAt(from defaults: UserDefaults = .standard) -> Date? {
+        defaults.object(forKey: clearedKey) as? Date
+    }
+
+    public static func markCleared(at date: Date = Date(), in defaults: UserDefaults = .standard) {
+        defaults.set(date, forKey: clearedKey)
+    }
+
+    /// Union by id, newest first, dropping anything a Clear on either side has retired.
+    public static func merge(_ local: [GameRecord], _ remote: [GameRecord], clearedAt: Date?) -> [GameRecord] {
+        var byID: [UUID: GameRecord] = [:]
+        for record in local + remote where clearedAt.map({ record.date > $0 }) ?? true {
+            byID[record.id] = record
+        }
+        return byID.values.sorted { $0.date > $1.date }
+    }
+
+    public static func encode(_ records: [GameRecord]) -> Data? {
+        try? JSONEncoder().encode(Array(records.prefix(syncLimit)))
+    }
+
+    public static func decode(_ data: Data?) -> [GameRecord] {
+        guard let data, let records = try? JSONDecoder().decode([GameRecord].self, from: data) else { return [] }
+        return records
+    }
 
     public static func load(from defaults: UserDefaults = .standard) -> [GameRecord] {
         guard let data = defaults.data(forKey: key),

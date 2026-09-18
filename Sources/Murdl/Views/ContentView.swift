@@ -63,7 +63,7 @@ struct HeaderView: View {
                 Text("MURDL")
                     .font(.system(size: 34, weight: .black, design: .rounded))
                     .foregroundStyle(MurdlPalette.titleGradient)
-                Text("\(game.boardCount) boards  \(game.maxGuesses) guesses")
+                Text("\(game.boardCount) \(game.boardCount == 1 ? "board" : "boards")  \(game.maxGuesses) guesses")
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(.secondary)
             }

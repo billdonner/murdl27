@@ -58,7 +58,7 @@ struct MurdlApp: App {
 
                 Menu("Boards") {
                     ForEach(Array(MurdlGame.boardCountOptions.enumerated()), id: \.element) { index, count in
-                        Toggle("\(count) Boards, \(count + MurdlGame.extraGuesses) Guesses", isOn: Binding(
+                        Toggle("\(count) \(count == 1 ? "Board" : "Boards"), \(count + MurdlGame.extraGuesses) Guesses", isOn: Binding(
                             get: { game.boardCount == count },
                             set: { if $0 { game.setBoardCount(count) } }
                         ))

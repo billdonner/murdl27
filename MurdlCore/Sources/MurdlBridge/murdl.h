@@ -15,7 +15,7 @@ typedef void *murdl_match;
 
 int32_t murdl_version(void);
 
-murdl_match murdl_match_new(int32_t board_count);                      /* 2, 4, 8, or 16; NULL otherwise */
+murdl_match murdl_match_new(int32_t board_count);                      /* 1, 2, 4, 8, or 16; NULL otherwise */
 murdl_match murdl_match_new_with_answers(const char *comma_separated); /* fixed answers, e.g. "crane,slate" */
 void murdl_match_free(murdl_match match);
 

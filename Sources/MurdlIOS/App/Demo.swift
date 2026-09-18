@@ -12,6 +12,9 @@ enum Demo {
     static func run(game: MurdlGame, showScores: @escaping () -> Void) {
         guard let scenario else { return }
         switch scenario {
+        case "one":
+            start(game, boards: 1, mode: .classic)
+            play(game, words: ["CRANE", "SLATE"], answersOf: [], typing: "PO")
         case "eight":
             start(game, boards: 8, mode: .classic)
             play(game, words: ["CRANE", "SLATE", "POINT"], answersOf: [1, 4, 6], typing: "STO")

@@ -17,7 +17,7 @@ public struct PlayResult: Equatable, Sendable {
 /// them. No timers, no persistence, no UI state. Front ends on any platform drive this.
 public struct MurdlMatch: Equatable, Sendable {
     public static let wordLength = 5
-    public static let boardCountOptions = [2, 4, 8, 16]
+    public static let boardCountOptions = [1, 2, 4, 8, 16]
     public static let defaultBoardCount = 8
     /// Classic MURDL gives five more guesses than boards: 8 boards, 13 guesses.
     public static let extraGuesses = 5

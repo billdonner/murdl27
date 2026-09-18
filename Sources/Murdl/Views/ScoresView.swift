@@ -62,7 +62,7 @@ struct ScoresView: View {
                         }
                         .font(.body.weight(.semibold))
                         HStack {
-                            Text("\(record.boardCount) boards  \(record.mode.title)")
+                            Text("\(record.boardCount) \(record.boardCount == 1 ? "board" : "boards")  \(record.mode.title)")
                             Spacer()
                             Text("\(record.score)  \(record.guessesUsed)/\(record.maxGuesses)  \(record.timeText)")
                                 .font(.system(.subheadline, design: .monospaced))

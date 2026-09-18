@@ -10,13 +10,13 @@ Tap out a five-letter word on the keyboard at the bottom and press the return ke
 - Orange: the letter is in that board's answer, but somewhere else.
 - Gray: the letter is not in that board's answer.
 
-A board turns green all the way across when it is solved and stops taking guesses. Keep going with the rest. You always have five more guesses than boards, so 2 boards gives 7 guesses, 8 gives 13, and 16 gives 21.
+A board turns green all the way across when it is solved and stops taking guesses. Keep going with the rest. You always have five more guesses than boards, so 1 board gives 6 guesses, 2 gives 7, 8 gives 13, and 16 gives 21.
 
 Letters you type appear on every unfinished board in the current row. The delete key removes the last letter and the X key clears them all. A guess must be a real word, and any answer word is always accepted.
 
 ## Boards and layout
 
-Choose 2, 4, 8, or 16 boards from the picker in the header. Changing the count starts a new game, and MURDL remembers your choice.
+Choose 1, 2, 4, 8, or 16 boards from the picker in the header. One board is the six-guess game to learn on. Changing the count starts a new game, and MURDL remembers your choice.
 
 Boards are laid out as a grid of up to eight per row, or as one horizontal strip. Switch with the layout button. When the boards do not all fit, the grid scrolls down with the next row peeking above the fold, and the strip scrolls sideways.
 

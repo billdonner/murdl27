@@ -9,7 +9,7 @@ namespace Murdl.Desktop;
 /// state change so windows can redraw.</summary>
 public sealed class GameSession : IDisposable
 {
-    public static readonly int[] BoardOptions = { 2, 4, 8, 16 };
+    public static readonly int[] BoardOptions = { 1, 2, 4, 8, 16 };
 
     public Match Match { get; private set; }
     public Snapshot State { get; private set; }

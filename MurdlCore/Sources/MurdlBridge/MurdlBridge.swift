@@ -29,7 +29,7 @@ private func string(_ pointer: UnsafePointer<CChar>?) -> String {
 @_cdecl("murdl_version")
 public func murdl_version() -> Int32 { 1 }
 
-/// Creates a match with `boardCount` boards (2, 4, 8, or 16) and random answers. Returns NULL for other counts.
+/// Creates a match with `boardCount` boards (1, 2, 4, 8, or 16) and random answers. Returns NULL for other counts.
 @_cdecl("murdl_match_new")
 public func murdl_match_new(_ boardCount: Int32) -> UnsafeMutableRawPointer? {
     guard MurdlMatch.boardCountOptions.contains(Int(boardCount)) else { return nil }

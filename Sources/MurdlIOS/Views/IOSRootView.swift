@@ -9,21 +9,37 @@ struct IOSRootView: View {
     /// Tapping outside the game-over card hides it so the boards can be studied; New Game resets it.
     @State private var gameOverDismissed = false
     @FocusState private var boardFocused: Bool
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    /// iPhone: one board per page. iPad: the grid.
+    private var isCompact: Bool { sizeClass == .compact }
 
     private var gameLocked: Bool {
         game.isOver || game.isShowingHelp
     }
 
     var body: some View {
+        GeometryReader { proxy in
+            content(width: proxy.size.width - (isCompact ? 24 : 32))
+        }
+    }
+
+    private func content(width: CGFloat) -> some View {
         VStack(spacing: 10) {
             IOSHeaderView(game: game, showScores: { isShowingScores = true })
 
             if game.isHelperMode {
-                HelperBarView(game: game)
+                HelperBarView(game: game, showsChips: !isCompact)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
-            BoardGridView(game: game)
+            Group {
+                if isCompact {
+                    PagedBoardsView(game: game)
+                } else {
+                    BoardGridView(game: game)
+                }
+            }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay {
                     if game.isOver, !gameOverDismissed {
@@ -41,15 +57,16 @@ struct IOSRootView: View {
 
             StatusStripView(game: game)
 
-            BottomKeyboardView(game: game)
+            BottomKeyboardView(game: game, width: width)
 
             Text(AppVersion.label)
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, isCompact ? 12 : 16)
         .padding(.top, 8)
         .padding(.bottom, 4)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(MurdlPalette.background.ignoresSafeArea())
         .animation(.spring(response: 0.35, dampingFraction: 0.86), value: game.isHelperMode)
         .animation(.spring(response: 0.35, dampingFraction: 0.86), value: game.helperFocusBoardID)

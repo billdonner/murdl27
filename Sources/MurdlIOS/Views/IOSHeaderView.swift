@@ -1,34 +1,39 @@
 import MurdlCore
 import SwiftUI
 
-/// Two rows instead of the Mac's single wide strip: identity and score on top, controls below.
-/// Rarely used actions live in a menu so the row fits an iPad in portrait.
+/// iPad: identity and score on top, pickers and buttons below. iPhone: one row, with the
+/// board count and mode as submenus of the More menu so the row fits a portrait phone.
 struct IOSHeaderView: View {
     @ObservedObject var game: MurdlGame
     let showScores: () -> Void
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    private var isCompact: Bool { sizeClass == .compact }
 
     var body: some View {
         VStack(spacing: 8) {
-            HStack(spacing: 12) {
-                MurdlLogo(size: 44)
+            HStack(spacing: isCompact ? 8 : 12) {
+                MurdlLogo(size: isCompact ? 36 : 44)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("MURDL")
-                        .font(.system(size: 30, weight: .black, design: .rounded))
+                        .font(.system(size: isCompact ? 22 : 30, weight: .black, design: .rounded))
                         .foregroundStyle(MurdlPalette.titleGradient)
                     Text("\(game.boardCount) \(game.boardCount == 1 ? "board" : "boards")  \(game.maxGuesses) guesses")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: isCompact ? 11 : 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
 
-                Spacer(minLength: 8)
+                Spacer(minLength: 4)
 
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("\(game.solvedCount)/\(game.boardCount)")
-                        .font(.system(size: 24, weight: .heavy, design: .rounded).monospacedDigit())
+                        .font(.system(size: isCompact ? 20 : 24, weight: .heavy, design: .rounded).monospacedDigit())
                         .foregroundStyle(MurdlPalette.letter)
                     Text(game.scoreText.isEmpty ? "\(game.guessesRemaining) left" : game.scoreText)
-                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                        .font(.system(size: isCompact ? 11 : 13, weight: .semibold, design: .monospaced))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
                         .foregroundStyle(.secondary)
                 }
                 .accessibilityElement(children: .combine)
@@ -38,7 +43,17 @@ struct IOSHeaderView: View {
                     ClockView(text: clockText, mode: game.mode, remaining: game.sprintRemaining, isRunning: game.clock.isRunning, hasStarted: game.clock.hasStarted, isOver: game.isOver)
                 }
 
+                if isCompact {
+                    newGameButton
+                }
+
                 Menu {
+                    if isCompact {
+                        boardsMenu
+                        modeMenu
+                        Divider()
+                    }
+
                     Button(game.isHelperMode ? "Turn Off Helper Mode" : "Turn On Helper Mode", systemImage: "sparkles") {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
                             game.toggleHelperMode()
@@ -73,50 +88,83 @@ struct IOSHeaderView: View {
                 .accessibilityLabel("More")
             }
 
-            HStack(spacing: 12) {
-                Picker("Boards", selection: Binding(
-                    get: { game.boardCount },
-                    set: { game.setBoardCount($0) }
-                )) {
-                    ForEach(MurdlGame.boardCountOptions, id: \.self) { count in
-                        Text("\(count)").tag(count)
+            if !isCompact {
+                HStack(spacing: 12) {
+                    boardsPicker
+                        .frame(maxWidth: 220)
+                    modePicker
+                        .frame(maxWidth: 280)
+
+                    Spacer(minLength: 8)
+
+                    HeaderButton(systemImage: game.boardLayout == .grid ? "rectangle.split.2x2" : "rectangle.split.3x1",
+                                 label: "Board layout: \(game.boardLayout.title)",
+                                 help: "Switch to \((game.boardLayout == .grid ? BoardLayout.strip : .grid).title) layout") {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            game.toggleBoardLayout()
+                        }
                     }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(maxWidth: 220)
-                .accessibilityLabel("Number of boards")
 
-                Picker("Mode", selection: Binding(
-                    get: { game.mode },
-                    set: { game.setMode($0) }
-                )) {
-                    ForEach(GameMode.allCases) { mode in
-                        Text(mode.title).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(maxWidth: 280)
-                .accessibilityLabel("Game mode")
-
-                Spacer(minLength: 8)
-
-                HeaderButton(systemImage: game.boardLayout == .grid ? "rectangle.split.2x2" : "rectangle.split.3x1",
-                             label: "Board layout: \(game.boardLayout.title)",
-                             help: "Switch to \((game.boardLayout == .grid ? BoardLayout.strip : .grid).title) layout") {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        game.toggleBoardLayout()
-                    }
-                }
-
-                HeaderButton(systemImage: "arrow.clockwise",
-                             label: "New game",
-                             help: "Start a new game") {
-                    game.startNewGame()
+                    newGameButton
                 }
             }
         }
         .disabled(game.isShowingHelp)
+    }
+
+    private var newGameButton: some View {
+        HeaderButton(systemImage: "arrow.clockwise", label: "New game", help: "Start a new game") {
+            game.startNewGame()
+        }
+    }
+
+    private var boardsPicker: some View {
+        Picker("Boards", selection: Binding(
+            get: { game.boardCount },
+            set: { game.setBoardCount($0) }
+        )) {
+            ForEach(MurdlGame.boardCountOptions, id: \.self) { count in
+                Text("\(count)").tag(count)
+            }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .accessibilityLabel("Number of boards")
+    }
+
+    private var modePicker: some View {
+        Picker("Mode", selection: Binding(
+            get: { game.mode },
+            set: { game.setMode($0) }
+        )) {
+            ForEach(GameMode.allCases) { mode in
+                Text(mode.title).tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .accessibilityLabel("Game mode")
+    }
+
+    private var boardsMenu: some View {
+        Menu("Boards: \(game.boardCount)", systemImage: "square.grid.2x2") {
+            ForEach(MurdlGame.boardCountOptions, id: \.self) { count in
+                Toggle("\(count) \(count == 1 ? "Board" : "Boards"), \(count + MurdlGame.extraGuesses) Guesses", isOn: Binding(
+                    get: { game.boardCount == count },
+                    set: { if $0 { game.setBoardCount(count) } }
+                ))
+            }
+        }
+    }
+
+    private var modeMenu: some View {
+        Menu("Mode: \(game.mode.title)", systemImage: "timer") {
+            ForEach(GameMode.allCases) { mode in
+                Toggle(mode.title, isOn: Binding(
+                    get: { game.mode == mode },
+                    set: { if $0 { game.setMode(mode) } }
+                ))
+            }
+        }
     }
 }

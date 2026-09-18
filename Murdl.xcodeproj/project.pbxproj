@@ -25,6 +25,7 @@
 		6C22CB39AC438BE21F04151E /* BoardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F89112C717E3A73416FBE /* BoardLayout.swift */; };
 		7688D38B8F3A3FBD8B66D721 /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 33431909F7ADE8F2E48A67F3 /* Help.md */; };
 		77FE597672A4AED93712100C /* ScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */; };
+		7A1AB3B96A737067E9EDC651 /* PagedBoardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5564A9E362C1A10056347D1 /* PagedBoardsView.swift */; };
 		8B6586C98B4FE1B35E064731 /* KeyboardFontStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */; };
 		931B5468BCDE3666BCE0C687 /* MurdlApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */; };
 		936DC77993E3F7A5BC27238C /* IOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC8133818ED19A39BAB9884C /* IOSRootView.swift */; };
@@ -56,6 +57,7 @@
 		843694FE9F154C3AC3325A81 /* MurdlPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlPalette.swift; sourceTree = "<group>"; };
 		851021F4FA44543CD28C4C39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8AF087AC77FA60C9648F1F1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A5564A9E362C1A10056347D1 /* PagedBoardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagedBoardsView.swift; sourceTree = "<group>"; };
 		A5E9E46407A4354611CDA06D /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		A906AE2E6D46B6006E5CE70C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BC8133818ED19A39BAB9884C /* IOSRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSRootView.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 				4EFD8F1379FA5A40DD26ABBE /* GameOverView.swift */,
 				7D143B9AAFD56E0D4D335797 /* IOSHeaderView.swift */,
 				BC8133818ED19A39BAB9884C /* IOSRootView.swift */,
+				A5564A9E362C1A10056347D1 /* PagedBoardsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				51DF5D86A18E640326BD1AE7 /* MurdlGame.swift in Sources */,
 				5B2B9659AAD3466CFBFA5B99 /* MurdlIOSApp.swift in Sources */,
 				3098552473DAF65EC27971C1 /* MurdlPalette.swift in Sources */,
+				7A1AB3B96A737067E9EDC651 /* PagedBoardsView.swift in Sources */,
 				77FE597672A4AED93712100C /* ScoresView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -402,7 +406,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -427,7 +431,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

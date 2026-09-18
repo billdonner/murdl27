@@ -244,6 +244,8 @@ struct MurdlLogo: View {
 
 struct HelperBarView: View {
     @ObservedObject var game: MurdlGame
+    /// The per-board chip grid needs width a phone does not have.
+    var showsChips = true
 
     private var accent: Color {
         MurdlPalette.boardAccent(game.helperFocusBoardID ?? 0)
@@ -278,7 +280,9 @@ struct HelperBarView: View {
 
             Spacer(minLength: 10)
 
-            HelperChipGrid(game: game)
+            if showsChips {
+                HelperChipGrid(game: game)
+            }
 
             Button {
                 withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {

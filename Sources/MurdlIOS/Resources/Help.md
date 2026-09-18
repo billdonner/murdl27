@@ -16,11 +16,13 @@ Letters you type appear on every unfinished board in the current row. The delete
 
 ## Boards and layout
 
-Choose 1, 2, 4, 8, or 16 boards from the picker in the header. One board is the six-guess game to learn on. Changing the count starts a new game, and MURDL remembers your choice.
+Choose 1, 2, 4, 8, or 16 boards from the picker in the header, or from the More menu on iPhone. One board is the six-guess game to learn on. Changing the count starts a new game, and MURDL remembers your choice.
 
-Boards are laid out as a grid of up to eight per row, or as one horizontal strip. Switch with the layout button. When the boards do not all fit, the grid scrolls down with the next row peeking above the fold, and the strip scrolls sideways.
+On iPad, boards are laid out as a grid of up to eight per row, or as one horizontal strip. Switch with the layout button. When the boards do not all fit, the grid scrolls down with the next row peeking above the fold, and the strip scrolls sideways.
 
-Tap a board to highlight it. With a hardware keyboard, the arrow keys step the highlight to the next board and the highlighted board scrolls into view. The highlight is only a pointer; it never changes which boards receive a guess.
+On iPhone you see one board at a time. Swipe sideways to move between boards, or tap a number in the strip under the board: green numbers are solved, gray ones are lost. Every guess still plays on every board, and when the board you are looking at is solved MURDL turns to the next open one.
+
+On iPad, tap a board to highlight it. With a hardware keyboard, the arrow keys step the highlight to the next board and the highlighted board scrolls into view. The highlight is only a pointer; it never changes which boards receive a guess.
 
 ## The keyboard
 
@@ -30,7 +32,7 @@ Change the key lettering from the More menu: System, Rounded, Monospaced, or Ser
 
 ## Modes and timers
 
-Pick a mode from the header. Changing mode starts a new game.
+Pick a mode from the header, or from the More menu on iPhone. Changing mode starts a new game.
 
 - Classic: no clock on screen. Time is still recorded in Scores.
 - Stopwatch: the clock counts up. Your fastest win at each board count is kept as a best time.

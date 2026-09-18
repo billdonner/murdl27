@@ -5,10 +5,15 @@ import SwiftUI
 /// The current page is the game's focused board, so hardware arrow keys page as well.
 struct PagedBoardsView: View {
     @ObservedObject var game: MurdlGame
+    /// Board being applauded before the page turns; nil the rest of the time.
+    @State private var celebratingBoardID: Int?
+    /// Pinch in: shrink the board until every row fits; pinch out: back to readable tiles.
+    @State private var fitAll = false
 
     private static let tileSpacing: CGFloat = 3
     private static let boardChrome: CGFloat = 50 + 14   // header row plus the board's own padding
     private static let minFittedTile: CGFloat = 26
+    private static let minSqueezedTile: CGFloat = 13
     private static let maxTile: CGFloat = 64
     /// Tile for a page that scrolls: big enough to read, small enough to show several rows.
     private static let scrollingTile: CGFloat = 46
@@ -24,8 +29,8 @@ struct PagedBoardsView: View {
         VStack(spacing: 8) {
             GeometryReader { proxy in
                 let fitted = Self.fittedTile(in: proxy.size, guesses: game.maxGuesses)
-                let scrolls = fitted < Self.minFittedTile
-                let tile = scrolls ? min(Self.scrollingTile, Self.widthTile(in: proxy.size)) : fitted
+                let scrolls = fitted < Self.minFittedTile && !fitAll
+                let tile = scrolls ? min(Self.scrollingTile, Self.widthTile(in: proxy.size)) : max(Self.minSqueezedTile, fitted)
 
                 TabView(selection: page) {
                     ForEach(game.boards) { board in
@@ -43,6 +48,14 @@ struct PagedBoardsView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+                .simultaneousGesture(
+                    MagnifyGesture(minimumScaleDelta: 0.15).onEnded { value in
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            fitAll = value.magnification < 1
+                        }
+                    }
+                )
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: fitAll)
             }
 
             BoardSwitcherStrip(game: game)
@@ -55,13 +68,19 @@ struct PagedBoardsView: View {
             // New Game clears the focus; land on the first board again.
             if id == nil { game.focusBoard(0) }
         }
-        .onChange(of: game.solvedCount) { _, _ in
-            advancePastFinishedBoard()
+        .onChange(of: finishedCount) { _, _ in
+            celebrateThenAdvance()
         }
+        .sensoryFeedback(.success, trigger: celebratingBoardID) { _, id in id != nil }
+    }
+
+    private var finishedCount: Int {
+        game.boards.filter(\.isFinished).count
     }
 
     private func boardView(_ board: MurdlBoard, tile: CGFloat) -> some View {
-        GameBoardView(
+        let celebrating = celebratingBoardID == board.id
+        return GameBoardView(
             boardID: board.id,
             rows: game.visibleRows(for: board),
             status: game.status(for: board),
@@ -70,14 +89,30 @@ struct PagedBoardsView: View {
             isFocused: false,
             tileSize: tile
         )
+        .scaleEffect(celebrating ? 1.03 : 1)
+        .overlay(alignment: .bottom) {
+            // Low on the board, over rows that are still empty, so the winning word stays visible.
+            if celebrating {
+                BoardFinishedBadge(board: board)
+                    .padding(.bottom, 14)
+                    .transition(.scale(scale: 0.4).combined(with: .opacity))
+            }
+        }
     }
 
-    /// After a guess finishes the board on screen, move on to the next one still open.
-    private func advancePastFinishedBoard() {
-        guard !game.isOver, let current = game.focusedBoardID, game.boards[current].isFinished else { return }
-        let next = game.boards.first { !$0.isFinished && $0.id > current } ?? game.boards.first { !$0.isFinished }
-        if let next {
-            withAnimation(.easeInOut(duration: 0.3)) { game.focusBoard(next.id) }
+    /// A guess just finished the board on screen: applaud it, then turn to the next open board.
+    private func celebrateThenAdvance() {
+        guard let current = game.focusedBoardID, game.boards[current].isFinished, celebratingBoardID == nil else { return }
+        withAnimation(.spring(response: 0.45, dampingFraction: 0.6)) { celebratingBoardID = current }
+        Task {
+            try? await Task.sleep(for: .seconds(game.isOver ? 0.6 : 1.5))
+            withAnimation(.easeOut(duration: 0.25)) { celebratingBoardID = nil }
+            guard !game.isOver else { return }
+            try? await Task.sleep(for: .milliseconds(150))
+            let next = game.boards.first { !$0.isFinished && $0.id > current } ?? game.boards.first { !$0.isFinished }
+            if let next {
+                withAnimation(.easeInOut(duration: 0.45)) { game.focusBoard(next.id) }
+            }
         }
     }
 
@@ -88,6 +123,35 @@ struct PagedBoardsView: View {
 
     private static func widthTile(in size: CGSize) -> CGFloat {
         floor(min(maxTile, (size.width - 14 - 24 - tileSpacing * CGFloat(MurdlGame.wordLength - 1)) / CGFloat(MurdlGame.wordLength)))
+    }
+}
+
+/// The applause: a check (or the answer, for a lost board) that springs in over the board.
+private struct BoardFinishedBadge: View {
+    let board: MurdlBoard
+
+    private var accent: Color { MurdlPalette.boardAccent(board.id) }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: board.isSolved ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .font(.system(size: 72, weight: .bold))
+                .foregroundStyle(.white, board.isSolved ? MurdlPalette.correct : MurdlPalette.absent)
+                .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
+            Text(board.isSolved ? "Board \(board.id + 1) solved!" : "Board \(board.id + 1): \(board.answer.uppercased())")
+                .font(.system(size: 20, weight: .black, design: .rounded))
+                .foregroundStyle(.white)
+            if let row = board.solvedRow {
+                Text("Row \(row + 1)")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.9))
+            }
+        }
+        .padding(.horizontal, 22)
+        .padding(.vertical, 18)
+        .background(accent.opacity(0.92), in: RoundedRectangle(cornerRadius: 18))
+        .shadow(color: accent.opacity(0.5), radius: 18, y: 6)
+        .allowsHitTesting(false)
     }
 }
 

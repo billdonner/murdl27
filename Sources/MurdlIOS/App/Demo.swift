@@ -27,6 +27,14 @@ enum Demo {
         case "win":
             start(game, boards: 4, mode: .stopwatch)
             play(game, words: ["CRANE", "SLATE"], answersOf: [0, 1, 2, 3], typing: "")
+        case "solve":
+            // Solves the board on screen a moment after launch so the ceremony can be captured.
+            start(game, boards: 4, mode: .classic)
+            play(game, words: ["CRANE", "SLATE"], answersOf: [], typing: "")
+            Task {
+                try? await Task.sleep(for: .seconds(1.5))
+                submit(game, game.boards[0].answer)
+            }
         case "helper":
             start(game, boards: 4, mode: .classic)
             play(game, words: ["CRANE", "STORM"], answersOf: [], typing: "")

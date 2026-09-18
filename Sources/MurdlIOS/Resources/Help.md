@@ -20,7 +20,7 @@ Choose 1, 2, 4, 8, or 16 boards from the picker in the header, or from the More 
 
 On iPad, boards are laid out as a grid of up to eight per row, or as one horizontal strip. Switch with the layout button. When the boards do not all fit, the grid scrolls down with the next row peeking above the fold, and the strip scrolls sideways.
 
-On iPhone you see one board at a time. Swipe sideways to move between boards, or tap a number in the strip under the board: green numbers are solved, gray ones are lost. Every guess still plays on every board, and when the board you are looking at is solved MURDL turns to the next open one.
+On iPhone you see one board at a time. Swipe sideways to move between boards, or tap a number in the strip under the board: green numbers are solved, gray ones are lost. Every guess still plays on every board, and when the board you are looking at is solved MURDL applauds it and turns to the next open one. Swipe the keyboard down to see more of a tall board and tap the handle, or swipe it up, to bring the keyboard back. Pinch the board to shrink it until every row fits; pinch out for readable tiles again.
 
 On iPad, tap a board to highlight it. With a hardware keyboard, the arrow keys step the highlight to the next board and the highlighted board scrolls into view. The highlight is only a pointer; it never changes which boards receive a guess.
 

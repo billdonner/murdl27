@@ -8,6 +8,8 @@ struct IOSRootView: View {
     @State private var isShowingScores = false
     /// Tapping outside the game-over card hides it so the boards can be studied; New Game resets it.
     @State private var gameOverDismissed = false
+    /// iPhone: swipe the keyboard down to see more board; swipe or tap the handle to bring it back.
+    @State private var keyboardHidden = false
     @FocusState private var boardFocused: Bool
     @Environment(\.horizontalSizeClass) private var sizeClass
 
@@ -57,7 +59,19 @@ struct IOSRootView: View {
 
             StatusStripView(game: game)
 
-            BottomKeyboardView(game: game, width: width)
+            if isCompact && keyboardHidden {
+                keyboardHandle
+            } else {
+                BottomKeyboardView(game: game, width: width)
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 30).onEnded { value in
+                            if isCompact, value.translation.height > 40 {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) { keyboardHidden = true }
+                            }
+                        }
+                    )
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
 
             Text(AppVersion.label)
                 .font(.caption2)
@@ -119,6 +133,27 @@ struct IOSRootView: View {
                     }
             }
         }
+    }
+
+    private var keyboardHandle: some View {
+        Label("Show keyboard", systemImage: "keyboard.chevron.compact.up")
+            .font(.system(size: 15, weight: .bold, design: .rounded))
+            .foregroundStyle(MurdlPalette.letter)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .background(MurdlPalette.status, in: Capsule())
+            .contentShape(Capsule())
+            .onTapGesture {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) { keyboardHidden = false }
+            }
+            .gesture(
+                DragGesture(minimumDistance: 20).onEnded { value in
+                    if value.translation.height < -20 {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) { keyboardHidden = false }
+                    }
+                }
+            )
+            .accessibilityAddTraits(.isButton)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
     private func submit() -> KeyPress.Result {

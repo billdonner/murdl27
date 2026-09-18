@@ -397,6 +397,8 @@ private struct HelperBoardChip: View {
 
 struct BoardGridView: View {
     @ObservedObject var game: MurdlGame
+    /// Cleared by a tap so the strip does not lurch to center a board the player just touched.
+    @State private var scrollToFocus = true
 
     private static let maxColumns = 8
     private static let minTile: CGFloat = 18
@@ -493,7 +495,11 @@ struct BoardGridView: View {
                                         tileSize: layout.tile
                                     )
                                     .id(board.id)
-                                    .onTapGesture { game.focusBoard(board.id) }
+                                    .onTapGesture {
+                                        // A tapped board is already on screen; only key navigation scrolls.
+                                        scrollToFocus = false
+                                        game.focusBoard(board.id)
+                                    }
                                 }
                             }
                         }
@@ -505,8 +511,10 @@ struct BoardGridView: View {
                     )
                 }
                 .scrollDisabled(!layout.scrolls)
+                .scrollBounceBehavior(.basedOnSize, axes: [.horizontal, .vertical])
                 .onChange(of: game.focusedBoardID) { _, id in
-                    guard let id else { return }
+                    defer { scrollToFocus = true }
+                    guard let id, scrollToFocus else { return }
                     withAnimation(.easeInOut(duration: 0.25)) {
                         scroller.scrollTo(id, anchor: .center)
                     }

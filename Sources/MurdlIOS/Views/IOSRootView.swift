@@ -41,7 +41,12 @@ struct IOSRootView: View {
         .focusable()
         .focusEffectDisabled()
         .focused($boardFocused)
-        .onAppear { boardFocused = true }
+        .onAppear {
+            boardFocused = true
+            #if DEBUG
+            Demo.run(game: game, showScores: { isShowingScores = true })
+            #endif
+        }
         .onKeyPress(characters: .letters, phases: .down) { press in
             guard !gameLocked, press.modifiers.subtracting([.shift, .capsLock]).isEmpty else { return .ignored }
             game.enter(String(press.characters))

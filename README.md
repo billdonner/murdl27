@@ -34,6 +34,7 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Shares `Sources/Murdl/Models` and `Sources/Murdl/Views` with the Mac app; `Sources/MurdlIOS` holds the app entry, a two-row header, the docked keyboard (with a Clear key), and its own `Help.md`. `MurdlGame` is platform-neutral; each app reports foreground and background so timed games pause.
 - iPad only for now (`TARGETED_DEVICE_FAMILY` 2, all orientations). The grid picks the column count with the biggest tiles among those that fill every row, so eight boards wrap into two rows of four in portrait. A hardware keyboard types through `.onKeyPress`; arrows move the board highlight.
 - Planned next version: iPhone, portrait only, one board per page with a board switcher strip (`TARGETED_DEVICE_FAMILY` 1,2).
+- `Screenshots/iPad/` holds the five 2064x2752 App Store captures (eight boards, sixteen boards, Sprint, Helper Mode, Scores). They come from the Debug-only demo hook in `Sources/MurdlIOS/App/Demo.swift`: launch the simulator build with `SIMCTL_CHILD_MURDL_DEMO=eight|sixteen|sprint|helper|scores` and it plays real guesses through the game API, then `xcrun simctl io <device> screenshot`. Nothing from it is compiled into archives.
 
 Build for the simulator with:
 

@@ -31,6 +31,7 @@
 		968367D985E0B5E0EECF4EE2 /* MurdlCore in Frameworks */ = {isa = PBXBuildFile; productRef = 503FA5BE16B8E4C7562D36DA /* MurdlCore */; };
 		A395D05BC21EEA1F2DC45E50 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */; };
 		A59D006AE219A420BB657434 /* KeyCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1F63AC1979CBD1FDB08CAE /* KeyCapture.swift */; };
+		A7D83AF007BA7B4C682C2B33 /* Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9E46407A4354611CDA06D /* Demo.swift */; };
 		D0F12C61BBC50BFA947215EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AF087AC77FA60C9648F1F1E /* Assets.xcassets */; };
 		DF3CE55F37F59AE9ADA38528 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */; };
 /* End PBXBuildFile section */
@@ -53,6 +54,7 @@
 		843694FE9F154C3AC3325A81 /* MurdlPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlPalette.swift; sourceTree = "<group>"; };
 		851021F4FA44543CD28C4C39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8AF087AC77FA60C9648F1F1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A5E9E46407A4354611CDA06D /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		A906AE2E6D46B6006E5CE70C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BC8133818ED19A39BAB9884C /* IOSRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSRootView.swift; sourceTree = "<group>"; };
 		D134B08F1ED6B6E095972C7C /* MurdlGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlGame.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 		2791CAA23E2DFAF2A2E93021 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				A5E9E46407A4354611CDA06D /* Demo.swift */,
 				851021F4FA44543CD28C4C39 /* Info.plist */,
 				29D98B328860A92616C1CFB8 /* MurdlIOSApp.swift */,
 			);
@@ -318,6 +321,7 @@
 				4A613E0DAF794280CD539EB7 /* BoardLayout.swift in Sources */,
 				61342DDEFE9F5E83F9182E7D /* BottomKeyboardView.swift in Sources */,
 				3827BD20C7F3C18CA5C929A3 /* ContentView.swift in Sources */,
+				A7D83AF007BA7B4C682C2B33 /* Demo.swift in Sources */,
 				493C32FBFA3D0E9982739AC6 /* IOSHeaderView.swift in Sources */,
 				936DC77993E3F7A5BC27238C /* IOSRootView.swift in Sources */,
 				8B6586C98B4FE1B35E064731 /* KeyboardFontStyle.swift in Sources */,

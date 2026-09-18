@@ -24,6 +24,9 @@ enum Demo {
         case "sprint":
             start(game, boards: 4, mode: .sprint)
             play(game, words: ["CRANE", "SLATE"], answersOf: [2], typing: "PO")
+        case "win":
+            start(game, boards: 4, mode: .stopwatch)
+            play(game, words: ["CRANE", "SLATE"], answersOf: [0, 1, 2, 3], typing: "")
         case "helper":
             start(game, boards: 4, mode: .classic)
             play(game, words: ["CRANE", "STORM"], answersOf: [], typing: "")

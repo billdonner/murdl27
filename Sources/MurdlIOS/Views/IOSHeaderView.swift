@@ -54,6 +54,10 @@ struct IOSHeaderView: View {
                         }
                     }
 
+                    ShareLink(item: game.shareText) {
+                        Label("Share Board", systemImage: "square.and.arrow.up")
+                    }
+
                     Button("Scores", systemImage: "list.number", action: showScores)
 
                     Button("Help", systemImage: "questionmark.circle") {

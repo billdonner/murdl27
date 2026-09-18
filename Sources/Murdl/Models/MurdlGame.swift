@@ -86,6 +86,18 @@ final class MurdlGame: ObservableObject {
         match.status(for: board)
     }
 
+    /// The match as text for a message, with the mode and clock added by this layer.
+    var shareText: String {
+        var notes: [String] = []
+        switch mode {
+        case .classic: break
+        case .stopwatch: notes.append("Stopwatch \(GameClock.format(elapsedSeconds))")
+        case .sprint: notes.append("Sprint, \(GameClock.format(sprintRemaining)) left")
+        }
+        if assisted { notes.append("assisted") }
+        return match.shareText(note: notes.joined(separator: ", "))
+    }
+
     var scoreSummary: ScoreSummary {
         ScoreSummary(records: records, boardCount: boardCount)
     }

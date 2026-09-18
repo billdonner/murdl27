@@ -6,6 +6,8 @@ import SwiftUI
 struct IOSRootView: View {
     @ObservedObject var game: MurdlGame
     @State private var isShowingScores = false
+    /// Tapping outside the game-over card hides it so the boards can be studied; New Game resets it.
+    @State private var gameOverDismissed = false
     @FocusState private var boardFocused: Bool
 
     private var gameLocked: Bool {
@@ -23,6 +25,19 @@ struct IOSRootView: View {
 
             BoardGridView(game: game)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay {
+                    if game.isOver, !gameOverDismissed {
+                        GameOverView(game: game) {
+                            withAnimation(.easeOut(duration: 0.2)) { gameOverDismissed = true }
+                        }
+                    }
+                }
+                .animation(.spring(response: 0.45, dampingFraction: 0.72), value: game.isOver)
+                .animation(.spring(response: 0.45, dampingFraction: 0.72), value: gameOverDismissed)
+                .onChange(of: game.isOver) { _, over in
+                    if !over { gameOverDismissed = false }
+                }
+                .sensoryFeedback(game.didWin ? .success : .warning, trigger: game.isOver) { _, over in over }
 
             StatusStripView(game: game)
 

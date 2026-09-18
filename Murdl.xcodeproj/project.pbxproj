@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0C82677BFC62A6B52065D613 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A906AE2E6D46B6006E5CE70C /* ContentView.swift */; };
+		0DF2D2037882EA56E03E0851 /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFD8F1379FA5A40DD26ABBE /* GameOverView.swift */; };
 		3098552473DAF65EC27971C1 /* MurdlPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843694FE9F154C3AC3325A81 /* MurdlPalette.swift */; };
 		3179CAACD815C790CAFD002B /* MurdlCore in Frameworks */ = {isa = PBXBuildFile; productRef = 241C7F4988507912CD0772D2 /* MurdlCore */; };
 		3827BD20C7F3C18CA5C929A3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A906AE2E6D46B6006E5CE70C /* ContentView.swift */; };
@@ -46,6 +47,7 @@
 		41A2EF757A36E110A9B6A3D3 /* MURDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MURDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		46AFB0787B6B9C27E72E9C7C /* Help.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Help.md; sourceTree = "<group>"; };
 		4E9006A8F68BBAB1A4736407 /* MurdlApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlApp.swift; sourceTree = "<group>"; };
+		4EFD8F1379FA5A40DD26ABBE /* GameOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverView.swift; sourceTree = "<group>"; };
 		5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		629D930CE49846EAC7A1D911 /* MURDL.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MURDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		675164CE195018740B97419B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				EAC97DA1AFF1DAB7D79F5488 /* BottomKeyboardView.swift */,
+				4EFD8F1379FA5A40DD26ABBE /* GameOverView.swift */,
 				7D143B9AAFD56E0D4D335797 /* IOSHeaderView.swift */,
 				BC8133818ED19A39BAB9884C /* IOSRootView.swift */,
 			);
@@ -322,6 +325,7 @@
 				61342DDEFE9F5E83F9182E7D /* BottomKeyboardView.swift in Sources */,
 				3827BD20C7F3C18CA5C929A3 /* ContentView.swift in Sources */,
 				A7D83AF007BA7B4C682C2B33 /* Demo.swift in Sources */,
+				0DF2D2037882EA56E03E0851 /* GameOverView.swift in Sources */,
 				493C32FBFA3D0E9982739AC6 /* IOSHeaderView.swift in Sources */,
 				936DC77993E3F7A5BC27238C /* IOSRootView.swift in Sources */,
 				8B6586C98B4FE1B35E064731 /* KeyboardFontStyle.swift in Sources */,

@@ -110,16 +110,18 @@ private struct ScrollingBoardPage<Content: View>: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
                     .overlay(alignment: .top) {
-                        Color.clear
-                            .frame(height: tile)
-                            .offset(y: cursorOffset)
-                            .id("cursor")
+                        // A real frame, not an offset, so the scroll reader can measure it.
+                        VStack(spacing: 0) {
+                            Color.clear.frame(height: cursorOffset)
+                            Color.clear.frame(height: tile).id("cursor")
+                        }
+                        .allowsHitTesting(false)
                     }
             }
             .scrollBounceBehavior(.basedOnSize)
             .task {
                 // Pages lay out lazily; give this one a beat before scrolling to the typing row.
-                try? await Task.sleep(for: .milliseconds(80))
+                try? await Task.sleep(for: .milliseconds(150))
                 scroller.scrollTo("cursor", anchor: .center)
             }
             .onChange(of: game.currentRow) { _, _ in

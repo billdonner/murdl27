@@ -411,11 +411,14 @@ private struct HelperBoardChip: View {
 
 struct BoardGridView: View {
     @ObservedObject var game: MurdlGame
+    /// Pinched in on iOS: tiles may shrink far below the usual floor so every board fits unscrolled.
+    var squeeze = false
     /// Cleared by a tap so the strip does not lurch to center a board the player just touched.
     @State private var scrollToFocus = true
 
     private static let maxColumns = 8
     private static let minTile: CGFloat = 18
+    private static let squeezedMinTile: CGFloat = 12
     private static let boardSpacing: CGFloat = 6
     private static let boardPadding: CGFloat = 7
     private static let tileSpacing: CGFloat = 3
@@ -450,17 +453,17 @@ struct BoardGridView: View {
     /// Grid: up to eight columns. Of the column counts that fill every row and fit without
     /// scrolling, the one with the biggest tiles wins, so a tall iPad screen wraps eight boards
     /// into two rows of four instead of one cramped row. When every count scrolls, the widest is kept.
-    private static func gridLayout(boards: Int, guesses: Int, size: CGSize) -> Layout {
+    private static func gridLayout(boards: Int, guesses: Int, size: CGSize, minTile: CGFloat = minTile) -> Layout {
         let minBoardWidth = boardWidth(tile: minTile)
         let fit = Int((size.width + boardSpacing) / (minBoardWidth + boardSpacing))
         let widest = max(1, min(boards, maxColumns, fit))
         let even = (1...widest).reversed().filter { boards % $0 == 0 }
-        let candidates = even.map { gridLayout(boards: boards, guesses: guesses, size: size, columns: $0) }
+        let candidates = even.map { gridLayout(boards: boards, guesses: guesses, size: size, columns: $0, minTile: minTile) }
         return candidates.filter { !$0.scrolls }.max { $0.tile < $1.tile }
-            ?? gridLayout(boards: boards, guesses: guesses, size: size, columns: widest)
+            ?? gridLayout(boards: boards, guesses: guesses, size: size, columns: widest, minTile: minTile)
     }
 
-    private static func gridLayout(boards: Int, guesses: Int, size: CGSize, columns: Int) -> Layout {
+    private static func gridLayout(boards: Int, guesses: Int, size: CGSize, columns: Int, minTile: CGFloat) -> Layout {
         let rows = Int((Double(boards) / Double(columns)).rounded(.up))
         let boardWidthLimit = (size.width - boardSpacing * CGFloat(columns - 1)) / CGFloat(columns)
         let fromWidth = (boardWidthLimit - boardPadding * 2 - tileSpacing * CGFloat(MurdlGame.wordLength - 1)) / CGFloat(MurdlGame.wordLength)
@@ -477,7 +480,7 @@ struct BoardGridView: View {
     }
 
     /// Strip: one row sized by height alone; scrolls sideways when the boards outrun the window.
-    private static func stripLayout(boards: Int, guesses: Int, size: CGSize) -> Layout {
+    private static func stripLayout(boards: Int, guesses: Int, size: CGSize, minTile: CGFloat = minTile) -> Layout {
         let fromHeight = tileFromHeight(size.height, guesses: guesses)
         let tile = floor(max(minTile, min(maxTile(forBoards: boards), fromHeight)))
         let totalWidth = boardWidth(tile: tile) * CGFloat(boards) + boardSpacing * CGFloat(boards - 1)
@@ -486,9 +489,10 @@ struct BoardGridView: View {
 
     var body: some View {
         GeometryReader { proxy in
+            let minTile = squeeze ? Self.squeezedMinTile : Self.minTile
             let layout = game.boardLayout == .strip
-                ? Self.stripLayout(boards: game.boardCount, guesses: game.maxGuesses, size: proxy.size)
-                : Self.gridLayout(boards: game.boardCount, guesses: game.maxGuesses, size: proxy.size)
+                ? Self.stripLayout(boards: game.boardCount, guesses: game.maxGuesses, size: proxy.size, minTile: minTile)
+                : Self.gridLayout(boards: game.boardCount, guesses: game.maxGuesses, size: proxy.size, minTile: minTile)
             let chunks = stride(from: 0, to: game.boards.count, by: layout.columns).map { start in
                 Array(game.boards[start..<min(start + layout.columns, game.boards.count)])
             }

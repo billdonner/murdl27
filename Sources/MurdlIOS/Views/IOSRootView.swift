@@ -8,8 +8,10 @@ struct IOSRootView: View {
     @State private var isShowingScores = false
     /// Tapping outside the game-over card hides it so the boards can be studied; New Game resets it.
     @State private var gameOverDismissed = false
-    /// iPhone: swipe the keyboard down to see more board; swipe or tap the handle to bring it back.
+    /// Swipe the keyboard down to see more board; swipe or tap the handle to bring it back.
     @State private var keyboardHidden = false
+    /// iPad: pinch the grid in to shrink tiles until every board fits; pinch out to restore them.
+    @State private var squeezeGrid = false
     @FocusState private var boardFocused: Bool
     @Environment(\.horizontalSizeClass) private var sizeClass
 
@@ -39,7 +41,14 @@ struct IOSRootView: View {
                 if isCompact {
                     PagedBoardsView(game: game)
                 } else {
-                    BoardGridView(game: game)
+                    BoardGridView(game: game, squeeze: squeezeGrid)
+                        .simultaneousGesture(
+                            MagnifyGesture(minimumScaleDelta: 0.15).onEnded { value in
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                    squeezeGrid = value.magnification < 1
+                                }
+                            }
+                        )
                 }
             }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -59,13 +68,13 @@ struct IOSRootView: View {
 
             StatusStripView(game: game)
 
-            if isCompact && keyboardHidden {
+            if keyboardHidden {
                 keyboardHandle
             } else {
                 BottomKeyboardView(game: game, width: width)
                     .simultaneousGesture(
                         DragGesture(minimumDistance: 30).onEnded { value in
-                            if isCompact, value.translation.height > 40 {
+                            if value.translation.height > 40 {
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) { keyboardHidden = true }
                             }
                         }

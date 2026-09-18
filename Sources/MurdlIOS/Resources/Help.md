@@ -18,7 +18,7 @@ Letters you type appear on every unfinished board in the current row. The delete
 
 Choose 1, 2, 4, 8, or 16 boards from the picker in the header, or from the More menu on iPhone. One board is the six-guess game to learn on. Changing the count starts a new game, and MURDL remembers your choice.
 
-On iPad, boards are laid out as a grid of up to eight per row, or as one horizontal strip. Switch with the layout button. When the boards do not all fit, the grid scrolls down with the next row peeking above the fold, and the strip scrolls sideways.
+On iPad, boards are laid out as a grid of up to eight per row, or as one horizontal strip. Switch with the layout button. When the boards do not all fit, the grid scrolls down with the next row peeking above the fold, and the strip scrolls sideways. Pinch the grid in to shrink the tiles until every board fits on screen at once; pinch out to restore them. On any device, swipe the keyboard down to give the boards its space and tap the handle, or swipe it up, to bring it back.
 
 On iPhone you see one board at a time. Swipe sideways to move between boards, or tap a number in the strip under the board: green numbers are solved, gray ones are lost. Every guess still plays on every board, and when the board you are looking at is solved MURDL applauds it and turns to the next open one. Swipe the keyboard down to see more of a tall board and tap the handle, or swipe it up, to bring the keyboard back. Pinch the board to shrink it until every row fits; pinch out for readable tiles again.
 

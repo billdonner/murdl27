@@ -38,6 +38,17 @@ Pick a mode from the header or File > Mode. Changing mode starts a new game.
 
 In both timed modes the clock does not start until your first keystroke, so you can study the board first. It pauses while Help is open or while MURDL is in the background, and resumes when you come back.
 
+## Starting words
+
+Good openers cover many different common letters. These sequences are accepted by the dictionary and score well on multi-board play; play them in order, then switch to solving.
+
+- CRANE, SLOTH: two words, ten letters. Enough for one or two boards.
+- CHIMP, ROBED, SLANT: three everyday words covering fifteen letters. The strongest three-word start in published tests.
+- TRACE, MOULD, SPINK: another fifteen-letter set. TRACE is one of the best single openers, so it works even if you stop after one word.
+- TROVE, BANDY, SKIMP, CHURL: four words, nineteen letters. Built for eight and sixteen boards, where the first four guesses are best spent mapping the alphabet.
+
+On a single board, RAISE, SLATE, or CRATE are strong first words.
+
 ## Helper Mode
 
 Helper Mode plays the game for you one board at a time. Turn it on with the sparkles button or Command-Shift-H. The helper bar names the next unfinished board and its answer; press Command-Shift-G to play that answer as the next guess. Letters you had already typed stay in place for your next guess.

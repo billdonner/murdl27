@@ -8,7 +8,7 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Modes: 1, 2, 4, 8, or 16 boards, 5 letters, guesses = boards + 5 (1 board is the six-guess beginner game, 8 boards the classic 13-guess game)
 - Engine: `MurdlCore/` Swift package (rules, scoring, dictionary, clock, records) with XCTest coverage; built and tested on Windows and macOS by `.github/workflows/core.yml`. The Mac app is a SwiftUI front end over it.
 - C bridge: `MurdlCore/Sources/MurdlBridge` exposes the engine as a C ABI (`murdl.h`) built as `MurdlBridge.dll` on Windows and `libMurdlBridge.dylib` on macOS; CI uploads the Windows DLL as a build artifact. Front ends drive it with `murdl_match_new`, `murdl_match_play`, and `murdl_match_state_json`.
-- Dictionaries: bundled inside MurdlCore, copied from `old-swift/MURDL/Documents/wtf/Dictionaries`
+- Dictionaries: bundled inside MurdlCore. `wordl5.txt` (allowed guesses) is the current 14,855-word list mirrored at github.com/tabatkins/wordle-list (MIT), replaced 2026-09-18 after the old Webster-style list turned out to reject 4,717 real words such as COPED and FAKED; `friendlies.txt` (answers) is the 2,309-word common-word list. Help lists four starter sequences (CRANE SLOTH; CHIMP ROBED SLANT; TRACE MOULD SPINK; TROVE BANDY SKIMP CHURL), all in both lists.
 - Visual assets: copied from `old-swift/MURDL/Documents/wtf/wtf/Assets.xcassets`
 - Help: bundled as `Sources/Murdl/Resources/Help.md`
 - UI: each board has a distinct accent color and tinted empty rows

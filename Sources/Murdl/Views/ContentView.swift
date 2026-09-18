@@ -135,6 +135,16 @@ struct HeaderView: View {
                 showScores()
             }
 
+            ShareLink(item: game.shareText) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 19, weight: .bold))
+                    .frame(width: 42, height: 42)
+            }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.roundedRectangle(radius: 8))
+            .accessibilityLabel("Share board")
+            .help("Share the board as text (Command-Shift-C copies it)")
+
             HeaderButton(systemImage: "keyboard",
                          label: "Show keyboard",
                          help: "Show the floating letter keyboard (Command-K)") {

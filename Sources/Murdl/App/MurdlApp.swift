@@ -77,6 +77,14 @@ struct MurdlApp: App {
                     }
                 }
                 .disabled(game.isShowingHelp)
+
+                Divider()
+
+                Button("Copy Board as Text") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(game.shareText, forType: .string)
+                }
+                .keyboardShortcut("c", modifiers: [.command, .shift])
             }
 
             CommandMenu("Game") {

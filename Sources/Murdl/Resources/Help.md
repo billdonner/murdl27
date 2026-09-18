@@ -48,6 +48,10 @@ A game that used the helper is recorded as assisted. It counts as played but nev
 
 Every finished game is recorded: date, boards, mode, result, score, guesses used, and time. Games you abandon with New Game are not recorded. Open Scores with Command-Shift-S.
 
+## Sharing a board
+
+The share button in the header sends the board as plain text: the result, the mode and clock, and emoji rows for games of up to four boards or one line per board above that. Command-Shift-C copies the same text to the clipboard for pasting anywhere.
+
 The score string has one character per board, giving the row that board was solved on. Rows 10 and up are written as letters starting at A, so row 10 is A, row 13 is D, and row 21 is L. When every board is solved the characters are sorted lowest first, and a lower string is a better game. When a board is missed it scores as one past the last row and the characters are sorted highest first.
 
 The summary shows games played, wins, win percentage, current and best streak, best score, and best time for the current board count. Clear removes every record.
@@ -66,6 +70,6 @@ Everything in MURDL can be done from the keyboard. Every button in the header ha
 - Command-Shift-H: Helper Mode on or off. Command-Shift-G: play the next helper step.
 - Command-L: switch between grid and strip. Option-Command-G: grid. Option-Command-T: strip.
 - Command-Shift-F: next keyboard font. Control-Command-1, 2, 3, 4: System, Rounded, Monospaced, or Serif.
-- Command-0: show the game board. Command-K: show the keyboard window. Command-Shift-S: show Scores.
+- Command-0: show the game board. Command-K: show the keyboard window. Command-Shift-S: show Scores. Command-Shift-C: copy the board as text.
 - Command-/: open or close this help. Escape also closes it.
 - Command-W: close a window. The game board comes back from the Window menu or Command-0.

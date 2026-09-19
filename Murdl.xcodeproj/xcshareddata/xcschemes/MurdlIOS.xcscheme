@@ -21,6 +21,20 @@
                ReferencedContainer = "container:Murdl.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F85FAB0163DA8E37AB8F2046"
+               BuildableName = "MurdlIOSUITests.xctest"
+               BlueprintName = "MurdlIOSUITests"
+               ReferencedContainer = "container:Murdl.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -39,7 +53,20 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F85FAB0163DA8E37AB8F2046"
+               BuildableName = "MurdlIOSUITests.xctest"
+               BlueprintName = "MurdlIOSUITests"
+               ReferencedContainer = "container:Murdl.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

@@ -61,6 +61,22 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
 
+  # Screenshot driver: the only headless way to rotate a simulator. Never shipped.
+  MurdlIOSUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: Tests/MurdlIOSUITests
+    dependencies:
+      - target: MurdlIOS
+    settings:
+      base:
+        DEVELOPMENT_TEAM: NEAY582ME4
+        SWIFT_VERSION: "6.0"
+        IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: YES
+
   Murdl:
     type: application
     platform: macOS
@@ -116,7 +132,12 @@ schemes:
     build:
       targets:
         MurdlIOS: all
+        MurdlIOSUITests: [test]
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - MurdlIOSUITests
     archive:
       config: Release

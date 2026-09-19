@@ -1,6 +1,7 @@
 #if DEBUG
 import Foundation
 import MurdlCore
+import UIKit
 
 /// Screenshot scenarios for the simulator, where nothing can type. Launch the Debug build with
 /// `SIMCTL_CHILD_MURDL_DEMO=<scenario>` and the app plays real guesses through the normal API.
@@ -9,8 +10,19 @@ import MurdlCore
 enum Demo {
     static let scenario = ProcessInfo.processInfo.environment["MURDL_DEMO"]
 
+    /// `MURDL_DEMO_LANDSCAPE=1` rotates the interface so a headless iPad capture comes out landscape.
+    static let wantsLandscape = ProcessInfo.processInfo.environment["MURDL_DEMO_LANDSCAPE"] == "1"
+
     static func run(game: MurdlGame, showScores: @escaping () -> Void) {
         guard let scenario else { return }
+        if wantsLandscape {
+            let scene = UIApplication.shared.connectedScenes.first { $0 is UIWindowScene } as? UIWindowScene
+            scene?.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeLeft))
+        }
+        // Every scenario starts from the same preferences.
+        game.setVariant(.standard)
+        game.setHighContrast(false)
+        game.setHelperMode(false)
         switch scenario {
         case "one":
             start(game, boards: 1, mode: .classic)

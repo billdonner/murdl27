@@ -35,7 +35,7 @@ extension MurdlMatch {
             }
             lines.append("")
         }
-        lines.append("billdonner.com/apps/murdl")
+        lines.append("1041soft.com/murdl")
         return lines.joined(separator: "\n")
     }
 

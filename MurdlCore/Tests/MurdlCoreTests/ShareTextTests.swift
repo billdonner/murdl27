@@ -12,7 +12,7 @@ final class ShareTextTests: XCTestCase {
         XCTAssertTrue(text.hasPrefix("MURDL 2 boards: Solved all 2 in 2/7 guesses\nScore 12\nStopwatch 0:42\n\n"), text)
         XCTAssertTrue(text.contains("Board 1 ✅ row 2\n⬜⬜🟩⬜🟩\n🟩🟩🟩🟩🟩\n"), text)
         XCTAssertTrue(text.contains("Board 2 ✅ row 1\n🟩🟩🟩🟩🟩\n"), text)
-        XCTAssertTrue(text.hasSuffix("billdonner.com/apps/murdl"))
+        XCTAssertTrue(text.hasSuffix("1041soft.com/murdl"))
     }
 
     func testBigGameListsOneLinePerBoardWhileOpen() {

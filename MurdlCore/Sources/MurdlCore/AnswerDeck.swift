@@ -1,7 +1,7 @@
 import Foundation
 
 /// Practice answers dealt without replacement: every answer comes up once before any repeats,
-/// so a sixteen-board player goes about 144 games, not 5, before meeting a word again.
+/// so a sixteen-board player goes about 165 games, not 5, before meeting a word again.
 /// Only the seed and position are stored; the order is rebuilt from the seed.
 public struct AnswerDeck: Codable, Equatable, Sendable {
     public private(set) var seed: UInt64

@@ -11,10 +11,10 @@ struct PagedBoardsView: View {
     @State private var fitAll = false
 
     private static let tileSpacing: CGFloat = 3
-    private static let boardChrome: CGFloat = 50 + 14   // header row plus the board's own padding
+    private static let boardChrome: CGFloat = 44   // header row, its spacing, and the board's own padding
     private static let minFittedTile: CGFloat = 26
     private static let minSqueezedTile: CGFloat = 13
-    private static let maxTile: CGFloat = 64
+    private static let maxTile: CGFloat = 128
     /// Tile for a page that scrolls: big enough to read, small enough to show several rows.
     private static let scrollingTile: CGFloat = 46
 
@@ -58,7 +58,10 @@ struct PagedBoardsView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: fitAll)
             }
 
-            BoardSwitcherStrip(game: game)
+            // One board has nothing to switch to; give its row to the board.
+            if game.boardCount > 1 {
+                BoardSwitcherStrip(game: game)
+            }
         }
         .onAppear {
             game.layoutColumns = 1
@@ -132,7 +135,7 @@ struct PagedBoardsView: View {
     }
 
     private static func widthTile(in size: CGSize) -> CGFloat {
-        floor(min(maxTile, (size.width - 14 - 24 - tileSpacing * CGFloat(MurdlGame.wordLength - 1)) / CGFloat(MurdlGame.wordLength)))
+        floor(min(maxTile, (size.width - 14 - 8 - tileSpacing * CGFloat(MurdlGame.wordLength - 1)) / CGFloat(MurdlGame.wordLength)))
     }
 }
 

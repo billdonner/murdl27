@@ -428,7 +428,10 @@ struct BoardGridView: View {
     private static let boardSpacing: CGFloat = 6
     private static let boardPadding: CGFloat = 7
     private static let tileSpacing: CGFloat = 3
-    private static let headerAndPadding: CGFloat = 50
+    /// Board header row, its spacing, and the board's own padding, as GameBoardView draws them.
+    private static let headerAndPadding: CGFloat = 44
+    /// Big enough that one board fills a 13-inch iPad or a full-screen Mac; tiles grow to the space.
+    private static let maxTile: CGFloat = 128
     /// How much of the next row of boards stays visible when the grid has to scroll.
     private static let peek: CGFloat = 72
 
@@ -437,15 +440,6 @@ struct BoardGridView: View {
         var tile: CGFloat
         var axes: Axis.Set
         var scrolls: Bool
-    }
-
-    /// Small games get bigger tiles so two boards do not float in an empty window.
-    private static func maxTile(forBoards count: Int) -> CGFloat {
-        switch count {
-        case ...2: return 76
-        case ...4: return 64
-        default: return 56
-        }
     }
 
     private static func boardWidth(tile: CGFloat) -> CGFloat {
@@ -475,7 +469,7 @@ struct BoardGridView: View {
         let fromWidth = (boardWidthLimit - boardPadding * 2 - tileSpacing * CGFloat(MurdlGame.wordLength - 1)) / CGFloat(MurdlGame.wordLength)
         let boardHeightLimit = (size.height - boardSpacing * CGFloat(rows - 1)) / CGFloat(rows)
         let fromHeight = tileFromHeight(boardHeightLimit, guesses: guesses)
-        var tile = floor(max(minTile, min(maxTile(forBoards: boards), fromWidth, fromHeight)))
+        var tile = floor(max(minTile, min(maxTile, fromWidth, fromHeight)))
         let scrolls = fromHeight < minTile && rows > 1
         if scrolls {
             // Shrink just enough that the next row peeks above the fold.
@@ -488,7 +482,7 @@ struct BoardGridView: View {
     /// Strip: one row sized by height alone; scrolls sideways when the boards outrun the window.
     private static func stripLayout(boards: Int, guesses: Int, size: CGSize, minTile: CGFloat = minTile) -> Layout {
         let fromHeight = tileFromHeight(size.height, guesses: guesses)
-        let tile = floor(max(minTile, min(maxTile(forBoards: boards), fromHeight)))
+        let tile = floor(max(minTile, min(maxTile, fromHeight)))
         let totalWidth = boardWidth(tile: tile) * CGFloat(boards) + boardSpacing * CGFloat(boards - 1)
         return Layout(columns: boards, tile: tile, axes: .horizontal, scrolls: totalWidth > size.width)
     }

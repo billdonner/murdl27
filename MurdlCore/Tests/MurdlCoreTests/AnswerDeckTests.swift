@@ -40,13 +40,26 @@ final class AnswerDeckTests: XCTestCase {
         XCTAssertEqual(games, WordDictionary.bundled.answerCount / 16)
     }
 
-    func testPracticeAddsWordsWhileTheDailyKeepsTheOriginalList() {
+    func testBundledAnswersAreTheOriginalsPlusPracticeAdditions() {
         let bundled = WordDictionary.bundled
-        XCTAssertEqual(bundled.dailyAnswerCount, 2_309, "changing the Daily list changes every Daily for everyone")
-        XCTAssertEqual(bundled.answerCount, 2_309 + 337)
+        XCTAssertEqual(bundled.answerCount, 2_309 + 338)
         let practice = Set(bundled.shuffledAnswers(seed: 1))
         XCTAssertEqual(practice.count, bundled.answerCount, "practice words must not repeat the original answers")
         XCTAssertTrue(practice.allSatisfy(bundled.contains), "every answer must be an allowed guess")
+    }
+
+    func testAWordNeverReturnsSoonAcrossAReshuffle() {
+        var deck = AnswerDeck(seed: 5)
+        let perPass = WordDictionary.bundled.answerCount / 16
+        var lastGame: [String: Int] = [:]
+        var shortest = Int.max
+        for game in 0..<(perPass * 3) {
+            for word in deck.deal(16, from: .bundled) {
+                if let last = lastGame[word] { shortest = min(shortest, game - last) }
+                lastGame[word] = game
+            }
+        }
+        XCTAssertGreaterThanOrEqual(shortest, perPass * 3 / 4 - 2, "a word came back after \(shortest) games")
     }
 
     func testPoolSmallerThanTheGameStillFillsEveryBoard() {

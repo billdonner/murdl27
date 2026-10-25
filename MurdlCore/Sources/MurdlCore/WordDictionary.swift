@@ -3,19 +3,14 @@ import Foundation
 public struct WordDictionary: Sendable {
     private let allowedWords: Set<String>
     private let answerWords: [String]
-    /// Daily answers: a fixed list, so every version of the app deals the same Daily #N.
-    private let dailyWords: [String]
 
-    /// The word lists shipped inside MurdlCore. Practice draws from the original answers plus
-    /// `practice.txt`; the Daily keeps to the original answers so adding words never moves it.
+    /// The word lists shipped inside MurdlCore: the original answers plus the `practice.txt` additions.
     public static let bundled = WordDictionary(
         allowedWords: WordDictionary.loadWords(named: "wordl5"),
-        answerWords: WordDictionary.loadWords(named: "friendlies") + WordDictionary.loadWords(named: "practice"),
-        dailyAnswerWords: WordDictionary.loadWords(named: "friendlies")
+        answerWords: WordDictionary.loadWords(named: "friendlies") + WordDictionary.loadWords(named: "practice")
     )
 
-    /// `dailyAnswerWords` defaults to the answer words.
-    public init(allowedWords: [String], answerWords: [String], dailyAnswerWords: [String]? = nil) {
+    public init(allowedWords: [String], answerWords: [String]) {
         let normalizedAllowed = WordDictionary.normalized(words: allowedWords)
         let normalizedAnswers = WordDictionary.normalized(words: answerWords)
         let fallbackAnswers = [
@@ -31,30 +26,30 @@ public struct WordDictionary: Sendable {
         // Every answer is always an allowed guess, so the helper can play answers directly.
         self.allowedWords = Set(normalizedAllowed).union(finalAnswers)
         self.answerWords = finalAnswers
-        let daily = dailyAnswerWords.map(WordDictionary.normalized(words:)) ?? []
-        self.dailyWords = daily.isEmpty ? finalAnswers : daily
     }
 
     public var answerCount: Int { answerWords.count }
-    public var dailyAnswerCount: Int { dailyWords.count }
 
     public func contains(_ word: String) -> Bool {
         allowedWords.contains(Self.normalize(word))
     }
 
-    /// Deterministic Daily pick: the same seed and count always give the same answers, in the
-    /// same order, on every device. Answers are sorted first so the file order does not matter.
-    public func answers(seed: UInt64, count: Int) -> [String] {
-        var generator = SeededGenerator(seed: seed)
-        let shuffled = dailyWords.sorted().shuffled(using: &generator)
-        guard !shuffled.isEmpty else { return Array(repeating: "adieu", count: count) }
-        return (0..<count).map { shuffled[$0 % shuffled.count] }
-    }
+    /// Quarters a pass through the answers is split into; see `shuffledAnswers(seed:)`.
+    static let passBlocks = 4
 
-    /// Every practice answer once, in an order fixed by the seed.
+    /// Every answer once, in an order fixed by the seed: the same on every device, because the
+    /// answers are sorted first (file order does not matter) and the generator is SplitMix64.
+    /// Each word belongs to one fixed quarter of the pass and only the order within a quarter
+    /// changes, so a word dealt late in one pass cannot open the next: it returns at least three
+    /// quarters of a pass later, even across a reshuffle.
     func shuffledAnswers(seed: UInt64) -> [String] {
+        var fixed = SeededGenerator(seed: 0x4D55_5244_4C21)
+        let words = answerWords.sorted().shuffled(using: &fixed)
+        let size = max(1, (words.count + Self.passBlocks - 1) / Self.passBlocks)
         var generator = SeededGenerator(seed: seed)
-        return answerWords.sorted().shuffled(using: &generator)
+        return stride(from: 0, to: words.count, by: size).flatMap { start in
+            words[start..<min(start + size, words.count)].shuffled(using: &generator)
+        }
     }
 
     public func randomAnswers(count: Int) -> [String] {

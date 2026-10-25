@@ -15,9 +15,33 @@ final class DailyPuzzleTests: XCTestCase {
     }
 
     func testSeedIsStableAcrossRuns() {
-        // Pinned: if this changes, everyone's daily changes. Recompute only for a deliberate reset.
+        // Pinned: if this changes, everyone's daily changes. Recompute only for a deliberate reset
+        // (last reset 2026-10-25: Dailies walk quarter-blocked passes of all 2,647 answers).
         let picks = DailyPuzzle.answers(number: 1, boardCount: 2, from: dictionary)
-        XCTAssertEqual(picks, ["plant", "house"])
+        XCTAssertEqual(picks, ["storm", "point"])
+    }
+
+    func testNoDailyAnswerRepeatsUntilTheListIsUsed() {
+        for boards in MurdlMatch.boardCountOptions {
+            let days = DailyPuzzle.daysWithoutRepeat(boardCount: boards, in: .bundled)
+            XCTAssertEqual(days, WordDictionary.bundled.answerCount / boards)
+            let dealt = (1...days).flatMap { DailyPuzzle.answers(number: $0, boardCount: boards, from: .bundled) }
+            XCTAssertEqual(Set(dealt).count, dealt.count, "\(boards) boards repeated a word within \(days) days")
+        }
+    }
+
+    func testAWordNeverReturnsSoonAcrossAReshuffle() {
+        let boards = 16
+        let days = DailyPuzzle.daysWithoutRepeat(boardCount: boards, in: .bundled)
+        var lastDay: [String: Int] = [:]
+        var shortest = Int.max
+        for day in 1...(days * 3) {
+            for word in DailyPuzzle.answers(number: day, boardCount: boards, from: .bundled) {
+                if let last = lastDay[word] { shortest = min(shortest, day - last) }
+                lastDay[word] = day
+            }
+        }
+        XCTAssertGreaterThanOrEqual(shortest, days * 3 / 4 - 2, "a word came back after \(shortest) days")
     }
 
     func testNumberCountsDaysFromEpoch() {

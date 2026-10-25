@@ -12,8 +12,30 @@ public enum DailyPuzzle {
         return max(1, days + 1)
     }
 
+    /// Dailies at one board count walk through a shuffled pass of the answers, `boardCount` words
+    /// a day, so no word repeats within a pass and none returns sooner than three quarters of a
+    /// pass later (see `WordDictionary.shuffledAnswers`). A pass holds whole days only: the few
+    /// words that would not fill a day sit out, picked at random each pass so none sits out for
+    /// good. A day never straddles two passes, so any day is computed directly.
     public static func answers(number: Int, boardCount: Int, from dictionary: WordDictionary) -> [String] {
-        dictionary.answers(seed: UInt64(number) &* 1_000_003 &+ UInt64(boardCount), count: boardCount)
+        let daysPerCycle = daysWithoutRepeat(boardCount: boardCount, in: dictionary)
+        let day = max(0, number - 1)
+        let cycle = day / daysPerCycle, slot = day % daysPerCycle
+        let seed = UInt64(cycle) &* 1_000_003 &+ UInt64(boardCount)
+        var order = dictionary.shuffledAnswers(seed: seed)
+        guard !order.isEmpty else { return Array(repeating: "adieu", count: boardCount) }
+        let spare = order.count - daysPerCycle * boardCount
+        if spare > 0 {
+            var generator = SeededGenerator(seed: ~seed)
+            let sitOut = Set(order.indices.shuffled(using: &generator).prefix(spare))
+            order = order.indices.filter { !sitOut.contains($0) }.map { order[$0] }
+        }
+        return (0..<boardCount).map { order[(slot * boardCount + $0) % order.count] }
+    }
+
+    /// Days in a row, at one board count, before any Daily answer can repeat.
+    public static func daysWithoutRepeat(boardCount: Int, in dictionary: WordDictionary) -> Int {
+        max(1, dictionary.answerCount / boardCount)
     }
 }
 

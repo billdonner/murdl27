@@ -19,6 +19,7 @@ final class MurdlGame: ObservableObject {
     private static let gameModeDefaultsKey = "MurdlGameMode"
     private static let highContrastDefaultsKey = "MurdlHighContrast"
     private static let variantDefaultsKey = "MurdlVariant"
+    private static let answerDeckDefaultsKey = "MurdlAnswerDeck"
 
     @Published private(set) var match: MurdlMatch
     @Published private(set) var currentGuess = ""
@@ -45,6 +46,8 @@ final class MurdlGame: ObservableObject {
     /// Orange/blue tiles with glyphs instead of green/orange.
     @Published private(set) var highContrast: Bool
     private(set) var assisted = false
+    /// Practice answers without replacement, persisted so repeats stay rare across launches.
+    private var answerDeck: AnswerDeck
     /// Boards per row in the current layout, reported by the grid view so up/down can move by a row.
     var layoutColumns = 1
     private var ticker: Timer?
@@ -62,6 +65,8 @@ final class MurdlGame: ObservableObject {
         highContrast = contrast
         MurdlPalette.highContrast = contrast
         variant = defaults.string(forKey: Self.variantDefaultsKey).flatMap(GameVariant.init) ?? .standard
+        answerDeck = defaults.data(forKey: Self.answerDeckDefaultsKey)
+            .flatMap { try? JSONDecoder().decode(AnswerDeck.self, from: $0) } ?? AnswerDeck()
         let savedCount = defaults.integer(forKey: Self.boardCountDefaultsKey)
         let boardCount = Self.boardCountOptions.contains(savedCount) ? savedCount : Self.defaultBoardCount
         match = MurdlMatch(boardCount: boardCount, dictionary: dictionary)
@@ -150,10 +155,12 @@ final class MurdlGame: ObservableObject {
 
     // MARK: Game flow
 
-    /// Practice: fresh random answers.
+    /// Practice: the next answers from the deck, so a word returns only after the whole list has.
     func startNewGame() {
         dailyNumber = nil
-        match = MurdlMatch(boardCount: boardCount, extraGuesses: variant.extraGuesses(boards: boardCount), dictionary: dictionary)
+        let answers = answerDeck.deal(boardCount, from: dictionary)
+        UserDefaults.standard.set(try? JSONEncoder().encode(answerDeck), forKey: Self.answerDeckDefaultsKey)
+        match = MurdlMatch(answers: answers, extraGuesses: variant.extraGuesses(boards: boardCount), dictionary: dictionary)
         reset(status: "Ready")
         playOpeners()
     }

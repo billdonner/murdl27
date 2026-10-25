@@ -31,16 +31,17 @@ struct PagedBoardsView: View {
                 let fitted = Self.fittedTile(in: proxy.size, guesses: game.maxGuesses)
                 let scrolls = fitted < Self.minFittedTile && !fitAll
                 let tile = scrolls ? min(Self.scrollingTile, Self.widthTile(in: proxy.size)) : max(Self.minSqueezedTile, fitted)
+                let tileHeight = scrolls ? tile : Self.stretchedTileHeight(tile, in: proxy.size, guesses: game.maxGuesses)
 
                 TabView(selection: page) {
                     ForEach(game.boards) { board in
                         Group {
                             if scrolls {
                                 ScrollingBoardPage(game: game, board: board, tile: tile) {
-                                    boardView(board, tile: tile)
+                                    boardView(board, tile: tile, tileHeight: tile)
                                 }
                             } else {
-                                boardView(board, tile: tile)
+                                boardView(board, tile: tile, tileHeight: tileHeight)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                             }
                         }
@@ -82,15 +83,15 @@ struct PagedBoardsView: View {
     }
 
     @ViewBuilder
-    private func boardView(_ board: MurdlBoard, tile: CGFloat) -> some View {
+    private func boardView(_ board: MurdlBoard, tile: CGFloat, tileHeight: CGFloat) -> some View {
         if game.isBoardVisible(board.id) {
-            revealedBoardView(board, tile: tile)
+            revealedBoardView(board, tile: tile, tileHeight: tileHeight)
         } else {
-            HiddenBoardView(boardID: board.id, guesses: game.maxGuesses, tileSize: tile)
+            HiddenBoardView(boardID: board.id, guesses: game.maxGuesses, tileSize: tile, tileHeight: tileHeight)
         }
     }
 
-    private func revealedBoardView(_ board: MurdlBoard, tile: CGFloat) -> some View {
+    private func revealedBoardView(_ board: MurdlBoard, tile: CGFloat, tileHeight: CGFloat) -> some View {
         let celebrating = celebratingBoardID == board.id
         return GameBoardView(
             boardID: board.id,
@@ -100,6 +101,7 @@ struct PagedBoardsView: View {
             isHelperTarget: game.helperFocusBoardID == board.id,
             isFocused: false,
             tileSize: tile,
+            tileHeight: tileHeight,
             highContrast: game.highContrast
         )
         .scaleEffect(celebrating ? 1.03 : 1)
@@ -132,6 +134,12 @@ struct PagedBoardsView: View {
     private static func fittedTile(in size: CGSize, guesses: Int) -> CGFloat {
         let fromHeight = (size.height - boardChrome - tileSpacing * CGFloat(guesses - 1)) / CGFloat(guesses)
         return floor(min(maxTile, fromHeight, widthTile(in: size)))
+    }
+
+    /// A width-bound board takes the spare height, up to the grid's tallest tile shape.
+    private static func stretchedTileHeight(_ tile: CGFloat, in size: CGSize, guesses: Int) -> CGFloat {
+        let fromHeight = (size.height - boardChrome - tileSpacing * CGFloat(guesses - 1)) / CGFloat(guesses)
+        return floor(max(tile, min(fromHeight, tile * BoardGridView.maxTileAspect)))
     }
 
     private static func widthTile(in size: CGSize) -> CGFloat {

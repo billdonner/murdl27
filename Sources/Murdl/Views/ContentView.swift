@@ -435,9 +435,14 @@ struct BoardGridView: View {
     /// How much of the next row of boards stays visible when the grid has to scroll.
     private static let peek: CGFloat = 72
 
+    /// Tiles may grow this much taller than wide when a width-bound grid leaves height unused.
+    static let maxTileAspect: CGFloat = 1.25
+
     private struct Layout {
         var columns: Int
         var tile: CGFloat
+        /// Tile height: the width, stretched toward `maxTileAspect` when there is spare height.
+        var tileHeight: CGFloat
         var axes: Axis.Set
         var scrolls: Bool
     }
@@ -476,7 +481,8 @@ struct BoardGridView: View {
             let peekTile = floor(max(minTile, tileFromHeight(size.height - peek - boardSpacing, guesses: guesses)))
             tile = min(tile, peekTile)
         }
-        return Layout(columns: columns, tile: tile, axes: .vertical, scrolls: scrolls)
+        let tileHeight = scrolls ? tile : floor(max(tile, min(fromHeight, tile * maxTileAspect)))
+        return Layout(columns: columns, tile: tile, tileHeight: tileHeight, axes: .vertical, scrolls: scrolls)
     }
 
     /// Strip: one row sized by height alone; scrolls sideways when the boards outrun the window.
@@ -484,7 +490,7 @@ struct BoardGridView: View {
         let fromHeight = tileFromHeight(size.height, guesses: guesses)
         let tile = floor(max(minTile, min(maxTile, fromHeight)))
         let totalWidth = boardWidth(tile: tile) * CGFloat(boards) + boardSpacing * CGFloat(boards - 1)
-        return Layout(columns: boards, tile: tile, axes: .horizontal, scrolls: totalWidth > size.width)
+        return Layout(columns: boards, tile: tile, tileHeight: tile, axes: .horizontal, scrolls: totalWidth > size.width)
     }
 
     var body: some View {
@@ -513,10 +519,11 @@ struct BoardGridView: View {
                                                 isHelperTarget: game.helperFocusBoardID == board.id,
                                                 isFocused: game.focusedBoardID == board.id,
                                                 tileSize: layout.tile,
+                                                tileHeight: layout.tileHeight,
                                                 highContrast: game.highContrast
                                             )
                                         } else {
-                                            HiddenBoardView(boardID: board.id, guesses: game.maxGuesses, tileSize: layout.tile)
+                                            HiddenBoardView(boardID: board.id, guesses: game.maxGuesses, tileSize: layout.tile, tileHeight: layout.tileHeight)
                                         }
                                     }
                                     .id(board.id)
@@ -557,11 +564,12 @@ struct HiddenBoardView: View {
     let boardID: Int
     let guesses: Int
     let tileSize: CGFloat
+    var tileHeight: CGFloat?
     private var accent: Color { MurdlPalette.boardAccent(boardID) }
 
     var body: some View {
         let width = tileSize * CGFloat(MurdlGame.wordLength) + 3 * CGFloat(MurdlGame.wordLength - 1)
-        let height = tileSize * CGFloat(guesses) + 3 * CGFloat(guesses - 1) + (tileSize < 26 ? 4 : 6) + 22
+        let height = (tileHeight ?? tileSize) * CGFloat(guesses) + 3 * CGFloat(guesses - 1) + (tileSize < 26 ? 4 : 6) + 22
         VStack(spacing: 6) {
             Image(systemName: "lock.fill")
                 .font(.system(size: max(12, tileSize * 0.6), weight: .bold))
@@ -597,6 +605,8 @@ struct GameBoardView: View {
     let isHelperTarget: Bool
     let isFocused: Bool
     let tileSize: CGFloat
+    /// Taller than `tileSize` when the layout has height to spare; nil keeps tiles square.
+    var tileHeight: CGFloat?
     /// Passed in (not read from the palette) so a toggle re-renders boards whose rows did not change.
     var highContrast = false
     private var accent: Color { MurdlPalette.boardAccent(boardID) }
@@ -627,7 +637,7 @@ struct GameBoardView: View {
                 ForEach(rows.indices, id: \.self) { row in
                     HStack(spacing: 3) {
                         ForEach(rows[row].indices, id: \.self) { column in
-                            TileView(tile: rows[row][column], boardID: boardID, row: row, tileSize: tileSize, highContrast: highContrast)
+                            TileView(tile: rows[row][column], boardID: boardID, row: row, tileSize: tileSize, tileHeight: tileHeight ?? tileSize, highContrast: highContrast)
                         }
                     }
                 }
@@ -680,6 +690,7 @@ private struct TileView: View {
     let boardID: Int
     let row: Int
     let tileSize: CGFloat
+    let tileHeight: CGFloat
     var highContrast = false
 
     var body: some View {
@@ -688,7 +699,7 @@ private struct TileView: View {
             .lineLimit(1)
             .minimumScaleFactor(0.55)
             .foregroundStyle(tile.mark == .empty ? .secondary : MurdlPalette.letter)
-            .frame(width: tileSize, height: tileSize)
+            .frame(width: tileSize, height: tileHeight)
             .background(fill, in: RoundedRectangle(cornerRadius: 4))
             .overlay(
                 RoundedRectangle(cornerRadius: 4)

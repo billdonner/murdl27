@@ -30,8 +30,8 @@ Modern SwiftUI rebuild of the archived MURDL game.
 - Sandboxed (no extra entitlements) with hardened runtime; version and build shown at the foot of the main window.
 - Listing copy lives in `~/coworking/MURDL-AppStore.md` (pushed with `/asc-push MURDL` once the ASC record exists).
 - `Screenshots/` holds 2560x1600 captures taken from the app at 1280x800 points: eight boards with the keyboard window, sixteen boards, Sprint, Scores, Help.
-- Archive through Xcode Cloud (this Mac runs a macOS beta; local archives fail ingestion). Two workflows per platform: Build on main, Archive on the `release` branch with App Store deployment (`scripts/xcode-cloud-workflows.py` creates them). Pin Xcode 26.6.
-- Build numbers follow Xcode Cloud's counter for both platforms; after each cloud archive set `CURRENT_PROJECT_VERSION` in `project.yml` to the number it used.
+- Archive through Xcode Cloud (this Mac runs a macOS beta; local archives fail ingestion). A Build workflow per platform on main, and one Archive workflow on the `release` branch, "Archive - App Store (Mac + iOS)", which archives both platforms in a single run so Mac and iOS share a build number (each run takes the next number from the product's counter). All are manual-start; `scripts/xcode-cloud-workflows.py` creates them. The old iOS-only Archive workflow is disabled. Pin Xcode 26.6.
+- Build numbers follow Xcode Cloud's counter; after each cloud archive set `CURRENT_PROJECT_VERSION` for both targets in `project.yml` to the number it used (2.3 shipped to TestFlight as Mac 14 and iOS 15 before the archive workflows were merged; from build 16 both match).
 
 ## iOS (iPad first)
 

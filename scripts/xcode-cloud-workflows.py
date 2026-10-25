@@ -7,8 +7,8 @@ Create MURDL's Xcode Cloud workflows once the Cloud product exists.
 The product itself must be created once in Xcode (Product > Xcode Cloud > Create
 Workflow); the API cannot do that. Everything after is scripted here, following the
 KinFlash playbook: a BUILD workflow for main and an ARCHIVE workflow for the release branch
-that uploads to App Store Connect, one pair per platform (Mac scheme Murdl, iOS scheme
-MurdlIOS). All pinned to Xcode 26.6 (Latest Release becomes 27 the day it ships and
+that uploads to App Store Connect. Builds run per platform (Mac scheme Murdl, iOS scheme
+MurdlIOS); one archive workflow archives both, so Mac and iOS get the same build number. All pinned to Xcode 26.6 (Latest Release becomes 27 the day it ships and
 resurrects ITMS-90111). Per house policy every workflow is started manually.
 
     uv run scripts/xcode-cloud-workflows.py            # create or report
@@ -54,20 +54,23 @@ print("macOS", macos["id"], macos["attributes"]["name"])
 existing = {w["attributes"]["name"]: w for w in get(f"ciProducts/{product['id']}/workflows", limit=50)["data"]}
 
 
-def workflow(name, branch, archive, scheme=SCHEME, platform="MACOS", destination="ANY_MAC"):
+MAC = (SCHEME, "MACOS", "ANY_MAC")
+IOS = ("MurdlIOS", "IOS", "ANY_IOS_DEVICE")
+
+
+def workflow(name, branch, archive, targets=(MAC,)):
     if name in existing:
         print(f"exists: {name} ({existing[name]['id']})")
         return
-    label = platform.replace("MACOS", "macOS").replace("IOS", "iOS")
     actions = [{
-        "name": f"{'Archive' if archive else 'Build'} - {label}",
+        "name": f"{'Archive' if archive else 'Build'} - {platform.replace('MACOS', 'macOS').replace('IOS', 'iOS')}",
         "actionType": "ARCHIVE" if archive else "BUILD",
         "destination": destination,
         "buildDistributionAudience": "APP_STORE_ELIGIBLE" if archive else None,
         "scheme": scheme,
         "platform": platform,
         "isRequiredToPass": True,
-    }]
+    } for scheme, platform, destination in targets]
     body = {"data": {"type": "ciWorkflows", "attributes": {
         "name": name,
         "description": "Created by scripts/xcode-cloud-workflows.py",
@@ -88,10 +91,13 @@ def workflow(name, branch, archive, scheme=SCHEME, platform="MACOS", destination
 
 
 workflow("Build - main", "main", archive=False)
-workflow("Archive - App Store", "release", archive=True)
-workflow("Build iOS - main", "main", archive=False, scheme="MurdlIOS", platform="IOS", destination="ANY_IOS_DEVICE")
-workflow("Archive iOS - App Store", "release", archive=True, scheme="MurdlIOS", platform="IOS", destination="ANY_IOS_DEVICE")
+workflow("Build iOS - main", "main", archive=False, targets=(IOS,))
+# One archive run for both platforms: every run takes the next number from the product's
+# shared counter, so separate Mac and iOS runs could never share a build number. The old
+# iOS-only "Archive iOS - App Store" workflow is disabled (2026-10-25).
+workflow("Archive - App Store (Mac + iOS)", "release", archive=True, targets=(MAC, IOS))
 
 for w in get(f"ciProducts/{product['id']}/workflows", limit=50, **{"fields[ciWorkflows]": "name,isEnabled"})["data"]:
-    x = get(f"ciWorkflows/{w['id']}/xcodeVersion")["data"]["attributes"]["name"]
+    # The /xcodeVersion related link answers 403 for this key; include= returns the same record.
+    x = get(f"ciWorkflows/{w['id']}", include="xcodeVersion")["included"][0]["attributes"]["name"]
     print(f"  {w['attributes']['name']}: enabled={w['attributes']['isEnabled']} xcode={x}")

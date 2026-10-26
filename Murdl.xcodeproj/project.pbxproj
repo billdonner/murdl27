@@ -7,15 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AF72D1670F9D13BBE96E1A7 /* MultiplayerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64708D3BB162D47D94B293B /* MultiplayerStore.swift */; };
 		0C82677BFC62A6B52065D613 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A906AE2E6D46B6006E5CE70C /* ContentView.swift */; };
 		0DF2D2037882EA56E03E0851 /* GameOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFD8F1379FA5A40DD26ABBE /* GameOverView.swift */; };
 		26FC0107F97FFB6C9830DB40 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B3BE15C0F844EB26D06940 /* ScreenshotTests.swift */; };
+		2CE73CEF31B0516DD87C11B6 /* ChallengeSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6030B678E4DFE287E5593E /* ChallengeSync.swift */; };
 		3098552473DAF65EC27971C1 /* MurdlPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843694FE9F154C3AC3325A81 /* MurdlPalette.swift */; };
 		3179CAACD815C790CAFD002B /* MurdlCore in Frameworks */ = {isa = PBXBuildFile; productRef = 241C7F4988507912CD0772D2 /* MurdlCore */; };
+		3463CA6EC873834FCD611C96 /* ChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9847D81D074AD817A076ABC8 /* ChallengeView.swift */; };
 		3827BD20C7F3C18CA5C929A3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A906AE2E6D46B6006E5CE70C /* ContentView.swift */; };
 		3F3FB46479B86223A59DBDE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AF087AC77FA60C9648F1F1E /* Assets.xcassets */; };
 		493C32FBFA3D0E9982739AC6 /* IOSHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D143B9AAFD56E0D4D335797 /* IOSHeaderView.swift */; };
 		4A613E0DAF794280CD539EB7 /* BoardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F89112C717E3A73416FBE /* BoardLayout.swift */; };
+		4B3A5B6AF933D07AB81A5C99 /* ChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9847D81D074AD817A076ABC8 /* ChallengeView.swift */; };
 		4C02E0E17A38CA32A26E1EBA /* KeyboardFontStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */; };
 		50B3BB783D6E642384553BDA /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 46AFB0787B6B9C27E72E9C7C /* Help.md */; };
 		51DF5D86A18E640326BD1AE7 /* MurdlGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D134B08F1ED6B6E095972C7C /* MurdlGame.swift */; };
@@ -24,7 +28,9 @@
 		61342DDEFE9F5E83F9182E7D /* BottomKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC97DA1AFF1DAB7D79F5488 /* BottomKeyboardView.swift */; };
 		6679E6BCFEC44BCB85CBC27A /* MurdlGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D134B08F1ED6B6E095972C7C /* MurdlGame.swift */; };
 		6C22CB39AC438BE21F04151E /* BoardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F89112C717E3A73416FBE /* BoardLayout.swift */; };
+		7464632D814FFDFEB4065FC7 /* MultiplayerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64708D3BB162D47D94B293B /* MultiplayerStore.swift */; };
 		7688D38B8F3A3FBD8B66D721 /* Help.md in Resources */ = {isa = PBXBuildFile; fileRef = 33431909F7ADE8F2E48A67F3 /* Help.md */; };
+		77A1E425F26B9FDDFC287A04 /* ChallengeSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6030B678E4DFE287E5593E /* ChallengeSync.swift */; };
 		77FE597672A4AED93712100C /* ScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7F02D9D8C4AC4EDBC47328 /* ScoresView.swift */; };
 		7A1AB3B96A737067E9EDC651 /* PagedBoardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5564A9E362C1A10056347D1 /* PagedBoardsView.swift */; };
 		8B6586C98B4FE1B35E064731 /* KeyboardFontStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */; };
@@ -70,6 +76,7 @@
 		843694FE9F154C3AC3325A81 /* MurdlPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlPalette.swift; sourceTree = "<group>"; };
 		851021F4FA44543CD28C4C39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8AF087AC77FA60C9648F1F1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9847D81D074AD817A076ABC8 /* ChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeView.swift; sourceTree = "<group>"; };
 		A5564A9E362C1A10056347D1 /* PagedBoardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagedBoardsView.swift; sourceTree = "<group>"; };
 		A5E9E46407A4354611CDA06D /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		A906AE2E6D46B6006E5CE70C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -78,8 +85,10 @@
 		CFBDB115B79C99CBDF6FB6EF /* MurdlIOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MurdlIOS.entitlements; sourceTree = "<group>"; };
 		D134B08F1ED6B6E095972C7C /* MurdlGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MurdlGame.swift; sourceTree = "<group>"; };
 		E1B3BE15C0F844EB26D06940 /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
+		E64708D3BB162D47D94B293B /* MultiplayerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplayerStore.swift; sourceTree = "<group>"; };
 		EAC97DA1AFF1DAB7D79F5488 /* BottomKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomKeyboardView.swift; sourceTree = "<group>"; };
 		F51B708A950827AEB1C61B71 /* ScoreSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreSync.swift; sourceTree = "<group>"; };
+		FA6030B678E4DFE287E5593E /* ChallengeSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeSync.swift; sourceTree = "<group>"; };
 		FBD74DD6C6150E645F5DB2AE /* MurdlCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MurdlCore; path = MurdlCore; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -148,7 +157,9 @@
 			isa = PBXGroup;
 			children = (
 				029F89112C717E3A73416FBE /* BoardLayout.swift */,
+				FA6030B678E4DFE287E5593E /* ChallengeSync.swift */,
 				20ED8AF87AAC9CBEA40FC62D /* KeyboardFontStyle.swift */,
+				E64708D3BB162D47D94B293B /* MultiplayerStore.swift */,
 				D134B08F1ED6B6E095972C7C /* MurdlGame.swift */,
 				F51B708A950827AEB1C61B71 /* ScoreSync.swift */,
 			);
@@ -176,6 +187,7 @@
 		847D28312953173B3BD54CEB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9847D81D074AD817A076ABC8 /* ChallengeView.swift */,
 				A906AE2E6D46B6006E5CE70C /* ContentView.swift */,
 				5B1ECB50F1A88DEFCD461017 /* KeyboardView.swift */,
 				843694FE9F154C3AC3325A81 /* MurdlPalette.swift */,
@@ -386,6 +398,8 @@
 			files = (
 				4A613E0DAF794280CD539EB7 /* BoardLayout.swift in Sources */,
 				61342DDEFE9F5E83F9182E7D /* BottomKeyboardView.swift in Sources */,
+				77A1E425F26B9FDDFC287A04 /* ChallengeSync.swift in Sources */,
+				3463CA6EC873834FCD611C96 /* ChallengeView.swift in Sources */,
 				3827BD20C7F3C18CA5C929A3 /* ContentView.swift in Sources */,
 				A7D83AF007BA7B4C682C2B33 /* Demo.swift in Sources */,
 				0DF2D2037882EA56E03E0851 /* GameOverView.swift in Sources */,
@@ -393,6 +407,7 @@
 				936DC77993E3F7A5BC27238C /* IOSRootView.swift in Sources */,
 				8B6586C98B4FE1B35E064731 /* KeyboardFontStyle.swift in Sources */,
 				A395D05BC21EEA1F2DC45E50 /* KeyboardView.swift in Sources */,
+				0AF72D1670F9D13BBE96E1A7 /* MultiplayerStore.swift in Sources */,
 				51DF5D86A18E640326BD1AE7 /* MurdlGame.swift in Sources */,
 				5B2B9659AAD3466CFBFA5B99 /* MurdlIOSApp.swift in Sources */,
 				3098552473DAF65EC27971C1 /* MurdlPalette.swift in Sources */,
@@ -407,10 +422,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				6C22CB39AC438BE21F04151E /* BoardLayout.swift in Sources */,
+				2CE73CEF31B0516DD87C11B6 /* ChallengeSync.swift in Sources */,
+				4B3A5B6AF933D07AB81A5C99 /* ChallengeView.swift in Sources */,
 				0C82677BFC62A6B52065D613 /* ContentView.swift in Sources */,
 				A59D006AE219A420BB657434 /* KeyCapture.swift in Sources */,
 				4C02E0E17A38CA32A26E1EBA /* KeyboardFontStyle.swift in Sources */,
 				DF3CE55F37F59AE9ADA38528 /* KeyboardView.swift in Sources */,
+				7464632D814FFDFEB4065FC7 /* MultiplayerStore.swift in Sources */,
 				931B5468BCDE3666BCE0C687 /* MurdlApp.swift in Sources */,
 				6679E6BCFEC44BCB85CBC27A /* MurdlGame.swift in Sources */,
 				95EA0C680CC272DCBADA22C6 /* MurdlPalette.swift in Sources */,

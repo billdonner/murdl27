@@ -9,6 +9,7 @@ struct MurdlIOSApp: App {
     var body: some Scene {
         WindowGroup {
             IOSRootView(game: game)
+                .onOpenURL { game.open(link: $0) }
         }
         .onChange(of: scenePhase) { _, phase in
             // The app switcher and Control Center count as away: a timed game should not run there.

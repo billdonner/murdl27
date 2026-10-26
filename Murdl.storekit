@@ -1,0 +1,35 @@
+{
+  "identifier" : "3C1F6E2A-6B0E-4C55-9C1D-4D55524C4D50",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : true,
+      "internalID" : "A7D3F0B2-1E4C-4F7A-8B6D-4D55524C4D51",
+      "localizations" : [
+        {
+          "description" : "Challenge friends to the same MURDL boards and trade results. One-time purchase.",
+          "displayName" : "MURDL Multiplayer",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.billdonner.murdl27.multiplayer",
+      "referenceName" : "MURDL Multiplayer",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6809919090",
+    "_developerTeamID" : "NEAY582ME4",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 0,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

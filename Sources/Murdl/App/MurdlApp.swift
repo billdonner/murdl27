@@ -96,6 +96,18 @@ struct MurdlApp: App {
 
                 Divider()
 
+                Button("Challenge a Friend…") {
+                    game.offerChallenge()
+                }
+                .keyboardShortcut("m", modifiers: [.command, .shift])
+                .disabled(!game.isOver || game.isShowingHelp)
+
+                Button("Your Name…") {
+                    game.challengeSheet = .name
+                }
+
+                Divider()
+
                 Button("Copy Board as Text") {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(game.shareText, forType: .string)

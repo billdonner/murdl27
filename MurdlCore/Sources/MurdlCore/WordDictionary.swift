@@ -28,6 +28,12 @@ public struct WordDictionary: Sendable {
         self.answerWords = finalAnswers
     }
 
+    /// `base` with extra allowed guesses; see `allowing(_:)`.
+    init(adding words: [String], to base: WordDictionary) {
+        allowedWords = base.allowedWords.union(words)
+        answerWords = base.answerWords
+    }
+
     public var answerCount: Int { answerWords.count }
 
     public func contains(_ word: String) -> Bool {

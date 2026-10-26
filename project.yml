@@ -53,6 +53,9 @@ targets:
         LSApplicationCategoryType: public.app-category.word-games
         NSHumanReadableCopyright: Copyright 1041soft.com
         UILaunchScreen: {}
+        CFBundleURLTypes:
+          - CFBundleURLName: com.billdonner.murdl27.challenge
+            CFBundleURLSchemes: [murdl]
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UISupportedInterfaceOrientations~ipad:
@@ -118,6 +121,9 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         LSApplicationCategoryType: public.app-category.word-games
         NSHumanReadableCopyright: Copyright 1041soft.com
+        CFBundleURLTypes:
+          - CFBundleURLName: com.billdonner.murdl27.challenge
+            CFBundleURLSchemes: [murdl]
 
 schemes:
   Murdl:
@@ -126,6 +132,7 @@ schemes:
         Murdl: all
     run:
       config: Debug
+      storeKitConfiguration: Murdl.storekit
     archive:
       config: Release
   MurdlIOS:
@@ -135,6 +142,7 @@ schemes:
         MurdlIOSUITests: [test]
     run:
       config: Debug
+      storeKitConfiguration: Murdl.storekit
     test:
       config: Debug
       targets:

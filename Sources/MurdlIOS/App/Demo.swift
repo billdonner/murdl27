@@ -83,10 +83,31 @@ enum Demo {
                 start(game, boards: 8, mode: .classic)
                 showScores()
             }
+        case "challenge":
+            // A friend's challenge opened from a link (run with MURDL_MULTIPLAYER=1 to skip the paywall).
+            var fresh = demoChallenge
+            fresh.id = Challenge.newID()
+            game.open(link: fresh.link)
+        case "challenge-done":
+            game.open(link: demoChallenge.link)
+            if case .incoming(let challenge)? = game.challengeSheet { game.playChallenge(challenge) }
+            play(game, words: ["CRANE", "SLATE"], answersOf: [0, 1, 2, 3], typing: "")
+        case "challenge-reply":
+            game.setPlayerName("Carol")
+            game.open(link: demoChallenge.replying(as: "Mike", result: ChallengeResult(solved: 4, guesses: 6, seconds: 201)).link)
+        case "challenge-send":
+            game.setPlayerName("Mike")
+            start(game, boards: 4, mode: .stopwatch)
+            play(game, words: ["CRANE"], answersOf: [0, 1, 2, 3], typing: "")
+            game.offerChallenge()
         default:
             break
         }
     }
+
+    private static let demoChallenge = Challenge(
+        id: "c0ffee01", answers: ["crane", "plant", "modus", "storm"], variant: .standard, mode: .stopwatch,
+        challenger: ChallengeEntry(name: "Carol", result: ChallengeResult(solved: 4, guesses: 7, seconds: 154)))
 
     private static func start(_ game: MurdlGame, boards: Int, mode: GameMode) {
         game.setMode(mode)

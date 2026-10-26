@@ -20,6 +20,7 @@ final class MurdlGame: ObservableObject {
     private static let highContrastDefaultsKey = "MurdlHighContrast"
     private static let variantDefaultsKey = "MurdlVariant"
     private static let answerDeckDefaultsKey = "MurdlAnswerDeck"
+    private static let playerNameDefaultsKey = "MurdlPlayerName"
 
     @Published private(set) var match: MurdlMatch
     @Published private(set) var currentGuess = ""
@@ -46,6 +47,15 @@ final class MurdlGame: ObservableObject {
     /// Orange/blue tiles with glyphs instead of green/orange.
     @Published private(set) var highContrast: Bool
     private(set) var assisted = false
+    /// The received challenge being played; nil in practice and the Daily.
+    @Published private(set) var challenge: Challenge?
+    /// The name on challenges and replies; asked for the first time one is sent.
+    @Published private(set) var playerName: String
+    /// Challenges sent and received, newest first.
+    @Published private(set) var challengeRecords: [ChallengeRecord] = ChallengeSync.load()
+    @Published var challengeSheet: ChallengeSheet?
+    let multiplayer = MultiplayerStore()
+    private var challengeSync: ChallengeSync?
     /// Practice answers without replacement, persisted so repeats stay rare across launches.
     private var answerDeck: AnswerDeck
     /// Boards per row in the current layout, reported by the grid view so up/down can move by a row.
@@ -65,6 +75,7 @@ final class MurdlGame: ObservableObject {
         highContrast = contrast
         MurdlPalette.highContrast = contrast
         variant = defaults.string(forKey: Self.variantDefaultsKey).flatMap(GameVariant.init) ?? .standard
+        playerName = defaults.string(forKey: Self.playerNameDefaultsKey) ?? ""
         answerDeck = defaults.data(forKey: Self.answerDeckDefaultsKey)
             .flatMap { try? JSONDecoder().decode(AnswerDeck.self, from: $0) } ?? AnswerDeck()
         let savedCount = defaults.integer(forKey: Self.boardCountDefaultsKey)
@@ -79,6 +90,11 @@ final class MurdlGame: ObservableObject {
         self.sync = sync
         records = sync.merged(with: records)
         ScoreStore.save(records)
+        let challengeSync = ChallengeSync { [weak self] merged in
+            self?.challengeRecords = merged
+        }
+        self.challengeSync = challengeSync
+        challengeRecords = challengeSync.merged(with: challengeRecords)
     }
 
     /// The app reports when it leaves and returns to the foreground; timed games pause meanwhile.
@@ -133,6 +149,7 @@ final class MurdlGame: ObservableObject {
     var subtitle: String {
         var parts: [String] = []
         if let dailyNumber { parts.append("Daily #\(dailyNumber)") }
+        if let challenge { parts.append("\(challenge.challenger.name)'s challenge") }
         if variant != .standard { parts.append(variant.title) }
         parts.append("\(boardCount) \(boardCount == 1 ? "board" : "boards")  \(maxGuesses) guesses")
         return parts.joined(separator: "  ")
@@ -157,6 +174,7 @@ final class MurdlGame: ObservableObject {
 
     /// Practice: the next answers from the deck, so a word returns only after the whole list has.
     func startNewGame() {
+        leaveChallenge()
         dailyNumber = nil
         let answers = answerDeck.deal(boardCount, from: dictionary)
         UserDefaults.standard.set(try? JSONEncoder().encode(answerDeck), forKey: Self.answerDeckDefaultsKey)
@@ -168,6 +186,7 @@ final class MurdlGame: ObservableObject {
     /// Today's Daily at the current board count: the same answers for everyone. A replay is
     /// allowed but only the first result counts in Scores.
     func startDailyGame() {
+        leaveChallenge()
         let number = todaysDailyNumber
         dailyNumber = number
         match = MurdlMatch(answers: DailyPuzzle.answers(number: number, boardCount: boardCount, from: dictionary),
@@ -329,6 +348,10 @@ final class MurdlGame: ObservableObject {
         records.insert(record, at: 0)
         ScoreStore.save(records)
         sync?.push(records)
+        if let challenge {
+            updateChallengeRecord(challenge.id) { $0.mine = $0.mine ?? self.challengeResult }
+            challengeSheet = .finished(challenge)
+        }
     }
 
     func clearRecords() {
@@ -336,6 +359,106 @@ final class MurdlGame: ObservableObject {
         ScoreStore.markCleared()
         ScoreStore.save(records)
         sync?.push(records)
+    }
+
+    // MARK: Challenges
+
+    /// This game's result as a challenge sees it.
+    var challengeResult: ChallengeResult {
+        ChallengeResult(solved: solvedCount, guesses: currentRow, seconds: Int(clock.elapsed().rounded()),
+                        assisted: assisted, timedOut: timedOut)
+    }
+
+    /// The finished game as a challenge to send: same boards, variant and mode. After playing a
+    /// friend's challenge it shows the comparison instead.
+    func offerChallenge() {
+        guard isOver else { return }
+        if let challenge {
+            challengeSheet = .finished(challenge)
+            return
+        }
+        let challenge = Challenge(answers: boards.map(\.answer), variant: variant, mode: mode,
+                                  challenger: ChallengeEntry(name: playerName, result: challengeResult))
+        challengeSheet = .send(challenge)
+    }
+
+    /// Called when the player actually sends or copies it, so cancelled offers leave no trace.
+    func recordSent(_ challenge: Challenge) {
+        updateChallengeRecord(challenge.id, create: ChallengeRecord(
+            id: challenge.id, sent: true, boardCount: challenge.boardCount, variant: challenge.variant,
+            mode: challenge.mode, mine: challenge.challenger.result))
+    }
+
+    func setPlayerName(_ name: String) {
+        playerName = Challenge.cleanName(name)
+        UserDefaults.standard.set(playerName, forKey: Self.playerNameDefaultsKey)
+    }
+
+    /// A challenge or reply link from Messages, Mail, or anywhere else. Returns false if it is
+    /// not one of ours.
+    @discardableResult
+    func open(link: URL) -> Bool {
+        guard let challenge = Challenge(link: link) else {
+            statusText = "That challenge link is incomplete. Ask for it again."
+            return false
+        }
+        if let reply = challenge.reply {
+            updateChallengeRecord(challenge.id, create: ChallengeRecord(
+                id: challenge.id, sent: true, boardCount: challenge.boardCount, variant: challenge.variant,
+                mode: challenge.mode, mine: challenge.challenger.result)) {
+                $0.opponent = reply.name
+                $0.theirs = reply.result
+            }
+            challengeSheet = .reply(challenge)
+        } else {
+            challengeSheet = .incoming(challenge)
+        }
+        return true
+    }
+
+    /// The record for a challenge already played here, if any.
+    func challengeRecord(_ id: String) -> ChallengeRecord? {
+        challengeRecords.first { $0.id == id }
+    }
+
+    /// Starts the challenge's boards with its variant and mode. The player's own settings are
+    /// left alone and come back with the next practice game or Daily.
+    func playChallenge(_ incoming: Challenge) {
+        guard !incoming.isReply, incoming.answers.count == incoming.boardCount else { return }
+        challengeSheet = nil
+        dailyNumber = nil
+        challenge = incoming
+        mode = incoming.mode
+        variant = incoming.variant
+        match = MurdlMatch(answers: incoming.answers, extraGuesses: incoming.variant.extraGuesses(boards: incoming.boardCount),
+                           dictionary: dictionary.allowing(incoming.answers))
+        updateChallengeRecord(incoming.id, create: ChallengeRecord(
+            id: incoming.id, sent: false, boardCount: incoming.boardCount, variant: incoming.variant,
+            mode: incoming.mode, opponent: incoming.challenger.name, theirs: incoming.challenger.result))
+        reset(status: "\(incoming.challenger.name)'s challenge: beat \(incoming.challenger.result.summary(boardCount: incoming.boardCount, mode: incoming.mode))")
+        playOpeners()
+    }
+
+    /// Back to the player's own mode and variant after a challenge.
+    private func leaveChallenge() {
+        guard challenge != nil else { return }
+        challenge = nil
+        let defaults = UserDefaults.standard
+        mode = defaults.string(forKey: Self.gameModeDefaultsKey).flatMap(GameMode.init) ?? .classic
+        variant = defaults.string(forKey: Self.variantDefaultsKey).flatMap(GameVariant.init) ?? .standard
+    }
+
+    /// Edits the record with `id`, creating it from `create` first if there is none.
+    private func updateChallengeRecord(_ id: String, create: ChallengeRecord? = nil, _ change: (inout ChallengeRecord) -> Void = { _ in }) {
+        if let index = challengeRecords.firstIndex(where: { $0.id == id }) {
+            change(&challengeRecords[index])
+        } else if var record = create {
+            change(&record)
+            challengeRecords.insert(record, at: 0)
+        } else {
+            return
+        }
+        challengeSync?.save(challengeRecords)
     }
 
     // MARK: Help

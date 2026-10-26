@@ -57,6 +57,12 @@ Finished games sync through iCloud to every Mac, iPad, and iPhone signed into th
 
 Every day there is one Daily puzzle at each board count, and everyone who plays it gets the same answers. Start it with the calendar button on iPad or from the More menu on iPhone. Your first result is the one that counts in Scores, where Daily games keep their own streak, and the share text says which Daily you played. Practice games, started with New Game, use fresh random answers and never affect the Daily streak.
 
+## Challenges
+
+Finish any game, then choose Challenge a Friend on the game-over card or in the More menu. MURDL makes a link with the same boards, variant and mode, plus your result, and you send it any way you like. Your friend opens the link, sees the score to beat, and plays the same boards; their first try is the one that counts. They send their result back with one tap, and opening it shows who won: most boards solved, then fewest guesses, then, in Stopwatch and Sprint, the faster time. A game played with Helper Mode loses to any game played without it.
+
+The name on your challenges is set the first time you send one and can be changed any time from the More menu under Your Name. Challenges sync with your scores. Sending and playing challenges needs MURDL Multiplayer, a one-time in-app purchase; reading a friend's reply does not.
+
 ## High contrast colors
 
 If green and orange are hard to tell apart, turn on High Contrast Colors in the More menu. Correct letters become orange with a check mark, misplaced letters blue with an arrow, so color is never the only signal. The setting is remembered.

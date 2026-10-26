@@ -129,6 +129,9 @@ struct IOSRootView: View {
         ) {
             HelpView(dismiss: game.hideHelp)
         }
+        .sheet(item: $game.challengeSheet, onDismiss: { boardFocused = true }) { sheet in
+            ChallengeView(game: game, sheet: sheet)
+        }
         .sheet(isPresented: $isShowingScores, onDismiss: { boardFocused = true }) {
             NavigationStack {
                 ScoresView(game: game)

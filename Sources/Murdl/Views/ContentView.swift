@@ -46,6 +46,10 @@ struct ContentView: View {
             HelpView(dismiss: game.hideHelp)
                 .frame(minWidth: 680, minHeight: 560)
         }
+        .sheet(item: $game.challengeSheet) { sheet in
+            ChallengeView(game: game, sheet: sheet)
+        }
+        .onOpenURL { game.open(link: $0) }
     }
 }
 
@@ -140,6 +144,13 @@ struct HeaderView: View {
                          help: "Show scores (Command-Shift-S)") {
                 showScores()
             }
+
+            HeaderButton(systemImage: "person.2",
+                         label: "Challenge a friend",
+                         help: "Send this finished game to a friend to beat (Command-Shift-M)") {
+                game.offerChallenge()
+            }
+            .disabled(!game.isOver)
 
             ShareLink(item: game.shareText) {
                 Image(systemName: "square.and.arrow.up")

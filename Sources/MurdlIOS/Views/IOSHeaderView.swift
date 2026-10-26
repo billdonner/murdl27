@@ -87,6 +87,15 @@ struct IOSHeaderView: View {
                         Label("Share Board", systemImage: "square.and.arrow.up")
                     }
 
+                    Button("Challenge a Friend", systemImage: "person.2") {
+                        game.offerChallenge()
+                    }
+                    .disabled(!game.isOver)
+
+                    Button(game.playerName.isEmpty ? "Your Name" : "Your Name: \(game.playerName)", systemImage: "person.text.rectangle") {
+                        game.challengeSheet = .name
+                    }
+
                     Button("Scores", systemImage: "list.number", action: showScores)
 
                     Button("Help", systemImage: "questionmark.circle") {

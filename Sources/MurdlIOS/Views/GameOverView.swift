@@ -63,6 +63,18 @@ struct GameOverView: View {
                         .background(MurdlPalette.status, in: RoundedRectangle(cornerRadius: 8))
                 }
 
+                Button {
+                    game.offerChallenge()
+                } label: {
+                    Label(game.challenge == nil ? "Challenge a Friend" : "Compare with \(game.challenge?.challenger.name ?? "")",
+                          systemImage: "person.2.fill")
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .frame(maxWidth: 272, minHeight: 44)
+                }
+                .buttonStyle(.bordered)
+                .buttonBorderShape(.roundedRectangle(radius: 10))
+                .padding(.top, 6)
+
                 HStack(spacing: 12) {
                     ShareLink(item: game.shareText) {
                         Label("Share", systemImage: "square.and.arrow.up")
@@ -82,7 +94,6 @@ struct GameOverView: View {
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.roundedRectangle(radius: 10))
                 }
-                .padding(.top, 6)
             }
             .padding(28)
             .frame(maxWidth: 420)

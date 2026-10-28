@@ -474,7 +474,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2.3;
+				MARKETING_VERSION = 2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
@@ -497,7 +497,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3;
+				MARKETING_VERSION = 2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
 				PRODUCT_NAME = MURDL;
 				SDKROOT = iphoneos;
@@ -523,7 +523,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3;
+				MARKETING_VERSION = 2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
 				PRODUCT_NAME = MURDL;
 				SDKROOT = iphoneos;
@@ -607,7 +607,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 2.3;
+				MARKETING_VERSION = 2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.billdonner.murdl27;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;

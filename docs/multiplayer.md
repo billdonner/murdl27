@@ -34,8 +34,10 @@ game does not need to.
 
 Non-consumable `com.billdonner.murdl27.multiplayer` ("MURDL Multiplayer"), StoreKit 2,
 cached in `MurdlMultiplayerUnlocked` so it opens unlocked offline. Needed to send and to play;
-not to read a reply. It must be created in App Store Connect (price, review screenshot) and
-submitted with the first version that ships challenges.
+not to read a reply. $3.99, Family Sharing on, every territory. Created in App Store Connect
+on 2026-10-28 (id 6828087071) with name, description, price and review note; it still needs a
+review screenshot of the paywall showing the real price (take it from a 2.4 TestFlight build),
+then goes in with 2.4, the first version that ships challenges. 2.3 ships without them.
 
 ### Later
 
